@@ -4,9 +4,9 @@ import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star, Keys, 
 const GRAVITY = 1400
 const PLAYER_SPEED = 280
 const JUMP_FORCE = -520
-const JETPACK_FORCE = -600
-const JETPACK_FUEL_RATE = 35
-const JETPACK_REGEN_RATE = 12
+const JETPACK_FORCE = -1400
+const JETPACK_FUEL_RATE = 18
+const JETPACK_REGEN_RATE = 15
 const BULLET_SPEED = 700
 const SHOOT_COOLDOWN = 0.18
 const PLAYER_MAX_HEALTH = 100
@@ -183,7 +183,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
 
   // Gravity
   player.vy += GRAVITY * dt
-  player.vy = Math.min(player.vy, 800)
+  player.vy = Math.max(-600, Math.min(player.vy, 800))
 
   // Apply velocity
   player.x += player.vx * dt

@@ -326,37 +326,41 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fill()
 
   // ─ LEGS ─
-  const walkCycle = player.onGround ? Math.sin(player.animFrame * 0.3) * 5 : 0
-  const legSpread = player.onGround ? 0 : 2
+  // Only animate legs when moving on ground, and swing forward/back (horizontal)
+  const isMoving = player.vx !== 0
+  const walkSwing = (isMoving && player.onGround) ? Math.sin(player.animFrame * 0.35) * 6 : 0
+  const legSpread = player.onGround ? 0 : 3
 
-  // Left leg
+  // Left leg - swings forward when right goes back
+  const leftLegX = -5 - legSpread + walkSwing
   ctx.fillStyle = COLORS.player.pants
-  ctx.fillRect(-5 - legSpread, hh - 14, 7, 14 + walkCycle)
+  ctx.fillRect(leftLegX, hh - 14, 7, 14)
   ctx.fillStyle = COLORS.player.pantsLight
-  ctx.fillRect(-4 - legSpread, hh - 13, 2, 12 + walkCycle)
+  ctx.fillRect(leftLegX + 1, hh - 13, 2, 12)
   // Left boot
   ctx.fillStyle = COLORS.player.boots
-  roundRect(ctx, -6 - legSpread, hh - 1 + walkCycle, 9, 5, 2)
+  roundRect(ctx, leftLegX - 1, hh - 1, 9, 5, 2)
   ctx.fill()
   ctx.fillStyle = COLORS.player.bootsHighlight
-  ctx.fillRect(-4 - legSpread, hh + walkCycle, 4, 2)
+  ctx.fillRect(leftLegX + 1, hh, 4, 2)
   // Boot sole
   ctx.fillStyle = '#1a1a1a'
-  ctx.fillRect(-6 - legSpread, hh + 3 + walkCycle, 9, 2)
+  ctx.fillRect(leftLegX - 1, hh + 3, 9, 2)
 
-  // Right leg
+  // Right leg - opposite swing
+  const rightLegX = 1 + legSpread - walkSwing
   ctx.fillStyle = COLORS.player.pants
-  ctx.fillRect(1 + legSpread, hh - 14, 7, 14 - walkCycle)
+  ctx.fillRect(rightLegX, hh - 14, 7, 14)
   ctx.fillStyle = COLORS.player.pantsLight
-  ctx.fillRect(2 + legSpread, hh - 13, 2, 12 - walkCycle)
+  ctx.fillRect(rightLegX + 1, hh - 13, 2, 12)
   // Right boot
   ctx.fillStyle = COLORS.player.boots
-  roundRect(ctx, 0 + legSpread, hh - 1 - walkCycle, 9, 5, 2)
+  roundRect(ctx, rightLegX - 1, hh - 1, 9, 5, 2)
   ctx.fill()
   ctx.fillStyle = COLORS.player.bootsHighlight
-  ctx.fillRect(2 + legSpread, hh - walkCycle, 4, 2)
+  ctx.fillRect(rightLegX + 1, hh, 4, 2)
   ctx.fillStyle = '#1a1a1a'
-  ctx.fillRect(0 + legSpread, hh + 3 - walkCycle, 9, 2)
+  ctx.fillRect(rightLegX - 1, hh + 3, 9, 2)
 
   // ─ TORSO ─
   // Main shirt
