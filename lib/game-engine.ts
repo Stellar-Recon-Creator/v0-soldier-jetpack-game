@@ -11,6 +11,7 @@ const BULLET_SPEED = 700
 const SHOOT_COOLDOWN = 0.18
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
+export const GROUND_Y = 500
 
 // ─── Level Generation ───
 export function generateLevel(level: number): Pick<GameState, 'platforms' | 'enemies' | 'levelLength'> {
@@ -18,29 +19,13 @@ export function generateLevel(level: number): Pick<GameState, 'platforms' | 'ene
   const enemies: Enemy[] = []
   const levelLength = 6000 + level * 2000
 
-  // Ground segments (with gaps)
-  let gx = 0
-  while (gx < levelLength) {
-    const segW = 200 + Math.random() * 400
-    platforms.push({
-      x: gx,
-      y: 500,
-      width: segW,
-      height: 40,
-      type: Math.random() > 0.7 ? 'metal' : 'normal',
-    })
-    gx += segW + 80 + Math.random() * 120
-  }
-
-  // Starting platform (safe zone)
-  platforms.push({ x: -100, y: 500, width: 300, height: 40, type: 'normal' })
-
-  // Floating platforms
-  for (let i = 0; i < levelLength / 300; i++) {
-    const px = 300 + Math.random() * (levelLength - 400)
-    const py = 200 + Math.random() * 250
+  // Elevated platforms above the continuous ground (for jumping/flying to)
+  for (let i = 0; i < levelLength / 250; i++) {
+    const px = 250 + Math.random() * (levelLength - 400)
+    const py = 200 + Math.random() * 220
     const pw = 80 + Math.random() * 120
-    const pType = Math.random() > 0.5 ? 'floating' : 'metal'
+    const roll = Math.random()
+    const pType = roll > 0.6 ? 'floating' : roll > 0.3 ? 'metal' : 'normal'
     platforms.push({
       x: px,
       y: py,
@@ -49,6 +34,19 @@ export function generateLevel(level: number): Pick<GameState, 'platforms' | 'ene
       type: pType,
       floatOffset: Math.random() * Math.PI * 2,
       floatSpeed: 1 + Math.random(),
+    })
+  }
+
+  // Add a few larger mid-height platforms for strategic positions
+  for (let i = 0; i < levelLength / 600; i++) {
+    const px = 400 + i * 600 + Math.random() * 200
+    const py = 340 + Math.random() * 80
+    platforms.push({
+      x: px,
+      y: py,
+      width: 120 + Math.random() * 100,
+      height: 18,
+      type: 'metal',
     })
   }
 
@@ -61,18 +59,16 @@ export function generateLevel(level: number): Pick<GameState, 'platforms' | 'ene
     else if (roll < 0.55) type = 'spitter'
     else if (roll < 0.75) type = 'flyer'
     else if (roll < 0.9) type = 'brute'
-    else type = 'grunt' // more grunts
+    else type = 'grunt'
 
     const eSize = getEnemySize(type)
-    const ey = type === 'flyer' ? 100 + Math.random() * 200 : 500 - eSize.h
+    const ey = type === 'flyer' ? 100 + Math.random() * 200 : GROUND_Y - eSize.h
     enemies.push(createEnemy(type, ex, ey))
   }
 
   // Boss at end
   const bossX = levelLength - 300
-  enemies.push(createEnemy('boss', bossX, 500 - 64))
-  // Boss platform
-  platforms.push({ x: bossX - 100, y: 500, width: 500, height: 40, type: 'metal' })
+  enemies.push(createEnemy('boss', bossX, GROUND_Y - 64))
 
   return { platforms, enemies, levelLength }
 }
@@ -113,7 +109,7 @@ function createEnemy(type: EnemyType, x: number, y: number): Enemy {
   }
 }
 
-// ─── Stars ───
+// ─── Stars (re-used as cloud data) ───
 export function generateStars(count: number, canvasW: number, canvasH: number): Star[] {
   const stars: Star[] = []
   for (let i = 0; i < count; i++) {
@@ -156,7 +152,6 @@ export function createPlayer(): Player {
 export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: number, canvasH: number): GameState {
   if (state.gameOver || state.gameWon || state.paused || !state.started) return state
 
-  // Clamp dt
   dt = Math.min(dt, 0.033)
 
   const player = { ...state.player }
@@ -223,8 +218,15 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     player.invincibleTimer -= dt
   }
 
-  // ─ Platform Collision ─
+  // ─ Continuous Ground Collision ─
   player.onGround = false
+  if (player.y + player.height >= GROUND_Y && player.vy >= 0) {
+    player.y = GROUND_Y - player.height
+    player.vy = 0
+    player.onGround = true
+  }
+
+  // ─ Platform Collision (elevated platforms only) ─
   for (const plat of state.platforms) {
     const platY = plat.y + (plat.type === 'floating' ? Math.sin((Date.now() * 0.002) + (plat.floatOffset || 0)) * 6 : 0)
     if (
@@ -240,8 +242,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     }
   }
 
-  // Fall death
-  if (player.y > 700) {
+  // Fall death (shouldn't happen with continuous ground but safety net)
+  if (player.y > 800) {
     player.health = 0
   }
 
@@ -255,7 +257,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       enemy.animTimer = 0
     }
 
-    // Face player
     enemy.facing = player.x < enemy.x ? -1 : 1
 
     const distToPlayer = Math.abs(enemy.x - player.x)
@@ -275,7 +276,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           enemy.vx = enemy.facing * 30
         }
         enemy.vy += GRAVITY * dt
-        // Shoot
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 500) {
           enemy.shootCooldown = 2 + Math.random()
@@ -301,7 +301,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         } else {
           enemy.vx *= 0.95
         }
-        // Dive attack
         if (distToPlayer < 150 && enemy.y < player.y) {
           enemy.vy += 200 * dt
         }
@@ -321,7 +320,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           enemy.vx = enemy.facing * 35
         }
         enemy.vy += GRAVITY * dt
-        // Boss shoots more
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 600) {
           enemy.shootCooldown = 0.8 + Math.random() * 0.5
@@ -345,8 +343,13 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     enemy.x += enemy.vx * dt
     enemy.y += enemy.vy * dt
 
-    // Enemy platform collision (not flyers)
+    // Enemy ground collision (not flyers)
     if (enemy.type !== 'flyer') {
+      if (enemy.y + enemy.height >= GROUND_Y && enemy.vy >= 0) {
+        enemy.y = GROUND_Y - enemy.height
+        enemy.vy = 0
+      }
+      // Also check elevated platforms
       for (const plat of state.platforms) {
         const platY = plat.y + (plat.type === 'floating' ? Math.sin((Date.now() * 0.002) + (plat.floatOffset || 0)) * 6 : 0)
         if (
@@ -362,7 +365,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       }
     }
 
-    // Enemy-player collision (contact damage)
+    // Enemy-player collision
     if (
       player.invincibleTimer <= 0 &&
       player.x + player.width > enemy.x &&
@@ -376,7 +379,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       player.vy = -300
       player.vx = (player.x < enemy.x ? -1 : 1) * 200
 
-      // Hit particles
       for (let i = 0; i < 8; i++) {
         particles.push(createParticle(player.x + player.width / 2, player.y + player.height / 2, '#ff4444'))
       }
@@ -389,13 +391,11 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     bullet.x += bullet.vx * dt
     bullet.y += bullet.vy * dt
 
-    // Off-screen
     if (bullet.x < state.cameraX - 100 || bullet.x > state.cameraX + canvasW + 100 || bullet.y < -100 || bullet.y > 800) {
       bullet.active = false
       continue
     }
 
-    // Player bullets hit enemies
     if (bullet.fromPlayer) {
       for (const enemy of enemies) {
         if (!enemy.active) continue
@@ -408,7 +408,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           bullet.active = false
           enemy.health -= bullet.damage
 
-          // Hit particles
           for (let i = 0; i < 5; i++) {
             particles.push(createParticle(bullet.x, bullet.y, '#44ffaa'))
           }
@@ -418,13 +417,11 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             const scoreMap: Record<EnemyType, number> = { grunt: 100, spitter: 200, flyer: 250, brute: 500, boss: 2000 }
             player.score += scoreMap[enemy.type]
 
-            // Death particles
             for (let i = 0; i < 15; i++) {
               const colors = ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ffffff']
               particles.push(createParticle(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, colors[Math.floor(Math.random() * colors.length)]))
             }
 
-            // Check if boss killed
             if (enemy.type === 'boss') {
               return {
                 ...state,
@@ -440,7 +437,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         }
       }
     } else {
-      // Enemy bullets hit player
       if (
         player.invincibleTimer <= 0 &&
         bullet.x + bullet.radius > player.x &&
@@ -455,6 +451,14 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         for (let i = 0; i < 6; i++) {
           particles.push(createParticle(bullet.x, bullet.y, '#ff4444'))
         }
+      }
+    }
+
+    // Bullets hit ground
+    if (bullet.y >= GROUND_Y) {
+      bullet.active = false
+      for (let i = 0; i < 3; i++) {
+        particles.push(createParticle(bullet.x, GROUND_Y, '#8b5e3c'))
       }
     }
 
@@ -512,7 +516,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   bullets = bullets.filter(b => b.active)
   enemies = enemies.filter(e => e.active || e.type === 'boss')
 
-  // ─ Game Over? ─
   const gameOver = player.health <= 0
 
   return {

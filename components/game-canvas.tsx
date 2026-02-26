@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react'
 import type { GameState, Keys } from '@/lib/game-types'
-import { generateLevel, generateStars, createPlayer, updateGame } from '@/lib/game-engine'
+import { generateLevel, generateStars, createPlayer, updateGame, GROUND_Y } from '@/lib/game-engine'
 import {
   drawBackground,
   drawStars,
   drawParallaxMountains,
+  drawGround,
   drawPlatform,
   drawPlayer,
   drawEnemy,
@@ -98,6 +99,9 @@ export default function GameCanvas() {
     drawStars(ctx, newState.stars, newState.cameraX)
     drawParallaxMountains(ctx, newState.cameraX, canvas.width, canvas.height)
 
+    // Continuous ground
+    drawGround(ctx, newState.cameraX, newState.cameraY, canvas.width, canvas.height, GROUND_Y)
+
     // Platforms
     for (const plat of newState.platforms) {
       if (plat.x - newState.cameraX > canvas.width + 50 || plat.x + plat.width - newState.cameraX < -50) continue
@@ -133,11 +137,11 @@ export default function GameCanvas() {
 
     // Progress bar at bottom
     const progress = Math.max(0, Math.min(1, newState.player.x / newState.levelLength))
-    ctx.fillStyle = 'rgba(0,0,0,0.5)'
+    ctx.fillStyle = 'rgba(0,0,0,0.4)'
     ctx.fillRect(10, canvas.height - 16, canvas.width - 20, 8)
     const progGrad = ctx.createLinearGradient(10, 0, 10 + (canvas.width - 20) * progress, 0)
-    progGrad.addColorStop(0, '#2266cc')
-    progGrad.addColorStop(1, '#44ddff')
+    progGrad.addColorStop(0, '#2a7a2a')
+    progGrad.addColorStop(1, '#44cc44')
     ctx.fillStyle = progGrad
     ctx.fillRect(10, canvas.height - 16, (canvas.width - 20) * progress, 8)
     // Boss icon at end
@@ -233,13 +237,13 @@ export default function GameCanvas() {
             <div className="relative">
               <h1
                 className="text-6xl font-bold tracking-tighter font-sans"
-                style={{ color: '#44ddff', textShadow: '0 0 30px rgba(68,221,255,0.5), 0 2px 4px rgba(0,0,0,0.8)' }}
+                style={{ color: '#2a5a2a', textShadow: '0 0 20px rgba(68,180,68,0.4), 0 2px 4px rgba(0,0,0,0.5)' }}
               >
                 STELLAR RECON
               </h1>
               <p
-                className="text-lg font-sans mt-2"
-                style={{ color: 'rgba(255,255,255,0.6)' }}
+                className="text-lg font-sans mt-2 font-semibold"
+                style={{ color: '#4a7a4a' }}
               >
                 Jetpack Assault
               </p>
@@ -261,10 +265,10 @@ export default function GameCanvas() {
 
             <div
               className="text-sm font-sans space-y-1 mt-8 p-4 rounded-lg"
-              style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.7)' }}
+              style={{ background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.85)' }}
             >
-              <p><span style={{ color: '#44ddff' }}>A/D</span> {'Move  |  '}<span style={{ color: '#44ddff' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#44ddff' }}>Shift</span> Jetpack</p>
-              <p><span style={{ color: '#44ddff' }}>Click/J</span> {'Shoot  |  '}Defeat the boss to win</p>
+              <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
+              <p><span style={{ color: '#66cc66' }}>Click/J</span> {'Shoot  |  '}Defeat the boss to win</p>
             </div>
           </div>
         </div>
