@@ -19,11 +19,26 @@ export function generateLevel(level: number): Pick<GameState, 'platforms' | 'ene
   const enemies: Enemy[] = []
   const levelLength = 6000 + level * 2000
 
+  const MIN_PLATFORM_DIST = 180 // minimum distance between any two platforms
+
+  // Helper to check if a new platform is far enough from all existing ones
+  const isFarEnough = (px: number, py: number, pw: number) => {
+    for (const p of platforms) {
+      const dx = Math.abs((px + pw / 2) - (p.x + p.width / 2))
+      const dy = Math.abs(py - p.y)
+      if (dx < MIN_PLATFORM_DIST && dy < MIN_PLATFORM_DIST * 0.6) return false
+    }
+    return true
+  }
+
   // Elevated platforms above the continuous ground (for jumping/flying to)
-  for (let i = 0; i < levelLength / 250; i++) {
+  const platformCount = Math.floor(levelLength / 280)
+  let attempts = 0
+  for (let placed = 0; placed < platformCount && attempts < platformCount * 5; attempts++) {
     const px = 250 + Math.random() * (levelLength - 400)
-    const py = 200 + Math.random() * 220
+    const py = 180 + Math.random() * 230
     const pw = 80 + Math.random() * 120
+    if (!isFarEnough(px, py, pw)) continue
     const roll = Math.random()
     const pType = roll > 0.6 ? 'floating' : roll > 0.3 ? 'metal' : 'normal'
     platforms.push({
@@ -35,16 +50,19 @@ export function generateLevel(level: number): Pick<GameState, 'platforms' | 'ene
       floatOffset: Math.random() * Math.PI * 2,
       floatSpeed: 1 + Math.random(),
     })
+    placed++
   }
 
-  // Add a few larger mid-height platforms for strategic positions
+  // Add larger mid-height strategic platforms with guaranteed spacing
   for (let i = 0; i < levelLength / 600; i++) {
     const px = 400 + i * 600 + Math.random() * 200
-    const py = 340 + Math.random() * 80
+    const py = 330 + Math.random() * 80
+    const pw = 120 + Math.random() * 100
+    if (!isFarEnough(px, py, pw)) continue
     platforms.push({
       x: px,
       y: py,
-      width: 120 + Math.random() * 100,
+      width: pw,
       height: 18,
       type: 'metal',
     })
@@ -259,7 +277,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     player.health = 0
   }
 
-  // ─ Enemy Update ─
+  // ─ Enemy Update ���
   for (const enemy of enemies) {
     if (!enemy.active) continue
 
