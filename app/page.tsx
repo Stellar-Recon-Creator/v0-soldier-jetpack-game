@@ -1,0 +1,9 @@
+import GameCanvas from '@/components/game-canvas'
+
+export default function Home() {
+  return (
+    <main className="w-full h-screen overflow-hidden bg-background">
+      <GameCanvas />
+    </main>
+  )
+}
