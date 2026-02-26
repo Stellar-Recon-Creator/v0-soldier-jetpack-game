@@ -145,6 +145,7 @@ export function createPlayer(): Player {
     shootCooldown: 0,
     invincibleTimer: 0,
     score: 0,
+    aimAngle: 0,
   }
 }
 
@@ -163,6 +164,16 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   player.vx = 0
   if (keys.left) { player.vx = -PLAYER_SPEED; player.facing = -1 }
   if (keys.right) { player.vx = PLAYER_SPEED; player.facing = 1 }
+
+  // Compute aim angle from mouse position (screen coords to world-relative angle)
+  const playerScreenX = player.x - state.cameraX + player.width / 2
+  const playerScreenY = player.y - state.cameraY + player.height / 2 - 6 // gun height offset
+  const aimDx = keys.mouseX - playerScreenX
+  const aimDy = keys.mouseY - playerScreenY
+  player.aimAngle = Math.atan2(aimDy, aimDx)
+  // Face the direction of the mouse
+  if (aimDx > 0) player.facing = 1
+  else if (aimDx < 0) player.facing = -1
 
   // Jump
   if (keys.jump && player.onGround) {
@@ -201,11 +212,12 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   if (keys.shoot && player.shootCooldown <= 0) {
     player.shootCooldown = SHOOT_COOLDOWN
     player.shooting = true
+    const bulletAngle = player.aimAngle
     bullets.push({
-      x: player.x + player.width / 2 + player.facing * 20,
-      y: player.y + 12,
-      vx: BULLET_SPEED * player.facing,
-      vy: 0,
+      x: player.x + player.width / 2 + Math.cos(bulletAngle) * 20,
+      y: player.y + 12 + Math.sin(bulletAngle) * 20,
+      vx: Math.cos(bulletAngle) * BULLET_SPEED,
+      vy: Math.sin(bulletAngle) * BULLET_SPEED,
       radius: 4,
       fromPlayer: true,
       active: true,

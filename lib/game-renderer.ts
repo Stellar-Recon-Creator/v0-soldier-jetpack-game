@@ -401,19 +401,33 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = COLORS.player.shirt
   ctx.fillRect(-hw + 1, -hh + 12, 5, 14)
 
-  // ─ ARM (front) + GUN ─
+  // ─ ARM (front) + GUN ─ (rotated to aim angle)
   const recoil = player.shootCooldown > 0.1 ? -2 : 0
-  const armY = -hh + 14
+  const shoulderX = hw - 4
+  const shoulderY = -hh + 16
+
+  // Get the aim angle, adjusting for facing direction
+  let drawAngle = player.aimAngle
+  if (f === -1) {
+    drawAngle = Math.PI - player.aimAngle
+  }
+  // Clamp the angle to reasonable range
+  drawAngle = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, drawAngle))
+
+  ctx.save()
+  ctx.translate(shoulderX, shoulderY)
+  ctx.rotate(drawAngle)
+
   // Upper arm
   ctx.fillStyle = COLORS.player.shirt
-  ctx.fillRect(hw - 6, armY, 6, 6)
+  ctx.fillRect(-2, -3, 10, 6)
   // Forearm / hand holding gun
   ctx.fillStyle = COLORS.player.skin
-  ctx.fillRect(hw - 4, armY + 4, 10 + recoil, 5)
+  ctx.fillRect(6, -2, 10 + recoil, 5)
 
   // Gun - detailed rifle
-  const gunX = hw + 4 + recoil
-  const gunY = armY + 1
+  const gunX = 14 + recoil
+  const gunY = -3
   // Gun body / receiver
   ctx.fillStyle = COLORS.player.gunDark
   roundRect(ctx, gunX, gunY, 18, 6, 1)
@@ -457,6 +471,8 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fill()
     ctx.globalAlpha = 1
   }
+
+  ctx.restore()
 
   // ─ NECK ─
   ctx.fillStyle = COLORS.player.skin
@@ -997,7 +1013,7 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText('A/D or Arrows - Move', canvasW - 20, 30)
   ctx.fillText('W or Space - Jump', canvasW - 20, 46)
   ctx.fillText('Shift - Jetpack', canvasW - 20, 62)
-  ctx.fillText('Click or J - Shoot', canvasW - 20, 78)
+  ctx.fillText('Mouse Aim + Click - Shoot', canvasW - 20, 78)
   ctx.textAlign = 'left'
 }
 

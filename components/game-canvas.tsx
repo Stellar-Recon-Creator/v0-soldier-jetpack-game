@@ -27,6 +27,8 @@ export default function GameCanvas() {
     jump: false,
     shoot: false,
     jetpack: false,
+    mouseX: 0,
+    mouseY: 0,
   })
   const lastTimeRef = useRef<number>(0)
   const animFrameRef = useRef<number>(0)
@@ -189,17 +191,26 @@ export default function GameCanvas() {
     const handleMouseUp = (e: MouseEvent) => {
       if (e.button === 0) keysRef.current.shoot = false
     }
+    const handleMouseMove = (e: MouseEvent) => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const rect = canvas.getBoundingClientRect()
+      keysRef.current.mouseX = e.clientX - rect.left
+      keysRef.current.mouseY = e.clientY - rect.top
+    }
 
     window.addEventListener('keydown', handleKeyDown)
     window.addEventListener('keyup', handleKeyUp)
     window.addEventListener('mousedown', handleMouseDown)
     window.addEventListener('mouseup', handleMouseUp)
+    window.addEventListener('mousemove', handleMouseMove)
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
       window.removeEventListener('mousedown', handleMouseDown)
       window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('mousemove', handleMouseMove)
     }
   }, [])
 
@@ -268,7 +279,7 @@ export default function GameCanvas() {
               style={{ background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.85)' }}
             >
               <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
-              <p><span style={{ color: '#66cc66' }}>Click/J</span> {'Shoot  |  '}Defeat the boss to win</p>
+              <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> {'Shoot  |  '}Defeat the boss to win</p>
             </div>
           </div>
         </div>

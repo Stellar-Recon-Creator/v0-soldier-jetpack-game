@@ -24,6 +24,7 @@ export interface Player {
   shootCooldown: number
   invincibleTimer: number
   score: number
+  aimAngle: number
 }
 
 export interface Platform {
@@ -117,4 +118,6 @@ export interface Keys {
   jump: boolean
   shoot: boolean
   jetpack: boolean
+  mouseX: number
+  mouseY: number
 }
