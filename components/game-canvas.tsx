@@ -285,21 +285,28 @@ export default function GameCanvas() {
       {/* Home Screen */}
       {screen === 'home' && (
         <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
-          {/* Stars in the night sky */}
+          {/* Stars in the night sky - using seeded positions to avoid hydration mismatch */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(80)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-white"
-                style={{
-                  width: Math.random() > 0.8 ? '3px' : Math.random() > 0.5 ? '2px' : '1px',
-                  height: Math.random() > 0.8 ? '3px' : Math.random() > 0.5 ? '2px' : '1px',
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 70}%`,
-                  opacity: 0.4 + Math.random() * 0.6,
-                }}
-              />
-            ))}
+            {[...Array(80)].map((_, i) => {
+              const seed = i * 137.5
+              const size = (i % 5 === 0) ? '3px' : (i % 3 === 0) ? '2px' : '1px'
+              const left = ((seed * 7) % 100)
+              const top = ((seed * 3) % 70)
+              const opacity = 0.4 + ((seed * 11) % 60) / 100
+              return (
+                <div
+                  key={i}
+                  className="absolute rounded-full bg-white"
+                  style={{
+                    width: size,
+                    height: size,
+                    left: `${left}%`,
+                    top: `${top}%`,
+                    opacity,
+                  }}
+                />
+              )
+            })}
           </div>
 
           {/* Title at top */}
@@ -435,21 +442,28 @@ export default function GameCanvas() {
       {/* Shop Screen */}
       {screen === 'shop' && (
         <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
-          {/* Stars background */}
+          {/* Stars background - using seeded positions to avoid hydration mismatch */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(60)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-white"
-                style={{
-                  width: Math.random() > 0.7 ? '2px' : '1px',
-                  height: Math.random() > 0.7 ? '2px' : '1px',
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  opacity: 0.3 + Math.random() * 0.5,
-                }}
-              />
-            ))}
+            {[...Array(60)].map((_, i) => {
+              const seed = (i + 100) * 137.5
+              const size = (i % 4 === 0) ? '2px' : '1px'
+              const left = ((seed * 7) % 100)
+              const top = ((seed * 3) % 100)
+              const opacity = 0.3 + ((seed * 11) % 50) / 100
+              return (
+                <div
+                  key={i}
+                  className="absolute rounded-full bg-white"
+                  style={{
+                    width: size,
+                    height: size,
+                    left: `${left}%`,
+                    top: `${top}%`,
+                    opacity,
+                  }}
+                />
+              )
+            })}
           </div>
 
           {/* Header */}
