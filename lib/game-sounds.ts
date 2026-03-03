@@ -50,35 +50,35 @@ export function playLaserSound() {
   }
 }
 
-// ─── JETPACK SOUND ───
-let jetpackOscillator: OscillatorNode | null = null
-let jetpackGain: GainNode | null = null
+// ─── JETPACK SOUND (Rocket Booster) ───
 let jetpackNoise: AudioBufferSourceNode | null = null
 let jetpackNoiseGain: GainNode | null = null
+let jetpackLowOsc: OscillatorNode | null = null
+let jetpackLowGain: GainNode | null = null
+let jetpackFilter: BiquadFilterNode | null = null
 
 export function startJetpackSound() {
   try {
     const ctx = getAudioContext()
     if (ctx.state === 'suspended') return
-    if (jetpackOscillator) return // Already playing
+    if (jetpackNoise) return // Already playing
     
-    // Low rumble oscillator
-    jetpackOscillator = ctx.createOscillator()
-    jetpackGain = ctx.createGain()
+    // Deep rocket rumble - very low frequency base
+    jetpackLowOsc = ctx.createOscillator()
+    jetpackLowGain = ctx.createGain()
     
-    jetpackOscillator.type = 'sawtooth'
-    jetpackOscillator.frequency.setValueAtTime(80, ctx.currentTime)
+    jetpackLowOsc.type = 'triangle'
+    jetpackLowOsc.frequency.setValueAtTime(35, ctx.currentTime) // Very low rumble
     
-    jetpackGain.gain.setValueAtTime(0, ctx.currentTime)
-    jetpackGain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.05)
+    jetpackLowGain.gain.setValueAtTime(0, ctx.currentTime)
+    jetpackLowGain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.08)
     
-    jetpackOscillator.connect(jetpackGain)
-    jetpackGain.connect(ctx.destination)
+    jetpackLowOsc.connect(jetpackLowGain)
+    jetpackLowGain.connect(ctx.destination)
+    jetpackLowOsc.start()
     
-    jetpackOscillator.start()
-    
-    // Add noise for "whoosh" effect
-    const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate)
+    // Filtered noise for rocket "roar" - low frequency focused
+    const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 1, ctx.sampleRate)
     const noiseData = noiseBuffer.getChannelData(0)
     for (let i = 0; i < noiseData.length; i++) {
       noiseData[i] = Math.random() * 2 - 1
@@ -90,15 +90,16 @@ export function startJetpackSound() {
     
     jetpackNoiseGain = ctx.createGain()
     jetpackNoiseGain.gain.setValueAtTime(0, ctx.currentTime)
-    jetpackNoiseGain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.05)
+    jetpackNoiseGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.08)
     
-    const noiseFilter = ctx.createBiquadFilter()
-    noiseFilter.type = 'bandpass'
-    noiseFilter.frequency.setValueAtTime(800, ctx.currentTime)
-    noiseFilter.Q.setValueAtTime(1, ctx.currentTime)
+    // Low-pass filter for deep rocket sound (not screechy)
+    jetpackFilter = ctx.createBiquadFilter()
+    jetpackFilter.type = 'lowpass'
+    jetpackFilter.frequency.setValueAtTime(300, ctx.currentTime) // Cut highs aggressively
+    jetpackFilter.Q.setValueAtTime(0.7, ctx.currentTime)
     
-    jetpackNoise.connect(noiseFilter)
-    noiseFilter.connect(jetpackNoiseGain)
+    jetpackNoise.connect(jetpackFilter)
+    jetpackFilter.connect(jetpackNoiseGain)
     jetpackNoiseGain.connect(ctx.destination)
     
     jetpackNoise.start()
@@ -111,25 +112,26 @@ export function stopJetpackSound() {
   try {
     const ctx = getAudioContext()
     
-    if (jetpackGain) {
-      jetpackGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1)
+    if (jetpackLowGain) {
+      jetpackLowGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15)
     }
     if (jetpackNoiseGain) {
-      jetpackNoiseGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1)
+      jetpackNoiseGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15)
     }
     
     setTimeout(() => {
-      if (jetpackOscillator) {
-        try { jetpackOscillator.stop() } catch { /* ignore */ }
-        jetpackOscillator = null
+      if (jetpackLowOsc) {
+        try { jetpackLowOsc.stop() } catch { /* ignore */ }
+        jetpackLowOsc = null
       }
       if (jetpackNoise) {
         try { jetpackNoise.stop() } catch { /* ignore */ }
         jetpackNoise = null
       }
-      jetpackGain = null
+      jetpackLowGain = null
       jetpackNoiseGain = null
-    }, 120)
+      jetpackFilter = null
+    }, 180)
   } catch {
     // Audio not available
   }
@@ -141,22 +143,54 @@ export function playAlienHitSound() {
     const ctx = getAudioContext()
     if (ctx.state === 'suspended') return
     
-    const oscillator = ctx.createOscillator()
-    const gainNode = ctx.createGain()
+    // Create impact explosion - noise burst + low thump
+    const bufferSize = ctx.sampleRate * 0.12
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+    const data = buffer.getChannelData(0)
     
-    oscillator.connect(gainNode)
-    gainNode.connect(ctx.destination)
+    // Sharp attack, fast decay noise
+    for (let i = 0; i < bufferSize; i++) {
+      const t = i / bufferSize
+      const envelope = Math.pow(1 - t, 3) // Fast decay
+      data[i] = (Math.random() * 2 - 1) * envelope
+    }
     
-    // Squelchy hit sound
-    oscillator.type = 'sine'
-    oscillator.frequency.setValueAtTime(400, ctx.currentTime)
-    oscillator.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.08)
+    const noise = ctx.createBufferSource()
+    noise.buffer = buffer
     
-    gainNode.gain.setValueAtTime(0.12, ctx.currentTime)
-    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1)
+    const noiseGain = ctx.createGain()
+    const noiseFilter = ctx.createBiquadFilter()
     
-    oscillator.start(ctx.currentTime)
-    oscillator.stop(ctx.currentTime + 0.1)
+    // Low-pass for punchy explosion, not harsh
+    noiseFilter.type = 'lowpass'
+    noiseFilter.frequency.setValueAtTime(800, ctx.currentTime)
+    noiseFilter.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.1)
+    
+    noise.connect(noiseFilter)
+    noiseFilter.connect(noiseGain)
+    noiseGain.connect(ctx.destination)
+    
+    noiseGain.gain.setValueAtTime(0.18, ctx.currentTime)
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12)
+    
+    noise.start(ctx.currentTime)
+    
+    // Add low thump for impact
+    const thump = ctx.createOscillator()
+    const thumpGain = ctx.createGain()
+    
+    thump.type = 'sine'
+    thump.frequency.setValueAtTime(150, ctx.currentTime)
+    thump.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.08)
+    
+    thump.connect(thumpGain)
+    thumpGain.connect(ctx.destination)
+    
+    thumpGain.gain.setValueAtTime(0.15, ctx.currentTime)
+    thumpGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1)
+    
+    thump.start(ctx.currentTime)
+    thump.stop(ctx.currentTime + 0.1)
   } catch {
     // Audio not available
   }
