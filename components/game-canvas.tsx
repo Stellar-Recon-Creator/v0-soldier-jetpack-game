@@ -312,15 +312,15 @@ export default function GameCanvas() {
                   if (el) {
                     const ctx = el.getContext('2d')
                     if (ctx) {
-                      el.width = 260
-                      el.height = 180
-                      ctx.clearRect(0, 0, 260, 180)
-                      drawPlayerZoomed(ctx, 130, 90, 3.5)
+                      el.width = 500
+                      el.height = 200
+                      ctx.clearRect(0, 0, 500, 200)
+                      drawPlayerZoomed(ctx, 200, 100, 3.5)
                     }
                   }
                 }}
-                width={260}
-                height={180}
+                width={500}
+                height={200}
                 style={{ imageRendering: 'pixelated' }}
               />
             </div>
