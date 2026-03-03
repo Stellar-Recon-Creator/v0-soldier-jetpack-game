@@ -14,7 +14,8 @@ const PLAYER_MAX_FUEL = 100
 export const GROUND_Y = 500
 
 // ─── Level Generation ───
-export function generateLevel(level: number): Pick<GameState, 'platforms' | 'enemies' | 'levelLength'> {
+// difficultyMultiplier: 1.0 = easy (default), 1.3 = medium, 1.65 = hard
+export function generateLevel(level: number, difficultyMultiplier: number = 1.0): Pick<GameState, 'platforms' | 'enemies' | 'levelLength'> {
   const platforms: Platform[] = []
   const enemies: Enemy[] = []
   const levelLength = 6000 + level * 2000
@@ -68,8 +69,8 @@ export function generateLevel(level: number): Pick<GameState, 'platforms' | 'ene
     })
   }
 
-  // Enemies
-  const enemyDensity = 0.8 + level * 0.3
+  // Enemies - density affected by difficulty multiplier
+  const enemyDensity = (0.8 + level * 0.3) * difficultyMultiplier
   for (let ex = 400; ex < levelLength - 200; ex += 200 + Math.random() * 300 / enemyDensity) {
     const roll = Math.random()
     let type: EnemyType

@@ -50,12 +50,14 @@ export default function GameCanvas() {
   const [screen, setScreen] = useState<'home' | 'shop' | 'title' | 'playing' | 'dead' | 'won'>('home')
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
+  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
 
-  const initGame = useCallback((lvl: number) => {
+  const initGame = useCallback((lvl: number, diff: 'easy' | 'medium' | 'hard' = 'easy') => {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const { platforms, enemies, levelLength } = generateLevel(lvl)
+    const diffMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 1.3 : 1.65
+    const { platforms, enemies, levelLength } = generateLevel(lvl, diffMultiplier)
     const stars = generateStars(200, canvas.width, canvas.height)
 
     stateRef.current = {
@@ -629,18 +631,43 @@ export default function GameCanvas() {
               </p>
             </div>
 
-            <div className="space-y-3">
-              <button
-                onClick={() => { initAudio(); setLevel(1); initGame(1) }}
-                className="block mx-auto px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                style={{
-                  background: 'linear-gradient(135deg, #22aa44, #44dd66)',
-                  color: '#0a1a0a',
-                  boxShadow: '0 0 20px rgba(68,221,100,0.4)',
-                }}
-              >
-                START MISSION
-              </button>
+            <div className="space-y-4">
+              <p className="text-sm font-sans" style={{ color: 'rgba(255,255,255,0.7)' }}>Select Difficulty</p>
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => { initAudio(); setLevel(1); setDifficulty('easy'); initGame(1, 'easy') }}
+                  className="px-6 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #22aa44, #44dd66)',
+                    color: '#0a1a0a',
+                    boxShadow: '0 0 20px rgba(68,221,100,0.4)',
+                  }}
+                >
+                  EASY
+                </button>
+                <button
+                  onClick={() => { initAudio(); setLevel(1); setDifficulty('medium'); initGame(1, 'medium') }}
+                  className="px-6 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #cc8822, #ffaa44)',
+                    color: '#1a1a0a',
+                    boxShadow: '0 0 20px rgba(255,170,68,0.4)',
+                  }}
+                >
+                  MEDIUM
+                </button>
+                <button
+                  onClick={() => { initAudio(); setLevel(1); setDifficulty('hard'); initGame(1, 'hard') }}
+                  className="px-6 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #aa2222, #dd4444)',
+                    color: '#ffffff',
+                    boxShadow: '0 0 20px rgba(221,68,68,0.4)',
+                  }}
+                >
+                  HARD
+                </button>
+              </div>
             </div>
 
             <div
@@ -668,7 +695,7 @@ export default function GameCanvas() {
               Score: {score}
             </p>
             <button
-              onClick={() => { initAudio(); initGame(level) }}
+              onClick={() => { initAudio(); initGame(level, difficulty) }}
               className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
                 background: 'linear-gradient(135deg, #cc2233, #ff4455)',
@@ -701,7 +728,7 @@ export default function GameCanvas() {
                   initAudio()
                   const nextLevel = level + 1
                   setLevel(nextLevel)
-                  initGame(nextLevel)
+                  initGame(nextLevel, difficulty)
                 }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
