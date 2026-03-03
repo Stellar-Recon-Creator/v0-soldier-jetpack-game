@@ -403,8 +403,8 @@ export default function GameCanvas() {
               style={{ imageRendering: 'pixelated' }}
             />
             
-            {/* Play button in the dirt */}
-            <div className="absolute left-1/2 -translate-x-1/2 z-20" style={{ bottom: '30px' }}>
+            {/* Buttons in the dirt */}
+            <div className="absolute left-1/2 -translate-x-1/2 z-20 flex gap-4" style={{ bottom: '30px' }}>
               <button
                 onClick={() => setScreen('title')}
                 className="px-16 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -415,6 +415,17 @@ export default function GameCanvas() {
                 }}
               >
                 PLAY
+              </button>
+              <button
+                onClick={() => {}}
+                className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #aa2222, #dd4444)',
+                  color: '#ffffff',
+                  boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
+                }}
+              >
+                SHOP
               </button>
             </div>
           </div>
