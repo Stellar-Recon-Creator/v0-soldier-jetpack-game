@@ -51,6 +51,7 @@ export default function GameCanvas() {
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
+  const [starCurrency, setStarCurrency] = useState(0)
 
   const initGame = useCallback((lvl: number, diff: 'easy' | 'medium' | 'hard' = 'easy') => {
     const canvas = canvasRef.current
@@ -131,6 +132,9 @@ export default function GameCanvas() {
     }
     if (newState.gameWon && screen === 'playing') {
       setScore(newState.player.score)
+      // Award stars based on difficulty
+      const starReward = difficulty === 'easy' ? 25 : difficulty === 'medium' ? 50 : 75
+      setStarCurrency(prev => prev + starReward)
       setScreen('won')
       stopJetpackSound()
       jetpackPlayingRef.current = false
@@ -287,6 +291,12 @@ export default function GameCanvas() {
       {/* Home Screen */}
       {screen === 'home' && (
         <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
+          {/* Star currency display - top right */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <span style={{ color: '#ffdd44', fontSize: '24px' }}>&#9733;</span>
+            <span className="text-xl font-bold font-sans" style={{ color: '#ffdd44' }}>{starCurrency}</span>
+          </div>
+
           {/* Stars in the night sky - using seeded positions to avoid hydration mismatch */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {[...Array(80)].map((_, i) => {
