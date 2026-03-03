@@ -750,7 +750,7 @@ export default function GameCanvas() {
                 NEXT LEVEL
               </button>
               <button
-                onClick={() => { setScreen('title'); stateRef.current = null }}
+                onClick={() => { setScreen('home'); stateRef.current = null }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
                   background: 'rgba(255,255,255,0.1)',
