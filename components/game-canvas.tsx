@@ -528,6 +528,10 @@ export default function GameCanvas() {
               >
                 PULSAR
               </span>
+              <div className="flex items-center gap-1">
+                <span style={{ color: '#ffdd44', fontSize: '18px' }}>&#9733;</span>
+                <span className="text-lg font-bold font-sans" style={{ color: '#ffdd44' }}>100</span>
+              </div>
             </div>
 
             {/* Nova Crate - Orange */}
@@ -565,6 +569,10 @@ export default function GameCanvas() {
               >
                 NOVA
               </span>
+              <div className="flex items-center gap-1">
+                <span style={{ color: '#ffdd44', fontSize: '18px' }}>&#9733;</span>
+                <span className="text-lg font-bold font-sans" style={{ color: '#ffdd44' }}>300</span>
+              </div>
             </div>
 
             {/* Stellar Crate - Purple */}
@@ -602,6 +610,10 @@ export default function GameCanvas() {
               >
                 STELLAR
               </span>
+              <div className="flex items-center gap-1">
+                <span style={{ color: '#ffdd44', fontSize: '18px' }}>&#9733;</span>
+                <span className="text-lg font-bold font-sans" style={{ color: '#ffdd44' }}>750</span>
+              </div>
             </div>
           </div>
 
