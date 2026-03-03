@@ -484,21 +484,30 @@ export default function GameCanvas() {
             {/* Pulsar Crate - Green */}
             <div className="flex flex-col items-center gap-4">
               <div
-                className="w-40 h-40 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
+                className="w-44 h-44 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
                 style={{
                   background: 'linear-gradient(135deg, #1a4a1a, #2a6a2a, #1a4a1a)',
                   border: '4px solid #44aa44',
                   boxShadow: '0 0 20px rgba(68,170,68,0.5), inset 0 0 30px rgba(68,170,68,0.3)',
                 }}
               >
-                <div
-                  className="w-32 h-32 rounded flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(145deg, #2a5a2a, #3a7a3a)',
-                    border: '2px solid #55bb55',
-                  }}
-                >
-                  <span className="text-4xl" style={{ color: '#88ff88', textShadow: '0 0 10px #44ff44' }}>?</span>
+                {/* Wooden crate graphic - Green tinted */}
+                <div className="w-28 h-28 relative" style={{ filter: 'drop-shadow(0 0 8px rgba(68,255,68,0.4))' }}>
+                  {/* Crate body */}
+                  <div className="absolute inset-0 rounded" style={{ background: 'linear-gradient(180deg, #3a5a2a 0%, #2a4a1a 100%)', border: '3px solid #1a3a0a' }}>
+                    {/* Horizontal planks */}
+                    <div className="absolute top-2 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #4a6a3a 0%, #3a5a2a 50%, #2a4a1a 100%)', borderBottom: '2px solid #1a3a0a' }} />
+                    <div className="absolute top-9 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #4a6a3a 0%, #3a5a2a 50%, #2a4a1a 100%)', borderBottom: '2px solid #1a3a0a' }} />
+                    <div className="absolute top-16 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #4a6a3a 0%, #3a5a2a 50%, #2a4a1a 100%)', borderBottom: '2px solid #1a3a0a' }} />
+                    {/* Vertical support beams */}
+                    <div className="absolute top-0 bottom-0 left-2 w-2" style={{ background: 'linear-gradient(90deg, #2a4a1a, #3a5a2a, #2a4a1a)', borderLeft: '1px solid #1a3a0a', borderRight: '1px solid #1a3a0a' }} />
+                    <div className="absolute top-0 bottom-0 right-2 w-2" style={{ background: 'linear-gradient(90deg, #2a4a1a, #3a5a2a, #2a4a1a)', borderLeft: '1px solid #1a3a0a', borderRight: '1px solid #1a3a0a' }} />
+                    {/* Corner nails */}
+                    <div className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#666' }} />
+                    <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#666' }} />
+                    <div className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#666' }} />
+                    <div className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#666' }} />
+                  </div>
                 </div>
               </div>
               <span
@@ -512,21 +521,30 @@ export default function GameCanvas() {
             {/* Nova Crate - Orange */}
             <div className="flex flex-col items-center gap-4">
               <div
-                className="w-40 h-40 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
+                className="w-44 h-44 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
                 style={{
                   background: 'linear-gradient(135deg, #4a2a0a, #6a3a1a, #4a2a0a)',
                   border: '4px solid #dd8844',
                   boxShadow: '0 0 20px rgba(221,136,68,0.5), inset 0 0 30px rgba(221,136,68,0.3)',
                 }}
               >
-                <div
-                  className="w-32 h-32 rounded flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(145deg, #5a3a1a, #7a4a2a)',
-                    border: '2px solid #ee9955',
-                  }}
-                >
-                  <span className="text-4xl" style={{ color: '#ffcc88', textShadow: '0 0 10px #ffaa44' }}>?</span>
+                {/* Wooden crate graphic - Orange tinted */}
+                <div className="w-28 h-28 relative" style={{ filter: 'drop-shadow(0 0 8px rgba(255,170,68,0.4))' }}>
+                  {/* Crate body */}
+                  <div className="absolute inset-0 rounded" style={{ background: 'linear-gradient(180deg, #6a4a2a 0%, #5a3a1a 100%)', border: '3px solid #3a2a0a' }}>
+                    {/* Horizontal planks */}
+                    <div className="absolute top-2 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #7a5a3a 0%, #6a4a2a 50%, #5a3a1a 100%)', borderBottom: '2px solid #3a2a0a' }} />
+                    <div className="absolute top-9 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #7a5a3a 0%, #6a4a2a 50%, #5a3a1a 100%)', borderBottom: '2px solid #3a2a0a' }} />
+                    <div className="absolute top-16 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #7a5a3a 0%, #6a4a2a 50%, #5a3a1a 100%)', borderBottom: '2px solid #3a2a0a' }} />
+                    {/* Vertical support beams */}
+                    <div className="absolute top-0 bottom-0 left-2 w-2" style={{ background: 'linear-gradient(90deg, #5a3a1a, #6a4a2a, #5a3a1a)', borderLeft: '1px solid #3a2a0a', borderRight: '1px solid #3a2a0a' }} />
+                    <div className="absolute top-0 bottom-0 right-2 w-2" style={{ background: 'linear-gradient(90deg, #5a3a1a, #6a4a2a, #5a3a1a)', borderLeft: '1px solid #3a2a0a', borderRight: '1px solid #3a2a0a' }} />
+                    {/* Corner nails */}
+                    <div className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#777' }} />
+                    <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#777' }} />
+                    <div className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#777' }} />
+                    <div className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#777' }} />
+                  </div>
                 </div>
               </div>
               <span
@@ -540,21 +558,30 @@ export default function GameCanvas() {
             {/* Stellar Crate - Purple */}
             <div className="flex flex-col items-center gap-4">
               <div
-                className="w-40 h-40 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
+                className="w-44 h-44 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
                 style={{
                   background: 'linear-gradient(135deg, #2a1a4a, #3a2a6a, #2a1a4a)',
                   border: '4px solid #aa66dd',
                   boxShadow: '0 0 20px rgba(170,102,221,0.5), inset 0 0 30px rgba(170,102,221,0.3)',
                 }}
               >
-                <div
-                  className="w-32 h-32 rounded flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(145deg, #3a2a5a, #4a3a7a)',
-                    border: '2px solid #bb77ee',
-                  }}
-                >
-                  <span className="text-4xl" style={{ color: '#ddaaff', textShadow: '0 0 10px #aa66ff' }}>?</span>
+                {/* Wooden crate graphic - Purple tinted */}
+                <div className="w-28 h-28 relative" style={{ filter: 'drop-shadow(0 0 8px rgba(170,102,255,0.4))' }}>
+                  {/* Crate body */}
+                  <div className="absolute inset-0 rounded" style={{ background: 'linear-gradient(180deg, #4a3a5a 0%, #3a2a4a 100%)', border: '3px solid #2a1a3a' }}>
+                    {/* Horizontal planks */}
+                    <div className="absolute top-2 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #5a4a6a 0%, #4a3a5a 50%, #3a2a4a 100%)', borderBottom: '2px solid #2a1a3a' }} />
+                    <div className="absolute top-9 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #5a4a6a 0%, #4a3a5a 50%, #3a2a4a 100%)', borderBottom: '2px solid #2a1a3a' }} />
+                    <div className="absolute top-16 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #5a4a6a 0%, #4a3a5a 50%, #3a2a4a 100%)', borderBottom: '2px solid #2a1a3a' }} />
+                    {/* Vertical support beams */}
+                    <div className="absolute top-0 bottom-0 left-2 w-2" style={{ background: 'linear-gradient(90deg, #3a2a4a, #4a3a5a, #3a2a4a)', borderLeft: '1px solid #2a1a3a', borderRight: '1px solid #2a1a3a' }} />
+                    <div className="absolute top-0 bottom-0 right-2 w-2" style={{ background: 'linear-gradient(90deg, #3a2a4a, #4a3a5a, #3a2a4a)', borderLeft: '1px solid #2a1a3a', borderRight: '1px solid #2a1a3a' }} />
+                    {/* Corner nails */}
+                    <div className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#888' }} />
+                    <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#888' }} />
+                    <div className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#888' }} />
+                    <div className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#888' }} />
+                  </div>
                 </div>
               </div>
               <span
