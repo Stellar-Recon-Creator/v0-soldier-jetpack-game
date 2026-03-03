@@ -121,3 +121,14 @@ export interface Keys {
   mouseX: number
   mouseY: number
 }
+
+export interface SoundEvents {
+  playerShoot: boolean
+  playerJump: boolean
+  playerHit: boolean
+  alienHit: boolean
+  alienDeath: boolean
+  alienShoot: boolean
+  bossRoar: boolean
+  explosion: boolean
+}

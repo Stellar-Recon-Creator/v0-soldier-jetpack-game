@@ -1,4 +1,4 @@
-import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star, Keys, EnemyType } from './game-types'
+import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star, Keys, EnemyType, SoundEvents } from './game-types'
 
 // ─── Constants ───
 const GRAVITY = 1400
@@ -168,11 +168,25 @@ export function createPlayer(): Player {
 }
 
 // ─── Update ───
-export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: number, canvasH: number): GameState {
-  if (state.gameOver || state.gameWon || state.paused || !state.started) return state
+export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: number, canvasH: number): GameState & { soundEvents: SoundEvents } {
+  const emptySoundEvents: SoundEvents = {
+    playerShoot: false,
+    playerJump: false,
+    playerHit: false,
+    alienHit: false,
+    alienDeath: false,
+    alienShoot: false,
+    bossRoar: false,
+    explosion: false,
+  }
+  
+  if (state.gameOver || state.gameWon || state.paused || !state.started) {
+    return { ...state, soundEvents: emptySoundEvents }
+  }
 
   dt = Math.min(dt, 0.033)
 
+  const soundEvents = { ...emptySoundEvents }
   const player = { ...state.player }
   let bullets = [...state.bullets]
   let enemies = state.enemies.map(e => ({ ...e }))
@@ -197,6 +211,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   if (keys.jump && player.onGround) {
     player.vy = JUMP_FORCE
     player.onGround = false
+    soundEvents.playerJump = true
   }
 
   // Jetpack
@@ -230,6 +245,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   if (keys.shoot && player.shootCooldown <= 0) {
     player.shootCooldown = SHOOT_COOLDOWN
     player.shooting = true
+    soundEvents.playerShoot = true
     const bulletAngle = player.aimAngle
     bullets.push({
       x: player.x + player.width / 2 + Math.cos(bulletAngle) * 20,
@@ -309,6 +325,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 500) {
           enemy.shootCooldown = 2 + Math.random()
+          soundEvents.alienShoot = true
           const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x)
           bullets.push({
             x: enemy.x + enemy.width / 2,
@@ -353,6 +370,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 600) {
           enemy.shootCooldown = 0.8 + Math.random() * 0.5
+          soundEvents.bossRoar = true
           for (let i = -1; i <= 1; i++) {
             const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x) + i * 0.3
             bullets.push({
@@ -408,6 +426,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       player.invincibleTimer = 1.0
       player.vy = -300
       player.vx = (player.x < enemy.x ? -1 : 1) * 200
+      soundEvents.playerHit = true
 
       for (let i = 0; i < 8; i++) {
         particles.push(createParticle(player.x + player.width / 2, player.y + player.height / 2, '#ff4444'))
@@ -437,6 +456,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         ) {
           bullet.active = false
           enemy.health -= bullet.damage
+          soundEvents.alienHit = true
 
           for (let i = 0; i < 5; i++) {
             particles.push(createParticle(bullet.x, bullet.y, '#44ffaa'))
@@ -444,6 +464,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
 
           if (enemy.health <= 0) {
             enemy.active = false
+            soundEvents.alienDeath = true
+            soundEvents.explosion = true
             const scoreMap: Record<EnemyType, number> = { grunt: 100, spitter: 200, flyer: 250, brute: 500, boss: 2000 }
             player.score += scoreMap[enemy.type]
 
@@ -460,6 +482,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
                 enemies,
                 particles,
                 gameWon: true,
+                soundEvents,
               }
             }
           }
@@ -477,6 +500,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         bullet.active = false
         player.health -= bullet.damage
         player.invincibleTimer = 0.5
+        soundEvents.playerHit = true
 
         for (let i = 0; i < 6; i++) {
           particles.push(createParticle(bullet.x, bullet.y, '#ff4444'))
@@ -557,6 +581,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     cameraX: camX,
     cameraY: camY,
     gameOver,
+    soundEvents,
   }
 }
 

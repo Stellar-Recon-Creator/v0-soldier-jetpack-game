@@ -4,6 +4,19 @@ import { useEffect, useRef, useCallback, useState } from 'react'
 import type { GameState, Keys } from '@/lib/game-types'
 import { generateLevel, generateStars, createPlayer, updateGame, GROUND_Y } from '@/lib/game-engine'
 import {
+  initAudio,
+  playLaserSound,
+  playJumpSound,
+  playPlayerHitSound,
+  playAlienHitSound,
+  playAlienDeathSound,
+  playAlienShootSound,
+  playBossRoarSound,
+  playExplosionSound,
+  startJetpackSound,
+  stopJetpackSound,
+} from '@/lib/game-sounds'
+import {
   drawBackground,
   drawStars,
   drawParallaxMountains,
@@ -32,6 +45,7 @@ export default function GameCanvas() {
   })
   const lastTimeRef = useRef<number>(0)
   const animFrameRef = useRef<number>(0)
+  const jetpackPlayingRef = useRef<boolean>(false)
   const [screen, setScreen] = useState<'title' | 'playing' | 'dead' | 'won'>('title')
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
@@ -83,14 +97,40 @@ export default function GameCanvas() {
     const newState = updateGame(state, keysRef.current, dt, canvas.width, canvas.height)
     stateRef.current = newState
 
+    // Play sounds based on events
+    if (newState.soundEvents) {
+      if (newState.soundEvents.playerShoot) playLaserSound()
+      if (newState.soundEvents.playerJump) playJumpSound()
+      if (newState.soundEvents.playerHit) playPlayerHitSound()
+      if (newState.soundEvents.alienHit) playAlienHitSound()
+      if (newState.soundEvents.alienDeath) playAlienDeathSound()
+      if (newState.soundEvents.alienShoot) playAlienShootSound()
+      if (newState.soundEvents.bossRoar) playBossRoarSound()
+      if (newState.soundEvents.explosion) playExplosionSound()
+    }
+
+    // Handle jetpack sound (continuous)
+    const jetpackActive = keysRef.current.jetpack && newState.player.jetpackFuel > 0
+    if (jetpackActive && !jetpackPlayingRef.current) {
+      startJetpackSound()
+      jetpackPlayingRef.current = true
+    } else if (!jetpackActive && jetpackPlayingRef.current) {
+      stopJetpackSound()
+      jetpackPlayingRef.current = false
+    }
+
     // Check game state transitions
     if (newState.gameOver && screen === 'playing') {
       setScore(newState.player.score)
       setScreen('dead')
+      stopJetpackSound()
+      jetpackPlayingRef.current = false
     }
     if (newState.gameWon && screen === 'playing') {
       setScore(newState.player.score)
       setScreen('won')
+      stopJetpackSound()
+      jetpackPlayingRef.current = false
     }
 
     // ─── Render ───
@@ -262,7 +302,7 @@ export default function GameCanvas() {
 
             <div className="space-y-3">
               <button
-                onClick={() => { setLevel(1); initGame(1) }}
+                onClick={() => { initAudio(); setLevel(1); initGame(1) }}
                 className="block mx-auto px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
                   background: 'linear-gradient(135deg, #22aa44, #44dd66)',
@@ -299,7 +339,7 @@ export default function GameCanvas() {
               Score: {score}
             </p>
             <button
-              onClick={() => initGame(level)}
+              onClick={() => { initAudio(); initGame(level) }}
               className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
                 background: 'linear-gradient(135deg, #cc2233, #ff4455)',
@@ -329,6 +369,7 @@ export default function GameCanvas() {
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => {
+                  initAudio()
                   const nextLevel = level + 1
                   setLevel(nextLevel)
                   initGame(nextLevel)
