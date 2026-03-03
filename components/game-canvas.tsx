@@ -284,9 +284,26 @@ export default function GameCanvas() {
 
       {/* Home Screen */}
       {screen === 'home' && (
-        <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#1a4a8c] via-[#4a8ad6] to-[#6ab4e8]">
+        <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
+          {/* Stars in the night sky */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(80)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full bg-white"
+                style={{
+                  width: Math.random() > 0.8 ? '3px' : Math.random() > 0.5 ? '2px' : '1px',
+                  height: Math.random() > 0.8 ? '3px' : Math.random() > 0.5 ? '2px' : '1px',
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 70}%`,
+                  opacity: 0.4 + Math.random() * 0.6,
+                }}
+              />
+            ))}
+          </div>
+
           {/* Title at top */}
-          <div className="pt-12 pb-4 flex justify-center">
+          <div className="pt-12 pb-4 flex justify-center z-10">
             <h1
               className="text-7xl font-black tracking-wider font-sans uppercase"
               style={{
@@ -303,10 +320,10 @@ export default function GameCanvas() {
           {/* Sky area - spacer */}
           <div className="flex-1" />
 
-          {/* Ground section with character standing on grass and button in dirt */}
-          <div className="relative w-full" style={{ height: '320px' }}>
+          {/* Ground section - shorter height for lower ground */}
+          <div className="relative w-full" style={{ height: '200px' }}>
             {/* Character positioned on grass - feet on grass top */}
-            <div className="absolute left-1/2 -translate-x-1/2 z-10" style={{ bottom: '260px' }}>
+            <div className="absolute left-1/2 -translate-x-1/2 z-10" style={{ bottom: '140px' }}>
               <canvas
                 ref={(el) => {
                   if (el) {
@@ -332,47 +349,47 @@ export default function GameCanvas() {
                   const ctx = el.getContext('2d')
                   if (ctx) {
                     el.width = window.innerWidth
-                    el.height = 320
-                    ctx.clearRect(0, 0, el.width, 320)
+                    el.height = 200
+                    ctx.clearRect(0, 0, el.width, 200)
                     
-                    const grassY = 40
+                    const grassY = 20
                     
                     // Dirt layer (fills to bottom)
-                    ctx.fillStyle = '#5a4030'
-                    ctx.fillRect(0, grassY + 28, el.width, 260)
+                    ctx.fillStyle = '#3a2820'
+                    ctx.fillRect(0, grassY + 28, el.width, 160)
                     
                     // Dirt texture - rocks
-                    ctx.fillStyle = '#4a3525'
+                    ctx.fillStyle = '#2a1a15'
                     for (let i = 0; i < el.width; i += 15) {
-                      ctx.fillRect(i + Math.random() * 8, grassY + 40 + Math.random() * 100, 5, 4)
+                      ctx.fillRect(i + Math.random() * 8, grassY + 40 + Math.random() * 80, 5, 4)
                     }
-                    ctx.fillStyle = '#6a5040'
+                    ctx.fillStyle = '#4a3525'
                     for (let i = 5; i < el.width; i += 20) {
-                      ctx.fillRect(i + Math.random() * 10, grassY + 50 + Math.random() * 120, 4, 3)
+                      ctx.fillRect(i + Math.random() * 10, grassY + 50 + Math.random() * 80, 4, 3)
                     }
                     
-                    // Grass base
-                    ctx.fillStyle = '#3a8a3a'
+                    // Grass base - darker for night
+                    ctx.fillStyle = '#2a6a2a'
                     ctx.fillRect(0, grassY, el.width, 32)
                     
                     // Grass top highlight
-                    ctx.fillStyle = '#4aa04a'
+                    ctx.fillStyle = '#3a7a3a'
                     ctx.fillRect(0, grassY, el.width, 8)
                     
                     // Grass blades - tall
-                    ctx.fillStyle = '#4a9a4a'
+                    ctx.fillStyle = '#2a5a2a'
                     for (let i = 0; i < el.width; i += 4) {
                       const h = 10 + Math.random() * 14
                       ctx.fillRect(i, grassY - h + 8, 3, h)
                     }
                     // Grass blades - medium
-                    ctx.fillStyle = '#5ab05a'
+                    ctx.fillStyle = '#3a6a3a'
                     for (let i = 2; i < el.width; i += 6) {
                       const h = 8 + Math.random() * 10
                       ctx.fillRect(i, grassY - h + 8, 2, h)
                     }
                     // Grass blades - highlights
-                    ctx.fillStyle = '#6ac06a'
+                    ctx.fillStyle = '#4a7a4a'
                     for (let i = 3; i < el.width; i += 9) {
                       const h = 6 + Math.random() * 8
                       ctx.fillRect(i, grassY - h + 8, 2, h)
@@ -381,13 +398,13 @@ export default function GameCanvas() {
                 }
               }}
               width={1200}
-              height={320}
+              height={200}
               className="w-full h-full"
               style={{ imageRendering: 'pixelated' }}
             />
             
             {/* Play button in the dirt */}
-            <div className="absolute left-1/2 -translate-x-1/2 z-20" style={{ bottom: '60px' }}>
+            <div className="absolute left-1/2 -translate-x-1/2 z-20" style={{ bottom: '30px' }}>
               <button
                 onClick={() => setScreen('title')}
                 className="px-16 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
