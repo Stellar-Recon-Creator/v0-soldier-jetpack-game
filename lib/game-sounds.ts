@@ -201,37 +201,78 @@ export function playAlienDeathSound() {
     const ctx = getAudioContext()
     if (ctx.state === 'suspended') return
     
-    // Multiple oscillators for a more complex death sound
-    const osc1 = ctx.createOscillator()
-    const osc2 = ctx.createOscillator()
-    const gain1 = ctx.createGain()
-    const gain2 = ctx.createGain()
+    // Big explosion: layered noise burst + bass drop + mid crunch
     
-    osc1.connect(gain1)
-    osc2.connect(gain2)
-    gain1.connect(ctx.destination)
-    gain2.connect(ctx.destination)
+    // 1. Main explosion noise burst - longer, louder
+    const bufferSize = ctx.sampleRate * 0.4
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+    const data = buffer.getChannelData(0)
     
-    // Descending screech
-    osc1.type = 'sawtooth'
-    osc1.frequency.setValueAtTime(800, ctx.currentTime)
-    osc1.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.3)
+    for (let i = 0; i < bufferSize; i++) {
+      const t = i / bufferSize
+      // Fast attack, slower decay with some sustain
+      const envelope = t < 0.05 ? t / 0.05 : Math.pow(1 - (t - 0.05) / 0.95, 1.5)
+      data[i] = (Math.random() * 2 - 1) * envelope
+    }
     
-    // Low burst
-    osc2.type = 'square'
-    osc2.frequency.setValueAtTime(150, ctx.currentTime)
-    osc2.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.2)
+    const noise = ctx.createBufferSource()
+    noise.buffer = buffer
     
-    gain1.gain.setValueAtTime(0.1, ctx.currentTime)
-    gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
+    const noiseGain = ctx.createGain()
+    const noiseFilter = ctx.createBiquadFilter()
     
-    gain2.gain.setValueAtTime(0.08, ctx.currentTime)
-    gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25)
+    noiseFilter.type = 'lowpass'
+    noiseFilter.frequency.setValueAtTime(2000, ctx.currentTime)
+    noiseFilter.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.35)
     
-    osc1.start(ctx.currentTime)
-    osc1.stop(ctx.currentTime + 0.3)
-    osc2.start(ctx.currentTime)
-    osc2.stop(ctx.currentTime + 0.25)
+    noise.connect(noiseFilter)
+    noiseFilter.connect(noiseGain)
+    noiseGain.connect(ctx.destination)
+    
+    noiseGain.gain.setValueAtTime(0.25, ctx.currentTime)
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4)
+    
+    noise.start(ctx.currentTime)
+    
+    // 2. Deep bass boom
+    const bass = ctx.createOscillator()
+    const bassGain = ctx.createGain()
+    
+    bass.type = 'sine'
+    bass.frequency.setValueAtTime(80, ctx.currentTime)
+    bass.frequency.exponentialRampToValueAtTime(25, ctx.currentTime + 0.25)
+    
+    bass.connect(bassGain)
+    bassGain.connect(ctx.destination)
+    
+    bassGain.gain.setValueAtTime(0.3, ctx.currentTime)
+    bassGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
+    
+    bass.start(ctx.currentTime)
+    bass.stop(ctx.currentTime + 0.3)
+    
+    // 3. Mid-range crunch for "splatter" feel
+    const crunch = ctx.createOscillator()
+    const crunchGain = ctx.createGain()
+    const crunchFilter = ctx.createBiquadFilter()
+    
+    crunch.type = 'sawtooth'
+    crunch.frequency.setValueAtTime(300, ctx.currentTime)
+    crunch.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.15)
+    
+    crunchFilter.type = 'bandpass'
+    crunchFilter.frequency.setValueAtTime(400, ctx.currentTime)
+    crunchFilter.Q.setValueAtTime(2, ctx.currentTime)
+    
+    crunch.connect(crunchFilter)
+    crunchFilter.connect(crunchGain)
+    crunchGain.connect(ctx.destination)
+    
+    crunchGain.gain.setValueAtTime(0.12, ctx.currentTime)
+    crunchGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15)
+    
+    crunch.start(ctx.currentTime)
+    crunch.stop(ctx.currentTime + 0.15)
   } catch {
     // Audio not available
   }
