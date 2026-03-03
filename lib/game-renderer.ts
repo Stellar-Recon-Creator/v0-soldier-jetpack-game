@@ -944,64 +944,7 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   roundRect(ctx, -2, -hh + 28, 6, 4, 1)
   ctx.fill()
 
-  // ─ ARM + GUN ─ (angled outward so weapon is visible)
-  const shoulderX = hw - 2
-  const shoulderY = -hh + 14
-  ctx.save()
-  ctx.translate(shoulderX, shoulderY)
-  ctx.rotate(0.15) // Slight upward angle to show gun better
-  
-  // Upper arm
-  ctx.fillStyle = COLORS.player.shirt
-  ctx.fillRect(-2, -3, 12, 7)
-  // Forearm/hand
-  ctx.fillStyle = COLORS.player.skin
-  ctx.fillRect(8, -2, 12, 5)
-  
-  // Gun - larger and more detailed
-  const gunX = 18
-  const gunY = -4
-  // Gun body / receiver
-  ctx.fillStyle = COLORS.player.gunDark
-  roundRect(ctx, gunX, gunY, 22, 7, 1)
-  ctx.fill()
-  // Barrel
-  ctx.fillStyle = COLORS.player.gunBarrel
-  ctx.fillRect(gunX + 20, gunY + 1, 12, 4)
-  // Barrel tip / muzzle
-  ctx.fillStyle = '#333'
-  ctx.fillRect(gunX + 30, gunY, 4, 6)
-  // Flash hider details
-  ctx.fillStyle = '#222'
-  ctx.fillRect(gunX + 32, gunY + 1, 2, 1)
-  ctx.fillRect(gunX + 32, gunY + 4, 2, 1)
-  // Magazine
-  ctx.fillStyle = COLORS.player.gunDark
-  roundRect(ctx, gunX + 5, gunY + 6, 5, 8, 1)
-  ctx.fill()
-  // Scope
-  ctx.fillStyle = '#555'
-  roundRect(ctx, gunX + 8, gunY - 4, 10, 4, 1)
-  ctx.fill()
-  // Scope lens
-  ctx.fillStyle = '#66aaff'
-  ctx.beginPath()
-  ctx.arc(gunX + 17, gunY - 2, 2, 0, Math.PI * 2)
-  ctx.fill()
-  // Gun highlight
-  ctx.fillStyle = COLORS.player.gunLight
-  ctx.fillRect(gunX + 2, gunY + 1, 16, 1)
-  // Stock
-  ctx.fillStyle = '#5a4a3a'
-  roundRect(ctx, gunX - 10, gunY + 0, 12, 6, 2)
-  ctx.fill()
-  // Stock detail
-  ctx.fillStyle = '#4a3a2a'
-  ctx.fillRect(gunX - 8, gunY + 2, 8, 2)
-  
-  ctx.restore()
-
-  // ─ NECK ─
+  // ─ NECK ─ (draw before arm so arm is on top)
   ctx.fillStyle = COLORS.player.skin
   ctx.fillRect(-2, -hh + 6, 6, 5)
 
@@ -1087,6 +1030,74 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillStyle = '#ccc'
   roundRect(ctx, -1, -hh + 15, 4, 3, 1)
   ctx.fill()
+
+  // ─ ARM + GUN ─ (drawn last so it's in front)
+  ctx.save()
+  const shoulderX = hw - 2
+  const shoulderY = -hh + 14
+  ctx.translate(shoulderX, shoulderY)
+  ctx.rotate(-0.1) // Slight horizontal angle
+  
+  // Upper arm
+  ctx.fillStyle = COLORS.player.shirt
+  ctx.fillRect(-2, -4, 14, 8)
+  // Forearm/hand
+  ctx.fillStyle = COLORS.player.skin
+  ctx.fillRect(10, -3, 14, 6)
+  
+  // Gun - large and detailed (fully visible)
+  const gunX = 22
+  const gunY = -5
+  // Gun body / receiver
+  ctx.fillStyle = '#2a2a2a'
+  roundRect(ctx, gunX, gunY, 28, 9, 2)
+  ctx.fill()
+  // Gun body highlight
+  ctx.fillStyle = '#3a3a3a'
+  ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
+  // Barrel
+  ctx.fillStyle = '#4a4a4a'
+  ctx.fillRect(gunX + 26, gunY + 2, 16, 5)
+  // Barrel tip / muzzle
+  ctx.fillStyle = '#333'
+  roundRect(ctx, gunX + 40, gunY + 1, 5, 7, 1)
+  ctx.fill()
+  // Muzzle holes
+  ctx.fillStyle = '#222'
+  ctx.fillRect(gunX + 43, gunY + 2, 2, 1)
+  ctx.fillRect(gunX + 43, gunY + 5, 2, 1)
+  // Magazine
+  ctx.fillStyle = '#2a2a2a'
+  roundRect(ctx, gunX + 6, gunY + 8, 6, 10, 1)
+  ctx.fill()
+  // Scope mount
+  ctx.fillStyle = '#444'
+  ctx.fillRect(gunX + 10, gunY - 2, 12, 3)
+  // Scope tube
+  ctx.fillStyle = '#555'
+  roundRect(ctx, gunX + 8, gunY - 6, 16, 5, 2)
+  ctx.fill()
+  // Scope lens
+  ctx.fillStyle = '#66aaff'
+  ctx.shadowColor = '#66aaff'
+  ctx.shadowBlur = 3
+  ctx.beginPath()
+  ctx.arc(gunX + 22, gunY - 3.5, 2.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  // Stock
+  ctx.fillStyle = '#5a4a3a'
+  roundRect(ctx, gunX - 14, gunY + 0, 16, 8, 2)
+  ctx.fill()
+  // Stock detail
+  ctx.fillStyle = '#4a3a2a'
+  ctx.fillRect(gunX - 12, gunY + 3, 12, 2)
+  // Grip
+  ctx.fillStyle = '#3a3a3a'
+  roundRect(ctx, gunX + 14, gunY + 7, 5, 8, 1)
+  ctx.fill()
+  
+  ctx.restore()
 
   ctx.restore()
 }
