@@ -285,29 +285,69 @@ export default function GameCanvas() {
       {/* Home Screen */}
       {screen === 'home' && (
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-[#2a6fc4] via-[#5aa4e6] to-[#a8d8f0]">
-          <div className="flex flex-col items-center gap-8">
-            {/* Zoomed character */}
+          <div className="flex flex-col items-center gap-6">
+            {/* Title */}
+            <h1
+              className="text-5xl font-bold tracking-tight font-sans"
+              style={{
+                color: '#1a3a1a',
+                textShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 40px rgba(68,180,68,0.4)',
+              }}
+            >
+              STELLAR RECON
+            </h1>
+
+            {/* Zoomed character with grass */}
             <canvas
               ref={(el) => {
                 if (el) {
                   const ctx = el.getContext('2d')
                   if (ctx) {
-                    el.width = 200
-                    el.height = 280
-                    ctx.clearRect(0, 0, 200, 280)
-                    drawPlayerZoomed(ctx, 100, 160, 4)
+                    el.width = 280
+                    el.height = 340
+                    ctx.clearRect(0, 0, 280, 340)
+                    
+                    // Draw grass ground
+                    const grassY = 280
+                    
+                    // Dirt layer
+                    ctx.fillStyle = '#5a4030'
+                    ctx.fillRect(0, grassY + 8, 280, 60)
+                    
+                    // Grass base
+                    ctx.fillStyle = '#3a8a3a'
+                    ctx.fillRect(0, grassY, 280, 12)
+                    
+                    // Grass top highlight
+                    ctx.fillStyle = '#4aa04a'
+                    ctx.fillRect(0, grassY, 280, 4)
+                    
+                    // Grass blades
+                    ctx.fillStyle = '#4a9a4a'
+                    for (let i = 0; i < 280; i += 6) {
+                      const h = 4 + Math.random() * 6
+                      ctx.fillRect(i, grassY - h, 2, h)
+                    }
+                    ctx.fillStyle = '#5ab05a'
+                    for (let i = 3; i < 280; i += 8) {
+                      const h = 3 + Math.random() * 5
+                      ctx.fillRect(i, grassY - h, 2, h)
+                    }
+                    
+                    // Draw the soldier (larger scale, positioned on grass)
+                    drawPlayerZoomed(ctx, 140, 200, 5)
                   }
                 }
               }}
-              width={200}
-              height={280}
+              width={280}
+              height={340}
               style={{ imageRendering: 'pixelated' }}
             />
             
             {/* Play button */}
             <button
               onClick={() => setScreen('title')}
-              className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              className="px-14 py-4 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
                 background: 'linear-gradient(135deg, #22aa44, #44dd66)',
                 color: '#0a1a0a',
