@@ -867,6 +867,185 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.globalAlpha = 1
 }
 
+// ─── Player Zoomed (for home screen) ───
+export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number = 3) {
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.scale(scale, scale)
+
+  // Simplified soldier at origin (centered)
+  const hw = 12
+  const hh = 20
+
+  // ─ JETPACK ─
+  ctx.fillStyle = COLORS.player.jetpackDark
+  roundRect(ctx, -hw - 8, -hh + 8, 10, 23, 3)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.jetpack
+  roundRect(ctx, -hw - 7, -hh + 9, 8, 21, 2)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.jetpackTank
+  roundRect(ctx, -hw - 10, -hh + 10, 4, 17, 2)
+  ctx.fill()
+  ctx.fillStyle = '#7a5a4a'
+  ctx.fillRect(-hw - 9, -hh + 11, 2, 15)
+  ctx.fillStyle = '#999'
+  roundRect(ctx, -hw - 10, -hh + 9, 4, 2, 1)
+  ctx.fill()
+  ctx.fillStyle = '#3a3a3a'
+  roundRect(ctx, -hw - 7, -hh + 29, 8, 5, 2)
+  ctx.fill()
+  ctx.fillStyle = '#44ff44'
+  ctx.shadowColor = '#44ff44'
+  ctx.shadowBlur = 4
+  ctx.beginPath()
+  ctx.arc(-hw - 3, -hh + 12, 1.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+
+  // ─ LEGS ─
+  const drawLeg = (xOff: number) => {
+    ctx.fillStyle = COLORS.player.pants
+    ctx.fillRect(xOff - 1, hh - 15, 7, 8)
+    ctx.fillStyle = COLORS.player.pantsLight
+    ctx.fillRect(xOff, hh - 14, 2, 6)
+    ctx.fillStyle = COLORS.player.pantsKnee
+    ctx.beginPath()
+    ctx.arc(xOff + 3, hh - 7, 3, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = COLORS.player.pants
+    ctx.fillRect(xOff - 1, hh - 8, 7, 7)
+    ctx.fillStyle = COLORS.player.boots
+    roundRect(ctx, xOff - 2, hh - 2, 9, 5, 2)
+    ctx.fill()
+    ctx.fillStyle = COLORS.player.bootsSole
+    ctx.fillRect(xOff - 2, hh + 2, 9, 2)
+  }
+  drawLeg(1)
+  drawLeg(-5)
+
+  // ─ TORSO ─
+  ctx.fillStyle = COLORS.player.vest
+  roundRect(ctx, -hw + 2, -hh + 9, 20, 21, 3)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.shirt
+  ctx.fillRect(-hw + 2, -hh + 10, 3, 18)
+  ctx.fillRect(hw - 5, -hh + 10, 3, 18)
+  ctx.fillStyle = COLORS.player.vestPouch
+  roundRect(ctx, -hw + 5, -hh + 17, 6, 5, 1)
+  ctx.fill()
+  roundRect(ctx, hw - 10, -hh + 17, 6, 5, 1)
+  ctx.fill()
+
+  // Belt
+  ctx.fillStyle = COLORS.player.belt
+  ctx.fillRect(-hw + 2, -hh + 28, 20, 4)
+  ctx.fillStyle = COLORS.player.beltBuckle
+  roundRect(ctx, -2, -hh + 28, 6, 4, 1)
+  ctx.fill()
+
+  // ─ ARM + GUN ─
+  const shoulderX = hw - 4
+  const shoulderY = -hh + 16
+  ctx.save()
+  ctx.translate(shoulderX, shoulderY)
+  ctx.rotate(-0.2)
+  ctx.fillStyle = COLORS.player.shirt
+  ctx.fillRect(-2, -3, 10, 6)
+  ctx.fillStyle = COLORS.player.skin
+  ctx.fillRect(6, -2, 10, 5)
+  const gunX = 14
+  const gunY = -3
+  ctx.fillStyle = COLORS.player.gunDark
+  roundRect(ctx, gunX, gunY, 18, 6, 1)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.gunBarrel
+  ctx.fillRect(gunX + 16, gunY + 1, 8, 3)
+  ctx.fillStyle = '#444'
+  ctx.fillRect(gunX + 23, gunY, 3, 5)
+  ctx.fillStyle = COLORS.player.gunDark
+  ctx.fillRect(gunX + 4, gunY + 5, 4, 6)
+  ctx.fillStyle = '#555'
+  roundRect(ctx, gunX + 6, gunY - 3, 8, 3, 1)
+  ctx.fill()
+  ctx.fillStyle = '#4a3a28'
+  roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
+  ctx.fill()
+  ctx.restore()
+
+  // ─ NECK ─
+  ctx.fillStyle = COLORS.player.skin
+  ctx.fillRect(-2, -hh + 6, 6, 5)
+
+  // ─ HEAD ─
+  ctx.fillStyle = COLORS.player.helmet
+  roundRect(ctx, -8, -hh - 7, 18, 16, 6)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.helmetLight
+  roundRect(ctx, -6, -hh - 6, 10, 7, 4)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.helmetDark
+  ctx.fillRect(-8, -hh + 4, 18, 3)
+  ctx.fillStyle = COLORS.player.helmetBand
+  ctx.fillRect(-8, -hh + 2, 18, 3)
+  ctx.strokeStyle = COLORS.player.helmetStrap
+  ctx.lineWidth = 1.5
+  ctx.beginPath()
+  ctx.moveTo(8, -hh + 4)
+  ctx.quadraticCurveTo(10, -hh + 8, 8, -hh + 10)
+  ctx.stroke()
+
+  // Face
+  ctx.fillStyle = COLORS.player.skin
+  roundRect(ctx, -4, -hh + 1, 13, 11, 3)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.skinShadow
+  roundRect(ctx, -2, -hh + 8, 9, 4, 2)
+  ctx.fill()
+
+  // Eye
+  ctx.fillStyle = '#ffffff'
+  roundRect(ctx, 2, -hh + 3, 6, 3.5, 1.5)
+  ctx.fill()
+  ctx.fillStyle = '#3a6a3a'
+  ctx.beginPath()
+  ctx.arc(5.5, -hh + 4.8, 1.8, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = '#111'
+  ctx.beginPath()
+  ctx.arc(5.5, -hh + 4.8, 0.9, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = '#fff'
+  ctx.beginPath()
+  ctx.arc(6.2, -hh + 4.2, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.strokeStyle = COLORS.player.hair
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(1, -hh + 1.5)
+  ctx.lineTo(8, -hh + 1)
+  ctx.stroke()
+
+  // Ear
+  ctx.fillStyle = COLORS.player.skin
+  ctx.beginPath()
+  ctx.ellipse(-5, -hh + 5, 2.5, 3.5, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Dog tags
+  ctx.strokeStyle = '#aaa'
+  ctx.lineWidth = 0.8
+  ctx.beginPath()
+  ctx.moveTo(1, -hh + 8)
+  ctx.quadraticCurveTo(2, -hh + 14, 1, -hh + 16)
+  ctx.stroke()
+  ctx.fillStyle = '#ccc'
+  roundRect(ctx, -1, -hh + 15, 4, 3, 1)
+  ctx.fill()
+
+  ctx.restore()
+}
+
 // ─── Enemies ───
 export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy, cameraX: number, cameraY: number) {
   const ex = enemy.x - cameraX

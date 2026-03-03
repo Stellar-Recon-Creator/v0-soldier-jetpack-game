@@ -23,6 +23,7 @@ import {
   drawGround,
   drawPlatform,
   drawPlayer,
+  drawPlayerZoomed,
   drawEnemy,
   drawBullet,
   drawParticle,
@@ -46,7 +47,7 @@ export default function GameCanvas() {
   const lastTimeRef = useRef<number>(0)
   const animFrameRef = useRef<number>(0)
   const jetpackPlayingRef = useRef<boolean>(false)
-  const [screen, setScreen] = useState<'title' | 'playing' | 'dead' | 'won'>('title')
+  const [screen, setScreen] = useState<'home' | 'title' | 'playing' | 'dead' | 'won'>('home')
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
 
@@ -280,6 +281,44 @@ export default function GameCanvas() {
         className="border border-border rounded-lg shadow-2xl"
         style={{ imageRendering: 'pixelated' }}
       />
+
+      {/* Home Screen */}
+      {screen === 'home' && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-[#2a6fc4] via-[#5aa4e6] to-[#a8d8f0]">
+          <div className="flex flex-col items-center gap-8">
+            {/* Zoomed character */}
+            <canvas
+              ref={(el) => {
+                if (el) {
+                  const ctx = el.getContext('2d')
+                  if (ctx) {
+                    el.width = 200
+                    el.height = 280
+                    ctx.clearRect(0, 0, 200, 280)
+                    drawPlayerZoomed(ctx, 100, 160, 4)
+                  }
+                }
+              }}
+              width={200}
+              height={280}
+              style={{ imageRendering: 'pixelated' }}
+            />
+            
+            {/* Play button */}
+            <button
+              onClick={() => setScreen('title')}
+              className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              style={{
+                background: 'linear-gradient(135deg, #22aa44, #44dd66)',
+                color: '#0a1a0a',
+                boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
+              }}
+            >
+              PLAY
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Title Screen */}
       {screen === 'title' && (
