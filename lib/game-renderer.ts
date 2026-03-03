@@ -949,75 +949,89 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillRect(-2, -hh + 6, 6, 5)
 
   // ─ HEAD ─
+  // Helmet - darker outline for visibility
+  ctx.fillStyle = '#2a4a2a'
+  roundRect(ctx, -10, -hh - 9, 22, 19, 7)
+  ctx.fill()
   ctx.fillStyle = COLORS.player.helmet
-  roundRect(ctx, -8, -hh - 7, 18, 16, 6)
+  roundRect(ctx, -9, -hh - 8, 20, 17, 6)
   ctx.fill()
   ctx.fillStyle = COLORS.player.helmetLight
-  roundRect(ctx, -6, -hh - 6, 10, 7, 4)
+  roundRect(ctx, -7, -hh - 7, 12, 8, 4)
   ctx.fill()
-  ctx.fillStyle = COLORS.player.helmetDark
-  ctx.fillRect(-8, -hh + 4, 18, 3)
-  ctx.fillStyle = COLORS.player.helmetBand
-  ctx.fillRect(-8, -hh + 2, 18, 3)
-  ctx.strokeStyle = COLORS.player.helmetStrap
-  ctx.lineWidth = 1.5
+  // Helmet rim
+  ctx.fillStyle = '#2a4a2a'
+  ctx.fillRect(-10, -hh + 4, 22, 4)
+  // Helmet band
+  ctx.fillStyle = '#5a6a5a'
+  ctx.fillRect(-10, -hh + 2, 22, 3)
+  // Chin strap
+  ctx.strokeStyle = '#5a5a4a'
+  ctx.lineWidth = 2
   ctx.beginPath()
-  ctx.moveTo(8, -hh + 4)
-  ctx.quadraticCurveTo(10, -hh + 8, 8, -hh + 10)
+  ctx.moveTo(10, -hh + 5)
+  ctx.quadraticCurveTo(13, -hh + 10, 10, -hh + 13)
   ctx.stroke()
 
-  // Face
+  // Face - wider to show both eyes
   ctx.fillStyle = COLORS.player.skin
-  roundRect(ctx, -4, -hh + 1, 13, 11, 3)
-  ctx.fill()
-  ctx.fillStyle = COLORS.player.skinShadow
-  roundRect(ctx, -2, -hh + 8, 9, 4, 2)
+  roundRect(ctx, -7, -hh + 0, 18, 14, 4)
   ctx.fill()
 
-  // Eye
+  // Left Eye
   ctx.fillStyle = '#ffffff'
-  roundRect(ctx, 2, -hh + 3, 6, 3.5, 1.5)
+  roundRect(ctx, -5, -hh + 2, 5, 4, 2)
   ctx.fill()
   ctx.fillStyle = '#3a6a3a'
   ctx.beginPath()
-  ctx.arc(5.5, -hh + 4.8, 1.8, 0, Math.PI * 2)
+  ctx.arc(-2.5, -hh + 4, 1.5, 0, Math.PI * 2)
   ctx.fill()
   ctx.fillStyle = '#111'
   ctx.beginPath()
-  ctx.arc(5.5, -hh + 4.8, 0.9, 0, Math.PI * 2)
+  ctx.arc(-2.5, -hh + 4, 0.7, 0, Math.PI * 2)
   ctx.fill()
-  ctx.fillStyle = '#fff'
+
+  // Right Eye
+  ctx.fillStyle = '#ffffff'
+  roundRect(ctx, 4, -hh + 2, 5, 4, 2)
+  ctx.fill()
+  ctx.fillStyle = '#3a6a3a'
   ctx.beginPath()
-  ctx.arc(6.2, -hh + 4.2, 0.5, 0, Math.PI * 2)
+  ctx.arc(6.5, -hh + 4, 1.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = '#111'
+  ctx.beginPath()
+  ctx.arc(6.5, -hh + 4, 0.7, 0, Math.PI * 2)
   ctx.fill()
   
-  // Eyebrow
+  // Eyebrows
   ctx.strokeStyle = COLORS.player.hair
-  ctx.lineWidth = 2
-  ctx.beginPath()
-  ctx.moveTo(1, -hh + 1.5)
-  ctx.lineTo(8, -hh + 1)
-  ctx.stroke()
-  
-  // Mouth - slight smirk
-  ctx.strokeStyle = '#8a5a4a'
   ctx.lineWidth = 1.5
   ctx.beginPath()
-  ctx.moveTo(2, -hh + 9)
-  ctx.quadraticCurveTo(5, -hh + 10.5, 7, -hh + 9)
+  ctx.moveTo(-6, -hh + 0.5)
+  ctx.lineTo(-1, -hh + 0)
   ctx.stroke()
-  // Lower lip highlight
-  ctx.strokeStyle = '#a07060'
-  ctx.lineWidth = 1
   ctx.beginPath()
-  ctx.moveTo(3, -hh + 10)
-  ctx.quadraticCurveTo(5, -hh + 10.8, 6, -hh + 10)
+  ctx.moveTo(3, -hh + 0)
+  ctx.lineTo(8, -hh + 0.5)
   ctx.stroke()
+  
+  // Nose
+  ctx.fillStyle = COLORS.player.skinShadow
+  ctx.fillRect(1, -hh + 5, 2, 3)
+  
+  // Mouth - pink
+  ctx.fillStyle = '#e88099'
+  roundRect(ctx, -1, -hh + 10, 6, 2, 1)
+  ctx.fill()
 
-  // Ear
+  // Ears
   ctx.fillStyle = COLORS.player.skin
   ctx.beginPath()
-  ctx.ellipse(-5, -hh + 5, 2.5, 3.5, 0, 0, Math.PI * 2)
+  ctx.ellipse(-8, -hh + 5, 2, 3, 0, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.ellipse(12, -hh + 5, 2, 3, 0, 0, Math.PI * 2)
   ctx.fill()
 
   // Dog tags

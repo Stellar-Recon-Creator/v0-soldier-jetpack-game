@@ -305,22 +305,22 @@ export default function GameCanvas() {
 
           {/* Ground section with character standing on grass and button in dirt */}
           <div className="relative w-full" style={{ height: '320px' }}>
-            {/* Character positioned on grass */}
-            <div className="absolute left-1/2 -translate-x-1/2 z-10" style={{ bottom: '220px' }}>
+            {/* Character positioned on grass - feet on grass top */}
+            <div className="absolute left-1/2 -translate-x-1/2 z-10" style={{ bottom: '260px' }}>
               <canvas
                 ref={(el) => {
                   if (el) {
                     const ctx = el.getContext('2d')
                     if (ctx) {
-                      el.width = 400
-                      el.height = 300
-                      ctx.clearRect(0, 0, 400, 300)
-                      drawPlayerZoomed(ctx, 200, 150, 6)
+                      el.width = 260
+                      el.height = 180
+                      ctx.clearRect(0, 0, 260, 180)
+                      drawPlayerZoomed(ctx, 130, 90, 3.5)
                     }
                   }
                 }}
-                width={400}
-                height={300}
+                width={260}
+                height={180}
                 style={{ imageRendering: 'pixelated' }}
               />
             </div>
