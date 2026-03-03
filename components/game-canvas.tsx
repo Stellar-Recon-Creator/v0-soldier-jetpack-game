@@ -47,7 +47,7 @@ export default function GameCanvas() {
   const lastTimeRef = useRef<number>(0)
   const animFrameRef = useRef<number>(0)
   const jetpackPlayingRef = useRef<boolean>(false)
-  const [screen, setScreen] = useState<'home' | 'title' | 'playing' | 'dead' | 'won'>('home')
+  const [screen, setScreen] = useState<'home' | 'shop' | 'title' | 'playing' | 'dead' | 'won'>('home')
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
 
@@ -417,7 +417,7 @@ export default function GameCanvas() {
                 PLAY
               </button>
               <button
-                onClick={() => {}}
+                onClick={() => setScreen('shop')}
                 className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
                   background: 'linear-gradient(135deg, #aa2222, #dd4444)',
@@ -428,6 +428,143 @@ export default function GameCanvas() {
                 SHOP
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shop Screen */}
+      {screen === 'shop' && (
+        <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
+          {/* Stars background */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(60)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full bg-white"
+                style={{
+                  width: Math.random() > 0.7 ? '2px' : '1px',
+                  height: Math.random() > 0.7 ? '2px' : '1px',
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  opacity: 0.3 + Math.random() * 0.5,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Header */}
+          <div className="pt-8 pb-4 flex justify-center z-10">
+            <h1
+              className="text-5xl font-black tracking-wider font-sans uppercase"
+              style={{
+                color: '#ffaa00',
+                textShadow: '0 0 10px rgba(255,170,0,0.8), 0 0 20px rgba(255,170,0,0.5), 0 4px 8px rgba(0,0,0,0.6)',
+              }}
+            >
+              SHOP
+            </h1>
+          </div>
+
+          {/* Crates */}
+          <div className="flex-1 flex items-center justify-center gap-8 z-10 px-8">
+            {/* Pulsar Crate - Green */}
+            <div className="flex flex-col items-center gap-4">
+              <div
+                className="w-40 h-40 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
+                style={{
+                  background: 'linear-gradient(135deg, #1a4a1a, #2a6a2a, #1a4a1a)',
+                  border: '4px solid #44aa44',
+                  boxShadow: '0 0 20px rgba(68,170,68,0.5), inset 0 0 30px rgba(68,170,68,0.3)',
+                }}
+              >
+                <div
+                  className="w-32 h-32 rounded flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(145deg, #2a5a2a, #3a7a3a)',
+                    border: '2px solid #55bb55',
+                  }}
+                >
+                  <span className="text-4xl" style={{ color: '#88ff88', textShadow: '0 0 10px #44ff44' }}>?</span>
+                </div>
+              </div>
+              <span
+                className="text-xl font-bold font-sans"
+                style={{ color: '#44dd44', textShadow: '0 0 10px rgba(68,221,68,0.5)' }}
+              >
+                PULSAR
+              </span>
+            </div>
+
+            {/* Nova Crate - Orange */}
+            <div className="flex flex-col items-center gap-4">
+              <div
+                className="w-40 h-40 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
+                style={{
+                  background: 'linear-gradient(135deg, #4a2a0a, #6a3a1a, #4a2a0a)',
+                  border: '4px solid #dd8844',
+                  boxShadow: '0 0 20px rgba(221,136,68,0.5), inset 0 0 30px rgba(221,136,68,0.3)',
+                }}
+              >
+                <div
+                  className="w-32 h-32 rounded flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(145deg, #5a3a1a, #7a4a2a)',
+                    border: '2px solid #ee9955',
+                  }}
+                >
+                  <span className="text-4xl" style={{ color: '#ffcc88', textShadow: '0 0 10px #ffaa44' }}>?</span>
+                </div>
+              </div>
+              <span
+                className="text-xl font-bold font-sans"
+                style={{ color: '#ffaa44', textShadow: '0 0 10px rgba(255,170,68,0.5)' }}
+              >
+                NOVA
+              </span>
+            </div>
+
+            {/* Stellar Crate - Purple */}
+            <div className="flex flex-col items-center gap-4">
+              <div
+                className="w-40 h-40 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
+                style={{
+                  background: 'linear-gradient(135deg, #2a1a4a, #3a2a6a, #2a1a4a)',
+                  border: '4px solid #aa66dd',
+                  boxShadow: '0 0 20px rgba(170,102,221,0.5), inset 0 0 30px rgba(170,102,221,0.3)',
+                }}
+              >
+                <div
+                  className="w-32 h-32 rounded flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(145deg, #3a2a5a, #4a3a7a)',
+                    border: '2px solid #bb77ee',
+                  }}
+                >
+                  <span className="text-4xl" style={{ color: '#ddaaff', textShadow: '0 0 10px #aa66ff' }}>?</span>
+                </div>
+              </div>
+              <span
+                className="text-xl font-bold font-sans"
+                style={{ color: '#bb88ff', textShadow: '0 0 10px rgba(187,136,255,0.5)' }}
+              >
+                STELLAR
+              </span>
+            </div>
+          </div>
+
+          {/* Back button */}
+          <div className="pb-8 flex justify-center z-10">
+            <button
+              onClick={() => setScreen('home')}
+              className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              style={{
+                background: 'linear-gradient(135deg, #444, #666)',
+                color: '#ffffff',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
+              }}
+            >
+              BACK
+            </button>
           </div>
         </div>
       )}
