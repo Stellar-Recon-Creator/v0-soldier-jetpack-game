@@ -944,33 +944,61 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   roundRect(ctx, -2, -hh + 28, 6, 4, 1)
   ctx.fill()
 
-  // ─ ARM + GUN ─
-  const shoulderX = hw - 4
-  const shoulderY = -hh + 16
+  // ─ ARM + GUN ─ (angled outward so weapon is visible)
+  const shoulderX = hw - 2
+  const shoulderY = -hh + 14
   ctx.save()
   ctx.translate(shoulderX, shoulderY)
-  ctx.rotate(-0.2)
+  ctx.rotate(0.15) // Slight upward angle to show gun better
+  
+  // Upper arm
   ctx.fillStyle = COLORS.player.shirt
-  ctx.fillRect(-2, -3, 10, 6)
+  ctx.fillRect(-2, -3, 12, 7)
+  // Forearm/hand
   ctx.fillStyle = COLORS.player.skin
-  ctx.fillRect(6, -2, 10, 5)
-  const gunX = 14
-  const gunY = -3
+  ctx.fillRect(8, -2, 12, 5)
+  
+  // Gun - larger and more detailed
+  const gunX = 18
+  const gunY = -4
+  // Gun body / receiver
   ctx.fillStyle = COLORS.player.gunDark
-  roundRect(ctx, gunX, gunY, 18, 6, 1)
+  roundRect(ctx, gunX, gunY, 22, 7, 1)
   ctx.fill()
+  // Barrel
   ctx.fillStyle = COLORS.player.gunBarrel
-  ctx.fillRect(gunX + 16, gunY + 1, 8, 3)
-  ctx.fillStyle = '#444'
-  ctx.fillRect(gunX + 23, gunY, 3, 5)
+  ctx.fillRect(gunX + 20, gunY + 1, 12, 4)
+  // Barrel tip / muzzle
+  ctx.fillStyle = '#333'
+  ctx.fillRect(gunX + 30, gunY, 4, 6)
+  // Flash hider details
+  ctx.fillStyle = '#222'
+  ctx.fillRect(gunX + 32, gunY + 1, 2, 1)
+  ctx.fillRect(gunX + 32, gunY + 4, 2, 1)
+  // Magazine
   ctx.fillStyle = COLORS.player.gunDark
-  ctx.fillRect(gunX + 4, gunY + 5, 4, 6)
+  roundRect(ctx, gunX + 5, gunY + 6, 5, 8, 1)
+  ctx.fill()
+  // Scope
   ctx.fillStyle = '#555'
-  roundRect(ctx, gunX + 6, gunY - 3, 8, 3, 1)
+  roundRect(ctx, gunX + 8, gunY - 4, 10, 4, 1)
   ctx.fill()
-  ctx.fillStyle = '#4a3a28'
-  roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
+  // Scope lens
+  ctx.fillStyle = '#66aaff'
+  ctx.beginPath()
+  ctx.arc(gunX + 17, gunY - 2, 2, 0, Math.PI * 2)
   ctx.fill()
+  // Gun highlight
+  ctx.fillStyle = COLORS.player.gunLight
+  ctx.fillRect(gunX + 2, gunY + 1, 16, 1)
+  // Stock
+  ctx.fillStyle = '#5a4a3a'
+  roundRect(ctx, gunX - 10, gunY + 0, 12, 6, 2)
+  ctx.fill()
+  // Stock detail
+  ctx.fillStyle = '#4a3a2a'
+  ctx.fillRect(gunX - 8, gunY + 2, 8, 2)
+  
   ctx.restore()
 
   // ─ NECK ─
@@ -1019,11 +1047,28 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.beginPath()
   ctx.arc(6.2, -hh + 4.2, 0.5, 0, Math.PI * 2)
   ctx.fill()
+  
+  // Eyebrow
   ctx.strokeStyle = COLORS.player.hair
   ctx.lineWidth = 2
   ctx.beginPath()
   ctx.moveTo(1, -hh + 1.5)
   ctx.lineTo(8, -hh + 1)
+  ctx.stroke()
+  
+  // Mouth - slight smirk
+  ctx.strokeStyle = '#8a5a4a'
+  ctx.lineWidth = 1.5
+  ctx.beginPath()
+  ctx.moveTo(2, -hh + 9)
+  ctx.quadraticCurveTo(5, -hh + 10.5, 7, -hh + 9)
+  ctx.stroke()
+  // Lower lip highlight
+  ctx.strokeStyle = '#a07060'
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(3, -hh + 10)
+  ctx.quadraticCurveTo(5, -hh + 10.8, 6, -hh + 10)
   ctx.stroke()
 
   // Ear

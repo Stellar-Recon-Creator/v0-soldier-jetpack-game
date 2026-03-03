@@ -284,70 +284,42 @@ export default function GameCanvas() {
 
       {/* Home Screen */}
       {screen === 'home' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-[#2a6fc4] via-[#5aa4e6] to-[#a8d8f0]">
-          <div className="flex flex-col items-center gap-6">
-            {/* Title */}
+        <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#2a6fc4] via-[#5aa4e6] to-[#7ac4f0]">
+          {/* Sky area with title and character */}
+          <div className="flex-1 flex flex-col items-center justify-center">
+            {/* Title with purple glow */}
             <h1
-              className="text-5xl font-bold tracking-tight font-sans"
+              className="text-6xl font-bold tracking-tight font-sans mb-8"
               style={{
-                color: '#1a3a1a',
-                textShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 40px rgba(68,180,68,0.4)',
+                color: '#e066ff',
+                textShadow: '0 0 20px rgba(200,100,255,0.9), 0 0 40px rgba(180,80,255,0.7), 0 0 60px rgba(160,60,255,0.5), 0 2px 4px rgba(0,0,0,0.4)',
               }}
             >
               STELLAR RECON
             </h1>
 
-            {/* Zoomed character with grass */}
+            {/* Character canvas */}
             <canvas
               ref={(el) => {
                 if (el) {
                   const ctx = el.getContext('2d')
                   if (ctx) {
-                    el.width = 280
-                    el.height = 340
-                    ctx.clearRect(0, 0, 280, 340)
-                    
-                    // Draw grass ground
-                    const grassY = 280
-                    
-                    // Dirt layer
-                    ctx.fillStyle = '#5a4030'
-                    ctx.fillRect(0, grassY + 8, 280, 60)
-                    
-                    // Grass base
-                    ctx.fillStyle = '#3a8a3a'
-                    ctx.fillRect(0, grassY, 280, 12)
-                    
-                    // Grass top highlight
-                    ctx.fillStyle = '#4aa04a'
-                    ctx.fillRect(0, grassY, 280, 4)
-                    
-                    // Grass blades
-                    ctx.fillStyle = '#4a9a4a'
-                    for (let i = 0; i < 280; i += 6) {
-                      const h = 4 + Math.random() * 6
-                      ctx.fillRect(i, grassY - h, 2, h)
-                    }
-                    ctx.fillStyle = '#5ab05a'
-                    for (let i = 3; i < 280; i += 8) {
-                      const h = 3 + Math.random() * 5
-                      ctx.fillRect(i, grassY - h, 2, h)
-                    }
-                    
-                    // Draw the soldier (larger scale, positioned on grass)
-                    drawPlayerZoomed(ctx, 140, 200, 5)
+                    el.width = 300
+                    el.height = 260
+                    ctx.clearRect(0, 0, 300, 260)
+                    drawPlayerZoomed(ctx, 150, 130, 5)
                   }
                 }
               }}
-              width={280}
-              height={340}
+              width={300}
+              height={260}
               style={{ imageRendering: 'pixelated' }}
             />
             
             {/* Play button */}
             <button
               onClick={() => setScreen('title')}
-              className="px-14 py-4 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              className="mt-6 px-14 py-4 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
                 background: 'linear-gradient(135deg, #22aa44, #44dd66)',
                 color: '#0a1a0a',
@@ -356,6 +328,65 @@ export default function GameCanvas() {
             >
               PLAY
             </button>
+          </div>
+
+          {/* Full-width grass ground at bottom */}
+          <div className="w-full" style={{ height: '120px' }}>
+            <canvas
+              ref={(el) => {
+                if (el) {
+                  const ctx = el.getContext('2d')
+                  if (ctx) {
+                    el.width = window.innerWidth
+                    el.height = 120
+                    ctx.clearRect(0, 0, el.width, 120)
+                    
+                    const grassY = 0
+                    
+                    // Dirt layer (fills to bottom)
+                    ctx.fillStyle = '#5a4030'
+                    ctx.fillRect(0, grassY + 20, el.width, 100)
+                    
+                    // Dirt texture
+                    ctx.fillStyle = '#4a3525'
+                    for (let i = 0; i < el.width; i += 12) {
+                      ctx.fillRect(i + Math.random() * 6, grassY + 25 + Math.random() * 60, 4, 3)
+                    }
+                    
+                    // Grass base
+                    ctx.fillStyle = '#3a8a3a'
+                    ctx.fillRect(0, grassY, el.width, 24)
+                    
+                    // Grass top highlight
+                    ctx.fillStyle = '#4aa04a'
+                    ctx.fillRect(0, grassY, el.width, 6)
+                    
+                    // Grass blades - tall
+                    ctx.fillStyle = '#4a9a4a'
+                    for (let i = 0; i < el.width; i += 5) {
+                      const h = 8 + Math.random() * 10
+                      ctx.fillRect(i, grassY - h + 6, 3, h)
+                    }
+                    // Grass blades - medium
+                    ctx.fillStyle = '#5ab05a'
+                    for (let i = 2; i < el.width; i += 7) {
+                      const h = 6 + Math.random() * 8
+                      ctx.fillRect(i, grassY - h + 6, 2, h)
+                    }
+                    // Grass blades - highlights
+                    ctx.fillStyle = '#6ac06a'
+                    for (let i = 4; i < el.width; i += 11) {
+                      const h = 5 + Math.random() * 6
+                      ctx.fillRect(i, grassY - h + 6, 2, h)
+                    }
+                  }
+                }
+              }}
+              width={1200}
+              height={120}
+              className="w-full"
+              style={{ imageRendering: 'pixelated' }}
+            />
           </div>
         </div>
       )}
