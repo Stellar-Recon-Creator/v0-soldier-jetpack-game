@@ -89,6 +89,12 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0)
   const bossX = levelLength - 300
   enemies.push(createEnemy('boss', bossX, GROUND_Y - 64))
 
+  // Apply health boost based on difficulty (easy = 1.0, medium = 1.3, hard = 1.65)
+  for (const enemy of enemies) {
+    enemy.health = Math.ceil(enemy.health * difficultyMultiplier)
+    enemy.maxHealth = Math.ceil(enemy.maxHealth * difficultyMultiplier)
+  }
+
   return { platforms, enemies, levelLength }
 }
 
