@@ -1806,6 +1806,42 @@ export function drawBullet(ctx: CanvasRenderingContext2D, bullet: Bullet, camera
   const bx = bullet.x - cameraX
   const by = bullet.y - cameraY
 
+  // Red acid bullets from flyers
+  if (bullet.isRedAcid) {
+    ctx.shadowColor = '#ff3333'
+    ctx.shadowBlur = 12
+
+    // Outer glow
+    ctx.fillStyle = '#ff4444'
+    ctx.beginPath()
+    ctx.arc(bx, by, bullet.radius * 1.6, 0, Math.PI * 2)
+    ctx.fill()
+    // Main bullet
+    ctx.fillStyle = '#ff2222'
+    ctx.beginPath()
+    ctx.arc(bx, by, bullet.radius, 0, Math.PI * 2)
+    ctx.fill()
+    // Core
+    ctx.fillStyle = '#ffaaaa'
+    ctx.beginPath()
+    ctx.arc(bx, by, bullet.radius * 0.4, 0, Math.PI * 2)
+    ctx.fill()
+
+    // Trail
+    ctx.fillStyle = '#ff3333'
+    ctx.globalAlpha = 0.5
+    ctx.beginPath()
+    ctx.arc(bx - bullet.vx * 0.015, by - bullet.vy * 0.015, bullet.radius * 0.7, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(bx - bullet.vx * 0.03, by - bullet.vy * 0.03, bullet.radius * 0.4, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    ctx.shadowBlur = 0
+    return
+  }
+
   ctx.shadowColor = bullet.fromPlayer ? COLORS.bullet.playerGlow : COLORS.bullet.enemyGlow
   ctx.shadowBlur = 10
 

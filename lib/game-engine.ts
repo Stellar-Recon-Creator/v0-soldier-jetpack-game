@@ -362,16 +362,18 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 400) {
           enemy.shootCooldown = 2.0 // Shoots every 2 seconds
+          soundEvents.alienShoot = true
           const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x)
-          enemyProjectiles.push({
+          bullets.push({
             x: enemy.x + enemy.width / 2,
             y: enemy.y + enemy.height / 2,
             vx: Math.cos(angle) * 180,
             vy: Math.sin(angle) * 180,
-            width: 10,
-            height: 10,
-            color: '#ff3333', // Red acid
+            radius: 5,
+            fromPlayer: false,
+            active: true,
             damage: 8,
+            isRedAcid: true, // Mark as red acid for rendering
           })
         }
         break

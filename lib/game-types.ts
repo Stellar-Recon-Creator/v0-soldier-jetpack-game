@@ -66,6 +66,7 @@ export interface Bullet {
   fromPlayer: boolean
   active: boolean
   damage: number
+  isRedAcid?: boolean
 }
 
 export interface Particle {
