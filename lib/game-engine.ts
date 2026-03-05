@@ -358,7 +358,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         if (distToPlayer < 150 && enemy.y < player.y) {
           enemy.vy += 200 * dt
         }
-        // Flyer shoots red acid
+        // Flyer shoots acid (same as spitter)
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 400) {
           enemy.shootCooldown = 2.0 // Shoots every 2 seconds
@@ -373,7 +373,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             fromPlayer: false,
             active: true,
             damage: 8,
-            isRedAcid: true, // Mark as red acid for rendering
           })
         }
         break
