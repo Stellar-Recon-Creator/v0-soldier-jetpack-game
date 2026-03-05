@@ -358,6 +358,22 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         if (distToPlayer < 150 && enemy.y < player.y) {
           enemy.vy += 200 * dt
         }
+        // Flyer shoots red acid
+        enemy.shootCooldown -= dt
+        if (enemy.shootCooldown <= 0 && distToPlayer < 400) {
+          enemy.shootCooldown = 2.0 // Shoots every 2 seconds
+          const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x)
+          enemyProjectiles.push({
+            x: enemy.x + enemy.width / 2,
+            y: enemy.y + enemy.height / 2,
+            vx: Math.cos(angle) * 180,
+            vy: Math.sin(angle) * 180,
+            width: 10,
+            height: 10,
+            color: '#ff3333', // Red acid
+            damage: 8,
+          })
+        }
         break
 
       case 'brute':
