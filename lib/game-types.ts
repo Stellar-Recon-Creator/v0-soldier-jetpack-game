@@ -25,6 +25,7 @@ export interface Player {
   invincibleTimer: number
   score: number
   aimAngle: number
+  bulletsFired: number
 }
 
 export interface Platform {

@@ -1931,10 +1931,11 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
     ctx.fill()
   }
 
-  // Score
+  // Score and Bullets
   ctx.fillStyle = COLORS.hud.text
   ctx.font = 'bold 14px Geist, sans-serif'
-  ctx.fillText(`SCORE: ${player.score}`, 20, 78)
+  ctx.fillText(`SCORE: ${player.score}`, 20, 72)
+  ctx.fillText(`BULLETS: ${player.bulletsFired}`, 120, 72)
 
   // Controls hint (top right)
   ctx.fillStyle = COLORS.hud.panelBg

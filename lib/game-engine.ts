@@ -171,6 +171,7 @@ export function createPlayer(): Player {
     invincibleTimer: 0,
     score: 0,
     aimAngle: 0,
+    bulletsFired: 0,
   }
 }
 
@@ -253,6 +254,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     player.shootCooldown = SHOOT_COOLDOWN
     player.shooting = true
     soundEvents.playerShoot = true
+    player.bulletsFired++
     const bulletAngle = player.aimAngle
     bullets.push({
       x: player.x + player.width / 2 + Math.cos(bulletAngle) * 20,
