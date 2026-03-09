@@ -173,6 +173,7 @@ export function createPlayer(): Player {
     aimAngle: 0,
     bulletsFired: 0,
     bulletsRemaining: 250,
+    bulletsMax: 250,
   }
 }
 

@@ -58,11 +58,16 @@ export default function GameCanvas() {
     if (!canvas) return
 
     const diffMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 1.3 : 1.65
+    const startingAmmo = diff === 'easy' ? 200 : diff === 'medium' ? 250 : 300
     const { platforms, enemies, levelLength } = generateLevel(lvl, diffMultiplier)
     const stars = generateStars(200, canvas.width, canvas.height)
 
+    const player = createPlayer()
+    player.bulletsRemaining = startingAmmo
+    player.bulletsMax = startingAmmo
+
     stateRef.current = {
-      player: createPlayer(),
+      player,
       platforms,
       enemies,
       bullets: [],

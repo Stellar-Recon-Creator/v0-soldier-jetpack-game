@@ -1937,9 +1937,9 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText(`SCORE: ${player.score}`, 20, 72)
 
   // Bullets remaining
-  ctx.fillStyle = player.bulletsRemaining > 50 ? COLORS.hud.text : player.bulletsRemaining > 0 ? '#ffaa00' : '#ff4444'
+  ctx.fillStyle = player.bulletsRemaining > player.bulletsMax * 0.2 ? COLORS.hud.text : player.bulletsRemaining > 0 ? '#ffaa00' : '#ff4444'
   ctx.font = 'bold 14px Geist, sans-serif'
-  ctx.fillText(`AMMO: ${player.bulletsRemaining}/250`, 20, 92)
+  ctx.fillText(`AMMO: ${player.bulletsRemaining}/${player.bulletsMax}`, 20, 92)
 
   // Controls hint (top right)
   ctx.fillStyle = COLORS.hud.panelBg

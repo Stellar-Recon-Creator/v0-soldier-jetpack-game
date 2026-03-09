@@ -27,6 +27,7 @@ export interface Player {
   aimAngle: number
   bulletsFired: number
   bulletsRemaining: number
+  bulletsMax: number
 }
 
 export interface Platform {
