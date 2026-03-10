@@ -1941,6 +1941,32 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`AMMO: ${player.bulletsRemaining}/${player.bulletsMax}`, 20, 92)
 
+  // LOW OXYGEN warning
+  if (player.lowOxygen) {
+    const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008)
+    ctx.save()
+    ctx.globalAlpha = 0.6 + 0.4 * pulse
+    // Full-screen red vignette
+    const vignette = ctx.createRadialGradient(canvasW / 2, canvasH / 2, canvasH * 0.3, canvasW / 2, canvasH / 2, canvasH * 0.85)
+    vignette.addColorStop(0, 'rgba(180,0,0,0)')
+    vignette.addColorStop(1, 'rgba(180,0,0,0.45)')
+    ctx.fillStyle = vignette
+    ctx.fillRect(0, 0, canvasW, canvasH)
+    ctx.restore()
+
+    // Warning text centered at top
+    ctx.save()
+    ctx.globalAlpha = 0.7 + 0.3 * pulse
+    ctx.font = `bold ${28 + Math.round(pulse * 4)}px Geist, sans-serif`
+    ctx.fillStyle = '#ff2222'
+    ctx.shadowColor = '#ff0000'
+    ctx.shadowBlur = 20
+    ctx.textAlign = 'center'
+    ctx.fillText('LOW OXYGEN', canvasW / 2, 60)
+    ctx.shadowBlur = 0
+    ctx.restore()
+  }
+
   // Controls hint (top right)
   ctx.fillStyle = COLORS.hud.panelBg
   roundRect(ctx, canvasW - 210, 10, 200, 80, 8)

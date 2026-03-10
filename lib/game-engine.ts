@@ -12,6 +12,7 @@ const SHOOT_COOLDOWN = 0.18
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
 export const GROUND_Y = 500
+export const MAX_ALTITUDE_Y = -100 // y below this triggers low oxygen
 
 // ─── Level Generation ───
 // difficultyMultiplier: 1.0 = easy (default), 1.3 = medium, 1.65 = hard
@@ -174,6 +175,7 @@ export function createPlayer(): Player {
     bulletsFired: 0,
     bulletsRemaining: 250,
     bulletsMax: 250,
+    lowOxygen: false,
   }
 }
 
@@ -274,6 +276,15 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   // Invincibility
   if (player.invincibleTimer > 0) {
     player.invincibleTimer -= dt
+  }
+
+  // ─ Max Altitude / Low Oxygen ─
+  if (player.y < MAX_ALTITUDE_Y) {
+    player.lowOxygen = true
+    player.health -= 8 * dt // drain ~8 HP per second
+    if (player.health < 0) player.health = 0
+  } else {
+    player.lowOxygen = false
   }
 
   // ─ Continuous Ground Collision ─

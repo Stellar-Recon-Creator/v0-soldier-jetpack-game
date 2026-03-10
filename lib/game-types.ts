@@ -28,6 +28,7 @@ export interface Player {
   bulletsFired: number
   bulletsRemaining: number
   bulletsMax: number
+  lowOxygen: boolean
 }
 
 export interface Platform {
