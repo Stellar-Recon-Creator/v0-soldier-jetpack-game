@@ -5,6 +5,8 @@ export interface Vector2 {
   y: number
 }
 
+export type WeaponType = 'rifle' | 'shotgun' | 'plasma' | 'smg' | 'sniper' | 'launcher'
+
 export interface Player {
   x: number
   y: number
@@ -29,6 +31,8 @@ export interface Player {
   bulletsRemaining: number
   bulletsMax: number
   lowOxygen: boolean
+  weapon: WeaponType
+  weapons: WeaponType[]
 }
 
 export interface Platform {
@@ -125,6 +129,7 @@ export interface Keys {
   jetpack: boolean
   mouseX: number
   mouseY: number
+  switchWeapon: WeaponType | null
 }
 
 export interface SoundEvents {

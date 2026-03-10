@@ -506,22 +506,33 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fill()
   ctx.shadowBlur = 0
 
-  // ─ LEGS (articulated with knees, forward/back swing) ─
+  // ─ LEGS (improved walking animation with hip rotation and foot lift) ─
   const isMoving = player.vx !== 0
-  const walkT = player.animFrame * 0.18
-  // Smooth sinusoidal swing for each leg
-  const leftPhase = isMoving && player.onGround ? Math.sin(walkT) : 0
-  const rightPhase = isMoving && player.onGround ? Math.sin(walkT + Math.PI) : 0
+  const walkT = player.animFrame * 0.22
+  const walking = isMoving && player.onGround
+  // More natural leg phases using sine with asymmetry (faster forward, slower back)
+  const leftRaw = walking ? Math.sin(walkT) : 0
+  const rightRaw = walking ? Math.sin(walkT + Math.PI) : 0
+  // Asymmetric: forward swing is faster/sharper, back swing is slower
+  const leftPhase = walking ? (leftRaw > 0 ? leftRaw : leftRaw * 0.7) : 0
+  const rightPhase = walking ? (rightRaw > 0 ? rightRaw : rightRaw * 0.7) : 0
   const legSpreadAir = player.onGround ? 0 : 3
+  // Body bob - slight vertical bounce when walking
+  const bodyBob = walking ? Math.abs(Math.sin(walkT * 2)) * 1.5 : 0
 
-  // Draw one leg
+  // Draw one leg with improved articulation
   const drawLeg = (phase: number, xOff: number) => {
-    const thighSwing = phase * 7 // forward/back displacement
-    const kneeAngle = Math.abs(phase) * 6 // knee bend
-    const thighX = xOff - legSpreadAir * Math.sign(xOff) + thighSwing
-    const thighY = hh - 15
+    // Hip drives the thigh forward/back
+    const hipSwing = phase * 9
+    // Knee bends more when leg is behind (negative phase) for a natural push-off
+    const kneeFlexion = phase < 0 ? Math.abs(phase) * 10 : Math.abs(phase) * 4
+    // Foot lifts off ground during swing phase (when moving forward)
+    const footLift = phase > 0.3 ? (phase - 0.3) * 8 : 0
 
-    // Thigh
+    const thighX = xOff - legSpreadAir * Math.sign(xOff) + hipSwing
+    const thighY = hh - 15 - bodyBob
+
+    // Thigh - slight rotation effect via offset
     ctx.fillStyle = COLORS.player.pants
     ctx.fillRect(thighX - 1, thighY, 7, 8)
     ctx.fillStyle = COLORS.player.pantsLight
@@ -533,28 +544,29 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.arc(thighX + 3, thighY + 8, 3, 0, Math.PI * 2)
     ctx.fill()
 
-    // Shin (offset by knee bend)
-    const shinX = thighX + kneeAngle * 0.3
-    const shinY = thighY + 7
+    // Shin - offset by knee bend, creating a more natural angle
+    const shinX = thighX - kneeFlexion * 0.2
+    const shinY = thighY + 7 - footLift
     ctx.fillStyle = COLORS.player.pants
     ctx.fillRect(shinX - 1, shinY, 7, 7)
     ctx.fillStyle = COLORS.player.pantsDark
     ctx.fillRect(shinX + 4, shinY + 1, 1, 5)
 
-    // Boot
+    // Boot - lifts with foot
+    const bootY = shinY + 6 - footLift * 0.3
     ctx.fillStyle = COLORS.player.boots
-    roundRect(ctx, shinX - 2, shinY + 6, 9, 5, 2)
+    roundRect(ctx, shinX - 2, bootY, 9, 5, 2)
     ctx.fill()
     // Boot highlight
     ctx.fillStyle = COLORS.player.bootsHighlight
-    ctx.fillRect(shinX, shinY + 7, 4, 1.5)
+    ctx.fillRect(shinX, bootY + 1, 4, 1.5)
     // Sole
     ctx.fillStyle = COLORS.player.bootsSole
-    ctx.fillRect(shinX - 2, shinY + 10, 9, 2)
+    ctx.fillRect(shinX - 2, bootY + 4, 9, 2)
     // Laces
     ctx.strokeStyle = COLORS.player.bootsLace
     ctx.lineWidth = 0.5
-    for (let ly = shinY + 7; ly < shinY + 10; ly += 2) {
+    for (let ly = bootY + 1; ly < bootY + 4; ly += 2) {
       ctx.beginPath()
       ctx.moveTo(shinX, ly)
       ctx.lineTo(shinX + 4, ly)
@@ -1890,11 +1902,11 @@ export function drawParticle(ctx: CanvasRenderingContext2D, particle: Particle, 
 export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: number, canvasH: number) {
   // Panel background
   ctx.fillStyle = COLORS.hud.panelBg
-  roundRect(ctx, 10, 10, 220, 110, 8)
+  roundRect(ctx, 10, 10, 220, 130, 8)
   ctx.fill()
   ctx.strokeStyle = COLORS.hud.panelBorder
   ctx.lineWidth = 1
-  roundRect(ctx, 10, 10, 220, 110, 8)
+  roundRect(ctx, 10, 10, 220, 130, 8)
   ctx.stroke()
 
   // Health
@@ -1941,6 +1953,17 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`AMMO: ${player.bulletsRemaining}/${player.bulletsMax}`, 20, 92)
 
+  // Current weapon
+  const weaponNames: Record<string, string> = { rifle: 'RIFLE', smg: 'SMG', shotgun: 'SHOTGUN', sniper: 'SNIPER', plasma: 'PLASMA', launcher: 'LAUNCHER' }
+  const weaponColors: Record<string, string> = { rifle: '#ffcc22', smg: '#44ddff', shotgun: '#ff8844', sniper: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222' }
+  ctx.fillStyle = weaponColors[player.weapon] || COLORS.hud.text
+  ctx.font = 'bold 14px Geist, sans-serif'
+  ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)
+  // Weapon slots hint
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'
+  ctx.font = '10px Geist, sans-serif'
+  ctx.fillText(player.weapons.map((w, i) => `[${i + 1}]${w === player.weapon ? '*' : ''}`).join(' '), 20, 128)
+
   // LOW OXYGEN warning
   if (player.lowOxygen) {
     const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008)
@@ -1969,10 +1992,10 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
 
   // Controls hint (top right)
   ctx.fillStyle = COLORS.hud.panelBg
-  roundRect(ctx, canvasW - 210, 10, 200, 80, 8)
+  roundRect(ctx, canvasW - 210, 10, 200, 96, 8)
   ctx.fill()
   ctx.strokeStyle = COLORS.hud.panelBorder
-  roundRect(ctx, canvasW - 210, 10, 200, 80, 8)
+  roundRect(ctx, canvasW - 210, 10, 200, 96, 8)
   ctx.stroke()
   ctx.fillStyle = 'rgba(255,255,255,0.8)'
   ctx.font = '11px Geist, sans-serif'
@@ -1981,6 +2004,7 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText('W or Space - Jump', canvasW - 20, 46)
   ctx.fillText('Shift - Jetpack', canvasW - 20, 62)
   ctx.fillText('Mouse Aim + Click - Shoot', canvasW - 20, 78)
+  ctx.fillText('1/2/3 - Switch Weapon', canvasW - 20, 94)
   ctx.textAlign = 'left'
 }
 

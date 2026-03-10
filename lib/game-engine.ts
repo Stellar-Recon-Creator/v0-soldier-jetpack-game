@@ -1,14 +1,24 @@
-import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star, Keys, EnemyType, SoundEvents } from './game-types'
+import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star, Keys, EnemyType, SoundEvents, WeaponType } from './game-types'
 
 // ─── Constants ───
 const GRAVITY = 1400
 const PLAYER_SPEED = 280
 const JUMP_FORCE = -520
-const JETPACK_FORCE = -1400
-const JETPACK_FUEL_RATE = 18
-const JETPACK_REGEN_RATE = 15
+const JETPACK_FORCE = -1000
+const JETPACK_FUEL_RATE = 30
+const JETPACK_REGEN_RATE = 8
 const BULLET_SPEED = 700
 const SHOOT_COOLDOWN = 0.18
+
+// Weapon configs
+const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number }> = {
+  rifle: { speed: 700, cooldown: 0.18, damage: 1, count: 1, spread: 0, radius: 4 },
+  smg: { speed: 650, cooldown: 0.08, damage: 1, count: 1, spread: 0.08, radius: 3 },
+  shotgun: { speed: 500, cooldown: 0.6, damage: 1, count: 5, spread: 0.15, radius: 3 },
+  sniper: { speed: 1200, cooldown: 1.2, damage: 8, count: 1, spread: 0, radius: 3 },
+  plasma: { speed: 400, cooldown: 0.8, damage: 4, count: 1, spread: 0, radius: 7 },
+  launcher: { speed: 350, cooldown: 1.5, damage: 10, count: 1, spread: 0, radius: 10 },
+}
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
 export const GROUND_Y = 500
@@ -176,6 +186,8 @@ export function createPlayer(): Player {
     bulletsRemaining: 250,
     bulletsMax: 250,
     lowOxygen: false,
+    weapon: 'rifle',
+    weapons: ['rifle'],
   }
 }
 
@@ -252,25 +264,35 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     player.animTimer = 0
   }
 
+  // Weapon switching
+  if (keys.switchWeapon && player.weapons.includes(keys.switchWeapon)) {
+    player.weapon = keys.switchWeapon
+    keys.switchWeapon = null
+  }
+
   // Shooting
+  const weaponCfg = WEAPON_CONFIGS[player.weapon]
   player.shootCooldown -= dt
   if (keys.shoot && player.shootCooldown <= 0 && player.bulletsRemaining > 0) {
-    player.shootCooldown = SHOOT_COOLDOWN
+    player.shootCooldown = weaponCfg.cooldown
     player.shooting = true
     soundEvents.playerShoot = true
     player.bulletsFired++
     player.bulletsRemaining--
     const bulletAngle = player.aimAngle
-    bullets.push({
-      x: player.x + player.width / 2 + Math.cos(bulletAngle) * 20,
-      y: player.y + 12 + Math.sin(bulletAngle) * 20,
-      vx: Math.cos(bulletAngle) * BULLET_SPEED,
-      vy: Math.sin(bulletAngle) * BULLET_SPEED,
-      radius: 4,
-      fromPlayer: true,
-      active: true,
-      damage: 1,
-    })
+    for (let i = 0; i < weaponCfg.count; i++) {
+      const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
+      bullets.push({
+        x: player.x + player.width / 2 + Math.cos(angle) * 20,
+        y: player.y + 12 + Math.sin(angle) * 20,
+        vx: Math.cos(angle) * weaponCfg.speed,
+        vy: Math.sin(angle) * weaponCfg.speed,
+        radius: weaponCfg.radius,
+        fromPlayer: true,
+        active: true,
+        damage: weaponCfg.damage,
+      })
+    }
   }
 
   // Invincibility
@@ -403,12 +425,12 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         break
 
       case 'boss':
-        if (distToPlayer < 600) {
+        if (distToPlayer < 1000) {
           enemy.vx = enemy.facing * 35
         }
         enemy.vy += GRAVITY * dt
         enemy.shootCooldown -= dt
-        if (enemy.shootCooldown <= 0 && distToPlayer < 600) {
+        if (enemy.shootCooldown <= 0 && distToPlayer < 1000) {
           enemy.shootCooldown = 0.8 + Math.random() * 0.5
           soundEvents.bossRoar = true
           for (let i = -1; i <= 1; i++) {

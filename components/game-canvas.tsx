@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import type { GameState, Keys } from '@/lib/game-types'
+import type { GameState, Keys, WeaponType } from '@/lib/game-types'
 import { generateLevel, generateStars, createPlayer, updateGame, GROUND_Y } from '@/lib/game-engine'
 import {
   initAudio,
@@ -43,6 +43,7 @@ export default function GameCanvas() {
     jetpack: false,
     mouseX: 0,
     mouseY: 0,
+    switchWeapon: null,
   })
   const lastTimeRef = useRef<number>(0)
   const animFrameRef = useRef<number>(0)
@@ -51,7 +52,32 @@ export default function GameCanvas() {
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
-  const [starCurrency, setStarCurrency] = useState(0)
+  const [starCurrency, setStarCurrency] = useState(100000)
+  const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['rifle'])
+  const [crateResult, setCrateResult] = useState<{ weapon: WeaponType; isDuplicate: boolean } | null>(null)
+
+  // Weapon loot tables per crate tier
+  const crateLootTables: Record<string, WeaponType[]> = {
+    pulsar: ['smg', 'shotgun'],
+    nova: ['shotgun', 'sniper', 'plasma'],
+    stellar: ['sniper', 'plasma', 'launcher'],
+  }
+
+  const crateColors: Record<string, string> = {
+    smg: '#44ddff', shotgun: '#ff8844', sniper: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222', rifle: '#ffcc22',
+  }
+
+  const openCrate = (tier: 'pulsar' | 'nova' | 'stellar', cost: number) => {
+    if (starCurrency < cost) return
+    setStarCurrency(prev => prev - cost)
+    const table = crateLootTables[tier]
+    const weapon = table[Math.floor(Math.random() * table.length)]
+    const isDuplicate = ownedWeapons.includes(weapon)
+    if (!isDuplicate) {
+      setOwnedWeapons(prev => [...prev, weapon])
+    }
+    setCrateResult({ weapon, isDuplicate })
+  }
 
   const initGame = useCallback((lvl: number, diff: 'easy' | 'medium' | 'hard' = 'easy') => {
     const canvas = canvasRef.current
@@ -65,6 +91,7 @@ export default function GameCanvas() {
     const player = createPlayer()
     player.bulletsRemaining = startingAmmo
     player.bulletsMax = startingAmmo
+    player.weapons = [...ownedWeapons]
 
     stateRef.current = {
       player,
@@ -86,7 +113,7 @@ export default function GameCanvas() {
 
     setScreen('playing')
     lastTimeRef.current = performance.now()
-  }, [])
+  }, [ownedWeapons])
 
   // ─── Game Loop ───
   const gameLoop = useCallback((timestamp: number) => {
@@ -223,6 +250,9 @@ export default function GameCanvas() {
           keys.jetpack = true
           break
         case 'KeyJ': keys.shoot = true; break
+        case 'Digit1': keys.switchWeapon = 'rifle'; break
+        case 'Digit2': keys.switchWeapon = 'shotgun'; break
+        case 'Digit3': keys.switchWeapon = 'plasma'; break
       }
     }
 
@@ -459,7 +489,7 @@ export default function GameCanvas() {
       {/* Shop Screen */}
       {screen === 'shop' && (
         <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
-          {/* Stars background - using seeded positions to avoid hydration mismatch */}
+          {/* Stars background */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {[...Array(60)].map((_, i) => {
               const seed = (i + 100) * 137.5
@@ -483,8 +513,14 @@ export default function GameCanvas() {
             })}
           </div>
 
+          {/* Star currency display - top right */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <span style={{ color: '#ffdd44', fontSize: '24px' }}>&#9733;</span>
+            <span className="text-xl font-bold font-sans" style={{ color: '#ffdd44' }}>{starCurrency}</span>
+          </div>
+
           {/* Header */}
-          <div className="pt-8 pb-4 flex justify-center z-10">
+          <div className="pt-8 pb-2 flex justify-center z-10">
             <h1
               className="text-5xl font-black tracking-wider font-sans uppercase"
               style={{
@@ -496,136 +532,108 @@ export default function GameCanvas() {
             </h1>
           </div>
 
+          {/* Owned weapons display */}
+          <div className="flex justify-center z-10 pb-2">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.4)' }}>
+              <span className="text-xs font-sans" style={{ color: 'rgba(255,255,255,0.6)' }}>OWNED:</span>
+              {ownedWeapons.map(w => (
+                <span key={w} className="text-xs font-bold font-sans px-2 py-1 rounded" style={{ color: crateColors[w], background: 'rgba(255,255,255,0.08)' }}>
+                  {w.toUpperCase()}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Crate result popup */}
+          {crateResult && (
+            <div className="absolute inset-0 z-30 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.75)' }}>
+              <div className="text-center space-y-6 p-8 rounded-2xl" style={{ background: 'rgba(20,20,40,0.95)', border: `2px solid ${crateColors[crateResult.weapon]}`, boxShadow: `0 0 40px ${crateColors[crateResult.weapon]}40, 0 0 80px ${crateColors[crateResult.weapon]}20` }}>
+                <h2
+                  className="text-4xl font-black font-sans uppercase"
+                  style={{ color: crateColors[crateResult.weapon], textShadow: `0 0 20px ${crateColors[crateResult.weapon]}80` }}
+                >
+                  {crateResult.isDuplicate ? 'DUPLICATE' : 'NEW WEAPON!'}
+                </h2>
+                <div className="text-6xl font-black font-sans uppercase" style={{ color: crateColors[crateResult.weapon], textShadow: `0 0 30px ${crateColors[crateResult.weapon]}` }}>
+                  {crateResult.weapon.toUpperCase()}
+                </div>
+                {crateResult.isDuplicate && (
+                  <p className="text-lg font-sans" style={{ color: 'rgba(255,255,255,0.6)' }}>You already own this weapon</p>
+                )}
+                <button
+                  onClick={() => setCrateResult(null)}
+                  className="px-10 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  style={{
+                    background: `linear-gradient(135deg, ${crateColors[crateResult.weapon]}88, ${crateColors[crateResult.weapon]})`,
+                    color: '#ffffff',
+                    boxShadow: `0 4px 20px ${crateColors[crateResult.weapon]}60`,
+                  }}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Crates */}
           <div className="flex-1 flex items-center justify-center gap-8 z-10 px-8">
             {/* Pulsar Crate - Green */}
-            <div className="flex flex-col items-center gap-4">
-              <div
-                className="w-44 h-44 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, #1a4a1a, #2a6a2a, #1a4a1a)',
-                  border: '4px solid #44aa44',
-                  boxShadow: '0 0 20px rgba(68,170,68,0.5), inset 0 0 30px rgba(68,170,68,0.3)',
-                }}
-              >
-                {/* Wooden crate graphic - Green tinted */}
-                <div className="w-28 h-28 relative" style={{ filter: 'drop-shadow(0 0 8px rgba(68,255,68,0.4))' }}>
-                  {/* Crate body */}
-                  <div className="absolute inset-0 rounded" style={{ background: 'linear-gradient(180deg, #3a5a2a 0%, #2a4a1a 100%)', border: '3px solid #1a3a0a' }}>
-                    {/* Horizontal planks */}
-                    <div className="absolute top-2 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #4a6a3a 0%, #3a5a2a 50%, #2a4a1a 100%)', borderBottom: '2px solid #1a3a0a' }} />
-                    <div className="absolute top-9 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #4a6a3a 0%, #3a5a2a 50%, #2a4a1a 100%)', borderBottom: '2px solid #1a3a0a' }} />
-                    <div className="absolute top-16 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #4a6a3a 0%, #3a5a2a 50%, #2a4a1a 100%)', borderBottom: '2px solid #1a3a0a' }} />
-                    {/* Vertical support beams */}
-                    <div className="absolute top-0 bottom-0 left-2 w-2" style={{ background: 'linear-gradient(90deg, #2a4a1a, #3a5a2a, #2a4a1a)', borderLeft: '1px solid #1a3a0a', borderRight: '1px solid #1a3a0a' }} />
-                    <div className="absolute top-0 bottom-0 right-2 w-2" style={{ background: 'linear-gradient(90deg, #2a4a1a, #3a5a2a, #2a4a1a)', borderLeft: '1px solid #1a3a0a', borderRight: '1px solid #1a3a0a' }} />
-                    {/* Corner nails */}
-                    <div className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#666' }} />
-                    <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#666' }} />
-                    <div className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#666' }} />
-                    <div className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#666' }} />
+            {([
+              { tier: 'pulsar' as const, cost: 100, color: '#44aa44', colorLight: '#44dd44', bgFrom: '#1a4a1a', bgMid: '#2a6a2a', plankLight: '#4a6a3a', plankMid: '#3a5a2a', plankDark: '#2a4a1a', border: '#1a3a0a', beamLight: '#3a5a2a', nailColor: '#666', filterGlow: 'rgba(68,255,68,0.4)', label: 'PULSAR', weapons: ['SMG', 'SHOTGUN'] },
+              { tier: 'nova' as const, cost: 300, color: '#dd8844', colorLight: '#ffaa44', bgFrom: '#4a2a0a', bgMid: '#6a3a1a', plankLight: '#7a5a3a', plankMid: '#6a4a2a', plankDark: '#5a3a1a', border: '#3a2a0a', beamLight: '#6a4a2a', nailColor: '#777', filterGlow: 'rgba(255,170,68,0.4)', label: 'NOVA', weapons: ['SHOTGUN', 'SNIPER', 'PLASMA'] },
+              { tier: 'stellar' as const, cost: 750, color: '#aa66dd', colorLight: '#bb88ff', bgFrom: '#2a1a4a', bgMid: '#3a2a6a', plankLight: '#5a4a6a', plankMid: '#4a3a5a', plankDark: '#3a2a4a', border: '#2a1a3a', beamLight: '#4a3a5a', nailColor: '#888', filterGlow: 'rgba(170,102,255,0.4)', label: 'STELLAR', weapons: ['SNIPER', 'PLASMA', 'LAUNCHER'] },
+            ]).map(crate => {
+              const canAfford = starCurrency >= crate.cost
+              return (
+                <div key={crate.tier} className="flex flex-col items-center gap-3">
+                  <div
+                    onClick={() => canAfford && openCrate(crate.tier, crate.cost)}
+                    className="w-44 h-44 rounded-lg flex items-center justify-center transition-all active:scale-95"
+                    style={{
+                      background: `linear-gradient(135deg, ${crate.bgFrom}, ${crate.bgMid}, ${crate.bgFrom})`,
+                      border: `4px solid ${canAfford ? crate.color : '#555'}`,
+                      boxShadow: canAfford ? `0 0 20px ${crate.color}80, inset 0 0 30px ${crate.color}4d` : 'none',
+                      cursor: canAfford ? 'pointer' : 'not-allowed',
+                      opacity: canAfford ? 1 : 0.5,
+                      transform: canAfford ? undefined : 'none',
+                    }}
+                  >
+                    <div className="w-28 h-28 relative" style={{ filter: canAfford ? `drop-shadow(0 0 8px ${crate.filterGlow})` : 'none' }}>
+                      <div className="absolute inset-0 rounded" style={{ background: `linear-gradient(180deg, ${crate.plankMid} 0%, ${crate.plankDark} 100%)`, border: `3px solid ${crate.border}` }}>
+                        <div className="absolute top-2 left-0 right-0 h-5" style={{ background: `linear-gradient(180deg, ${crate.plankLight} 0%, ${crate.plankMid} 50%, ${crate.plankDark} 100%)`, borderBottom: `2px solid ${crate.border}` }} />
+                        <div className="absolute top-9 left-0 right-0 h-5" style={{ background: `linear-gradient(180deg, ${crate.plankLight} 0%, ${crate.plankMid} 50%, ${crate.plankDark} 100%)`, borderBottom: `2px solid ${crate.border}` }} />
+                        <div className="absolute top-16 left-0 right-0 h-5" style={{ background: `linear-gradient(180deg, ${crate.plankLight} 0%, ${crate.plankMid} 50%, ${crate.plankDark} 100%)`, borderBottom: `2px solid ${crate.border}` }} />
+                        <div className="absolute top-0 bottom-0 left-2 w-2" style={{ background: `linear-gradient(90deg, ${crate.plankDark}, ${crate.beamLight}, ${crate.plankDark})`, borderLeft: `1px solid ${crate.border}`, borderRight: `1px solid ${crate.border}` }} />
+                        <div className="absolute top-0 bottom-0 right-2 w-2" style={{ background: `linear-gradient(90deg, ${crate.plankDark}, ${crate.beamLight}, ${crate.plankDark})`, borderLeft: `1px solid ${crate.border}`, borderRight: `1px solid ${crate.border}` }} />
+                        <div className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: crate.nailColor }} />
+                        <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: crate.nailColor }} />
+                        <div className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: crate.nailColor }} />
+                        <div className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: crate.nailColor }} />
+                      </div>
+                    </div>
+                  </div>
+                  <span
+                    className="text-xl font-bold font-sans"
+                    style={{ color: crate.colorLight, textShadow: `0 0 10px ${crate.colorLight}80` }}
+                  >
+                    {crate.label}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <span style={{ color: canAfford ? '#ffdd44' : '#888', fontSize: '18px' }}>&#9733;</span>
+                    <span className="text-lg font-bold font-sans" style={{ color: canAfford ? '#ffdd44' : '#888' }}>{crate.cost}</span>
+                  </div>
+                  <div className="text-xs font-sans text-center" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    {crate.weapons.join(' / ')}
                   </div>
                 </div>
-              </div>
-              <span
-                className="text-xl font-bold font-sans"
-                style={{ color: '#44dd44', textShadow: '0 0 10px rgba(68,221,68,0.5)' }}
-              >
-                PULSAR
-              </span>
-              <div className="flex items-center gap-1">
-                <span style={{ color: '#ffdd44', fontSize: '18px' }}>&#9733;</span>
-                <span className="text-lg font-bold font-sans" style={{ color: '#ffdd44' }}>100</span>
-              </div>
-            </div>
-
-            {/* Nova Crate - Orange */}
-            <div className="flex flex-col items-center gap-4">
-              <div
-                className="w-44 h-44 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, #4a2a0a, #6a3a1a, #4a2a0a)',
-                  border: '4px solid #dd8844',
-                  boxShadow: '0 0 20px rgba(221,136,68,0.5), inset 0 0 30px rgba(221,136,68,0.3)',
-                }}
-              >
-                {/* Wooden crate graphic - Orange tinted */}
-                <div className="w-28 h-28 relative" style={{ filter: 'drop-shadow(0 0 8px rgba(255,170,68,0.4))' }}>
-                  {/* Crate body */}
-                  <div className="absolute inset-0 rounded" style={{ background: 'linear-gradient(180deg, #6a4a2a 0%, #5a3a1a 100%)', border: '3px solid #3a2a0a' }}>
-                    {/* Horizontal planks */}
-                    <div className="absolute top-2 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #7a5a3a 0%, #6a4a2a 50%, #5a3a1a 100%)', borderBottom: '2px solid #3a2a0a' }} />
-                    <div className="absolute top-9 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #7a5a3a 0%, #6a4a2a 50%, #5a3a1a 100%)', borderBottom: '2px solid #3a2a0a' }} />
-                    <div className="absolute top-16 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #7a5a3a 0%, #6a4a2a 50%, #5a3a1a 100%)', borderBottom: '2px solid #3a2a0a' }} />
-                    {/* Vertical support beams */}
-                    <div className="absolute top-0 bottom-0 left-2 w-2" style={{ background: 'linear-gradient(90deg, #5a3a1a, #6a4a2a, #5a3a1a)', borderLeft: '1px solid #3a2a0a', borderRight: '1px solid #3a2a0a' }} />
-                    <div className="absolute top-0 bottom-0 right-2 w-2" style={{ background: 'linear-gradient(90deg, #5a3a1a, #6a4a2a, #5a3a1a)', borderLeft: '1px solid #3a2a0a', borderRight: '1px solid #3a2a0a' }} />
-                    {/* Corner nails */}
-                    <div className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#777' }} />
-                    <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#777' }} />
-                    <div className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#777' }} />
-                    <div className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#777' }} />
-                  </div>
-                </div>
-              </div>
-              <span
-                className="text-xl font-bold font-sans"
-                style={{ color: '#ffaa44', textShadow: '0 0 10px rgba(255,170,68,0.5)' }}
-              >
-                NOVA
-              </span>
-              <div className="flex items-center gap-1">
-                <span style={{ color: '#ffdd44', fontSize: '18px' }}>&#9733;</span>
-                <span className="text-lg font-bold font-sans" style={{ color: '#ffdd44' }}>300</span>
-              </div>
-            </div>
-
-            {/* Stellar Crate - Purple */}
-            <div className="flex flex-col items-center gap-4">
-              <div
-                className="w-44 h-44 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, #2a1a4a, #3a2a6a, #2a1a4a)',
-                  border: '4px solid #aa66dd',
-                  boxShadow: '0 0 20px rgba(170,102,221,0.5), inset 0 0 30px rgba(170,102,221,0.3)',
-                }}
-              >
-                {/* Wooden crate graphic - Purple tinted */}
-                <div className="w-28 h-28 relative" style={{ filter: 'drop-shadow(0 0 8px rgba(170,102,255,0.4))' }}>
-                  {/* Crate body */}
-                  <div className="absolute inset-0 rounded" style={{ background: 'linear-gradient(180deg, #4a3a5a 0%, #3a2a4a 100%)', border: '3px solid #2a1a3a' }}>
-                    {/* Horizontal planks */}
-                    <div className="absolute top-2 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #5a4a6a 0%, #4a3a5a 50%, #3a2a4a 100%)', borderBottom: '2px solid #2a1a3a' }} />
-                    <div className="absolute top-9 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #5a4a6a 0%, #4a3a5a 50%, #3a2a4a 100%)', borderBottom: '2px solid #2a1a3a' }} />
-                    <div className="absolute top-16 left-0 right-0 h-5" style={{ background: 'linear-gradient(180deg, #5a4a6a 0%, #4a3a5a 50%, #3a2a4a 100%)', borderBottom: '2px solid #2a1a3a' }} />
-                    {/* Vertical support beams */}
-                    <div className="absolute top-0 bottom-0 left-2 w-2" style={{ background: 'linear-gradient(90deg, #3a2a4a, #4a3a5a, #3a2a4a)', borderLeft: '1px solid #2a1a3a', borderRight: '1px solid #2a1a3a' }} />
-                    <div className="absolute top-0 bottom-0 right-2 w-2" style={{ background: 'linear-gradient(90deg, #3a2a4a, #4a3a5a, #3a2a4a)', borderLeft: '1px solid #2a1a3a', borderRight: '1px solid #2a1a3a' }} />
-                    {/* Corner nails */}
-                    <div className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#888' }} />
-                    <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#888' }} />
-                    <div className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full" style={{ background: '#888' }} />
-                    <div className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full" style={{ background: '#888' }} />
-                  </div>
-                </div>
-              </div>
-              <span
-                className="text-xl font-bold font-sans"
-                style={{ color: '#bb88ff', textShadow: '0 0 10px rgba(187,136,255,0.5)' }}
-              >
-                STELLAR
-              </span>
-              <div className="flex items-center gap-1">
-                <span style={{ color: '#ffdd44', fontSize: '18px' }}>&#9733;</span>
-                <span className="text-lg font-bold font-sans" style={{ color: '#ffdd44' }}>750</span>
-              </div>
-            </div>
+              )
+            })}
           </div>
 
           {/* Back button */}
           <div className="pb-8 flex justify-center z-10">
             <button
-              onClick={() => setScreen('home')}
+              onClick={() => { setCrateResult(null); setScreen('home') }}
               className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
                 background: 'linear-gradient(135deg, #444, #666)',
@@ -639,70 +647,114 @@ export default function GameCanvas() {
         </div>
       )}
 
-      {/* Title Screen */}
+      {/* Title Screen / Difficulty Selection */}
       {screen === 'title' && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center space-y-6">
-            <div className="relative">
-              <h1
-                className="text-6xl font-bold tracking-tighter font-sans"
-                style={{ color: '#2a5a2a', textShadow: '0 0 20px rgba(68,180,68,0.4), 0 2px 4px rgba(0,0,0,0.5)' }}
-              >
-                STELLAR RECON
-              </h1>
-              <p
-                className="text-lg font-sans mt-2 font-semibold"
-                style={{ color: '#4a7a4a' }}
-              >
-                Jetpack Assault
-              </p>
-            </div>
+        <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
+          {/* Stars background */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(60)].map((_, i) => {
+              const seed = (i + 200) * 137.5
+              const size = (i % 5 === 0) ? '3px' : (i % 3 === 0) ? '2px' : '1px'
+              const left = ((seed * 7) % 100)
+              const top = ((seed * 3) % 80)
+              const opacity = 0.3 + ((seed * 11) % 50) / 100
+              return (
+                <div
+                  key={i}
+                  className="absolute rounded-full bg-white"
+                  style={{
+                    width: size,
+                    height: size,
+                    left: `${left}%`,
+                    top: `${top}%`,
+                    opacity,
+                  }}
+                />
+              )
+            })}
+          </div>
 
-            <div className="space-y-4">
-              <p className="text-sm font-sans" style={{ color: 'rgba(255,255,255,0.7)' }}>Select Difficulty</p>
-              <div className="flex gap-4 justify-center">
-                <button
-                  onClick={() => { initAudio(); setLevel(1); setDifficulty('easy'); initGame(1, 'easy') }}
-                  className="px-6 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+          <div className="flex-1 flex items-center justify-center z-10">
+            <div className="text-center space-y-8">
+              <div className="relative">
+                <h1
+                  className="text-7xl font-black tracking-wider font-sans uppercase"
                   style={{
-                    background: 'linear-gradient(135deg, #22aa44, #44dd66)',
-                    color: '#0a1a0a',
-                    boxShadow: '0 0 20px rgba(68,221,100,0.4)',
+                    color: '#8a2be2',
+                    textShadow: '0 0 10px rgba(138,43,226,0.8), 0 0 20px rgba(138,43,226,0.6), 0 0 30px rgba(100,20,180,0.5), 0 4px 8px rgba(0,0,0,0.6)',
+                    letterSpacing: '0.1em',
+                    WebkitTextStroke: '2px #5a1a9a',
                   }}
                 >
-                  EASY
-                </button>
-                <button
-                  onClick={() => { initAudio(); setLevel(1); setDifficulty('medium'); initGame(1, 'medium') }}
-                  className="px-6 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                  style={{
-                    background: 'linear-gradient(135deg, #cc8822, #ffaa44)',
-                    color: '#1a1a0a',
-                    boxShadow: '0 0 20px rgba(255,170,68,0.4)',
-                  }}
+                  STELLAR RECON
+                </h1>
+                <p
+                  className="text-xl font-sans mt-3 font-semibold"
+                  style={{ color: '#9a6acc', textShadow: '0 0 10px rgba(154,106,204,0.5)' }}
                 >
-                  MEDIUM
-                </button>
-                <button
-                  onClick={() => { initAudio(); setLevel(1); setDifficulty('hard'); initGame(1, 'hard') }}
-                  className="px-6 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                  style={{
-                    background: 'linear-gradient(135deg, #aa2222, #dd4444)',
-                    color: '#ffffff',
-                    boxShadow: '0 0 20px rgba(221,68,68,0.4)',
-                  }}
-                >
-                  HARD
-                </button>
+                  Jetpack Assault
+                </p>
               </div>
-            </div>
 
-            <div
-              className="text-sm font-sans space-y-1 mt-8 p-4 rounded-lg"
-              style={{ background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.85)' }}
-            >
-              <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
-              <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> {'Shoot  |  '}Defeat the boss to win</p>
+              <div className="space-y-5">
+                <p className="text-lg font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Difficulty</p>
+                <div className="flex gap-6 justify-center">
+                  <button
+                    onClick={() => { initAudio(); setLevel(1); setDifficulty('easy'); initGame(1, 'easy') }}
+                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    style={{
+                      background: 'linear-gradient(135deg, #22aa44, #44dd66)',
+                      color: '#0a1a0a',
+                      boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
+                    }}
+                  >
+                    EASY
+                  </button>
+                  <button
+                    onClick={() => { initAudio(); setLevel(1); setDifficulty('medium'); initGame(1, 'medium') }}
+                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    style={{
+                      background: 'linear-gradient(135deg, #cc8822, #ffaa44)',
+                      color: '#1a1a0a',
+                      boxShadow: '0 4px 20px rgba(255,170,68,0.5), 0 0 40px rgba(255,170,68,0.3)',
+                    }}
+                  >
+                    MEDIUM
+                  </button>
+                  <button
+                    onClick={() => { initAudio(); setLevel(1); setDifficulty('hard'); initGame(1, 'hard') }}
+                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    style={{
+                      background: 'linear-gradient(135deg, #aa2222, #dd4444)',
+                      color: '#ffffff',
+                      boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
+                    }}
+                  >
+                    HARD
+                  </button>
+                </div>
+              </div>
+
+              <div
+                className="text-sm font-sans space-y-2 mt-8 p-5 rounded-xl"
+                style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
+                <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> {'Shoot  |  '}<span style={{ color: '#66cc66' }}>1/2/3</span> Switch Weapon</p>
+                <p style={{ color: 'rgba(255,255,255,0.6)' }}>Shoot crates for ammo, health, and new weapons!</p>
+              </div>
+
+              <button
+                onClick={() => setScreen('home')}
+                className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                }}
+              >
+                BACK
+              </button>
             </div>
           </div>
         </div>
