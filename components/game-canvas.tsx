@@ -721,17 +721,30 @@ export default function GameCanvas() {
             <p className="text-2xl font-sans" style={{ color: '#ffffff' }}>
               Score: {score}
             </p>
-            <button
-              onClick={() => { initAudio(); initGame(level, difficulty) }}
-              className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              style={{
-                background: 'linear-gradient(135deg, #cc2233, #ff4455)',
-                color: '#ffffff',
-                boxShadow: '0 0 20px rgba(255,68,68,0.4)',
-              }}
-            >
-              RETRY
-            </button>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => { initAudio(); initGame(level, difficulty) }}
+                className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #cc2233, #ff4455)',
+                  color: '#ffffff',
+                  boxShadow: '0 0 20px rgba(255,68,68,0.4)',
+                }}
+              >
+                RETRY
+              </button>
+              <button
+                onClick={() => { setScreen('home'); stateRef.current = null }}
+                className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                }}
+              >
+                HOME
+              </button>
+            </div>
           </div>
         </div>
       )}
