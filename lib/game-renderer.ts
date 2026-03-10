@@ -1890,11 +1890,11 @@ export function drawParticle(ctx: CanvasRenderingContext2D, particle: Particle, 
 export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: number, canvasH: number) {
   // Panel background
   ctx.fillStyle = COLORS.hud.panelBg
-  roundRect(ctx, 10, 10, 220, 80, 8)
+  roundRect(ctx, 10, 10, 220, 110, 8)
   ctx.fill()
   ctx.strokeStyle = COLORS.hud.panelBorder
   ctx.lineWidth = 1
-  roundRect(ctx, 10, 10, 220, 80, 8)
+  roundRect(ctx, 10, 10, 220, 110, 8)
   ctx.stroke()
 
   // Health
