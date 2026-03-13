@@ -671,89 +671,303 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = COLORS.player.glove
   ctx.fillRect(10, -2, 7 + recoil, 5)
 
-  // Gun - detailed assault rifle
+  // Gun - varies by weapon type
   const gunX = 15 + recoil
   const gunY = -3.5
-  // Gun body / receiver
-  ctx.fillStyle = COLORS.player.gunDark
-  roundRect(ctx, gunX, gunY, 18, 7, 1)
-  ctx.fill()
-  // Grip
-  ctx.fillStyle = '#2a2a2a'
-  ctx.fillRect(gunX + 7, gunY + 6, 4, 5)
-  // Trigger guard
-  ctx.strokeStyle = '#444'
-  ctx.lineWidth = 0.8
-  ctx.beginPath()
-  ctx.moveTo(gunX + 7, gunY + 6)
-  ctx.quadraticCurveTo(gunX + 9, gunY + 10, gunX + 11, gunY + 6)
-  ctx.stroke()
-  // Barrel
-  ctx.fillStyle = COLORS.player.gunBarrel
-  ctx.fillRect(gunX + 16, gunY + 1.5, 9, 3)
-  // Barrel tip / flash suppressor
-  ctx.fillStyle = '#444'
-  roundRect(ctx, gunX + 24, gunY + 0.5, 4, 5, 1)
-  ctx.fill()
-  // Magazine
-  ctx.fillStyle = '#2a2a2a'
-  ctx.fillRect(gunX + 3, gunY + 6, 4, 7)
-  ctx.fillStyle = '#222'
-  ctx.fillRect(gunX + 3, gunY + 11, 4, 2) // mag base
-  // Scope
-  ctx.fillStyle = '#505050'
-  roundRect(ctx, gunX + 6, gunY - 4, 10, 3.5, 1.5)
-  ctx.fill()
-  // Scope lens
-  ctx.fillStyle = '#4488cc'
-  ctx.globalAlpha = 0.7
-  ctx.beginPath()
-  ctx.arc(gunX + 15, gunY - 2.2, 1.8, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.globalAlpha = 1
-  // Scope lens glint
-  ctx.fillStyle = '#aaddff'
-  ctx.beginPath()
-  ctx.arc(gunX + 14.5, gunY - 2.8, 0.6, 0, Math.PI * 2)
-  ctx.fill()
-  // Rail on top
-  ctx.fillStyle = '#4a4a4a'
-  ctx.fillRect(gunX + 2, gunY - 0.5, 14, 1)
-  // Gun highlight
-  ctx.fillStyle = COLORS.player.gunLight
-  ctx.fillRect(gunX + 2, gunY + 1.5, 12, 0.8)
-  // Stock
-  ctx.fillStyle = '#4a3a28'
-  roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
-  ctx.fill()
-  ctx.fillStyle = '#5a4a38'
-  ctx.fillRect(gunX - 5, gunY + 1.5, 6, 2)
-  // Forward grip
-  ctx.fillStyle = '#3a3a3a'
-  ctx.fillRect(gunX + 13, gunY + 6, 3, 4)
+  const weapon = player.weapon
 
-  // Muzzle flash
+  // Draw weapon based on type
+  if (weapon === 'smg') {
+    // SMG - small tommy gun style, no scope
+    // Receiver (compact)
+    ctx.fillStyle = COLORS.player.gunDark
+    roundRect(ctx, gunX, gunY, 14, 6, 1)
+    ctx.fill()
+    // Grip
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 5, gunY + 5, 4, 5)
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 5, gunY + 5)
+    ctx.quadraticCurveTo(gunX + 7, gunY + 9, gunX + 9, gunY + 5)
+    ctx.stroke()
+    // Short barrel
+    ctx.fillStyle = COLORS.player.gunBarrel
+    ctx.fillRect(gunX + 12, gunY + 1.5, 6, 2.5)
+    // Barrel tip
+    ctx.fillStyle = '#444'
+    roundRect(ctx, gunX + 17, gunY + 0.5, 3, 4.5, 1)
+    ctx.fill()
+    // Drum magazine (tommy gun style)
+    ctx.fillStyle = '#2a2a2a'
+    ctx.beginPath()
+    ctx.arc(gunX + 7, gunY + 11, 5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#222'
+    ctx.beginPath()
+    ctx.arc(gunX + 7, gunY + 11, 3, 0, Math.PI * 2)
+    ctx.fill()
+    // Gun highlight
+    ctx.fillStyle = COLORS.player.gunLight
+    ctx.fillRect(gunX + 2, gunY + 1.5, 10, 0.8)
+    // Small stock
+    ctx.fillStyle = '#4a3a28'
+    roundRect(ctx, gunX - 5, gunY + 1, 7, 4, 2)
+    ctx.fill()
+  } else if (weapon === 'sniper') {
+    // Sniper - long barrel with scope
+    // Receiver
+    ctx.fillStyle = COLORS.player.gunDark
+    roundRect(ctx, gunX, gunY, 20, 6, 1)
+    ctx.fill()
+    // Grip
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 8, gunY + 5, 4, 5)
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 8, gunY + 5)
+    ctx.quadraticCurveTo(gunX + 10, gunY + 9, gunX + 12, gunY + 5)
+    ctx.stroke()
+    // Long barrel
+    ctx.fillStyle = COLORS.player.gunBarrel
+    ctx.fillRect(gunX + 18, gunY + 1.5, 16, 2.5)
+    // Barrel tip
+    ctx.fillStyle = '#444'
+    roundRect(ctx, gunX + 33, gunY + 0.5, 4, 4.5, 1)
+    ctx.fill()
+    // Magazine
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 3, gunY + 5, 4, 6)
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX + 3, gunY + 10, 4, 2)
+    // Large scope
+    ctx.fillStyle = '#505050'
+    roundRect(ctx, gunX + 5, gunY - 6, 14, 5, 2)
+    ctx.fill()
+    // Scope lens front
+    ctx.fillStyle = '#4488cc'
+    ctx.globalAlpha = 0.7
+    ctx.beginPath()
+    ctx.arc(gunX + 18, gunY - 3.5, 2.2, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Scope lens glint
+    ctx.fillStyle = '#aaddff'
+    ctx.beginPath()
+    ctx.arc(gunX + 17.5, gunY - 4, 0.7, 0, Math.PI * 2)
+    ctx.fill()
+    // Rail
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 2, gunY - 0.5, 16, 1)
+    // Gun highlight
+    ctx.fillStyle = COLORS.player.gunLight
+    ctx.fillRect(gunX + 2, gunY + 1.5, 14, 0.8)
+    // Stock
+    ctx.fillStyle = '#4a3a28'
+    roundRect(ctx, gunX - 9, gunY + 0.5, 11, 5, 2)
+    ctx.fill()
+    ctx.fillStyle = '#5a4a38'
+    ctx.fillRect(gunX - 7, gunY + 1.5, 7, 2)
+  } else if (weapon === 'launcher') {
+    // Launcher - wide big barrel, no scope
+    // Receiver (wide)
+    ctx.fillStyle = COLORS.player.gunDark
+    roundRect(ctx, gunX, gunY - 2, 16, 10, 2)
+    ctx.fill()
+    // Grip
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 6, gunY + 7, 5, 6)
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 6, gunY + 7)
+    ctx.quadraticCurveTo(gunX + 8.5, gunY + 12, gunX + 11, gunY + 7)
+    ctx.stroke()
+    // Big wide barrel
+    ctx.fillStyle = '#555'
+    roundRect(ctx, gunX + 14, gunY - 3, 14, 12, 3)
+    ctx.fill()
+    // Barrel hole
+    ctx.fillStyle = '#222'
+    ctx.beginPath()
+    ctx.arc(gunX + 27, gunY + 3, 4, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#111'
+    ctx.beginPath()
+    ctx.arc(gunX + 27, gunY + 3, 3, 0, Math.PI * 2)
+    ctx.fill()
+    // Gun highlight
+    ctx.fillStyle = COLORS.player.gunLight
+    ctx.fillRect(gunX + 2, gunY, 12, 0.8)
+    // Stock
+    ctx.fillStyle = '#4a3a28'
+    roundRect(ctx, gunX - 7, gunY + 1, 9, 5, 2)
+    ctx.fill()
+  } else if (weapon === 'shotgun') {
+    // Shotgun - smaller/shorter barrel, no scope
+    // Receiver
+    ctx.fillStyle = COLORS.player.gunDark
+    roundRect(ctx, gunX, gunY, 15, 6, 1)
+    ctx.fill()
+    // Grip
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 6, gunY + 5, 4, 5)
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 6, gunY + 5)
+    ctx.quadraticCurveTo(gunX + 8, gunY + 9, gunX + 10, gunY + 5)
+    ctx.stroke()
+    // Shorter, thicker barrel
+    ctx.fillStyle = COLORS.player.gunBarrel
+    ctx.fillRect(gunX + 13, gunY + 0.5, 8, 4)
+    // Barrel tip
+    ctx.fillStyle = '#444'
+    roundRect(ctx, gunX + 20, gunY - 0.5, 4, 6, 1)
+    ctx.fill()
+    // Pump grip
+    ctx.fillStyle = '#4a3a28'
+    roundRect(ctx, gunX + 10, gunY + 5, 6, 3, 1)
+    ctx.fill()
+    // Gun highlight
+    ctx.fillStyle = COLORS.player.gunLight
+    ctx.fillRect(gunX + 2, gunY + 1.5, 11, 0.8)
+    // Stock
+    ctx.fillStyle = '#4a3a28'
+    roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
+    ctx.fill()
+    ctx.fillStyle = '#5a4a38'
+    ctx.fillRect(gunX - 5, gunY + 1.5, 6, 2)
+  } else if (weapon === 'plasma') {
+    // Plasma - slightly longer and wider barrel
+    // Receiver (wider)
+    ctx.fillStyle = COLORS.player.gunDark
+    roundRect(ctx, gunX, gunY - 1, 18, 8, 1)
+    ctx.fill()
+    // Grip
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 7, gunY + 6, 4, 5)
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 7, gunY + 6)
+    ctx.quadraticCurveTo(gunX + 9, gunY + 10, gunX + 11, gunY + 6)
+    ctx.stroke()
+    // Wider longer barrel
+    ctx.fillStyle = '#6644aa'
+    roundRect(ctx, gunX + 16, gunY - 1, 12, 6, 2)
+    ctx.fill()
+    // Barrel glow ring
+    ctx.fillStyle = '#aa66ff'
+    ctx.globalAlpha = 0.8
+    roundRect(ctx, gunX + 26, gunY - 0.5, 3, 5, 1)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Energy cell
+    ctx.fillStyle = '#aa66ff'
+    ctx.globalAlpha = 0.6
+    ctx.fillRect(gunX + 3, gunY + 6, 4, 6)
+    ctx.globalAlpha = 1
+    ctx.fillStyle = '#cc88ff'
+    ctx.fillRect(gunX + 4, gunY + 7, 2, 4)
+    // Gun highlight
+    ctx.fillStyle = COLORS.player.gunLight
+    ctx.fillRect(gunX + 2, gunY + 1, 12, 0.8)
+    // Stock
+    ctx.fillStyle = '#3a3a4a'
+    roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
+    ctx.fill()
+  } else {
+    // Rifle (default) - assault rifle with scope
+    // Gun body / receiver
+    ctx.fillStyle = COLORS.player.gunDark
+    roundRect(ctx, gunX, gunY, 18, 7, 1)
+    ctx.fill()
+    // Grip
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 7, gunY + 6, 4, 5)
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 7, gunY + 6)
+    ctx.quadraticCurveTo(gunX + 9, gunY + 10, gunX + 11, gunY + 6)
+    ctx.stroke()
+    // Barrel
+    ctx.fillStyle = COLORS.player.gunBarrel
+    ctx.fillRect(gunX + 16, gunY + 1.5, 9, 3)
+    // Barrel tip / flash suppressor
+    ctx.fillStyle = '#444'
+    roundRect(ctx, gunX + 24, gunY + 0.5, 4, 5, 1)
+    ctx.fill()
+    // Magazine
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 3, gunY + 6, 4, 7)
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX + 3, gunY + 11, 4, 2)
+    // Scope
+    ctx.fillStyle = '#505050'
+    roundRect(ctx, gunX + 6, gunY - 4, 10, 3.5, 1.5)
+    ctx.fill()
+    // Scope lens
+    ctx.fillStyle = '#4488cc'
+    ctx.globalAlpha = 0.7
+    ctx.beginPath()
+    ctx.arc(gunX + 15, gunY - 2.2, 1.8, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Scope lens glint
+    ctx.fillStyle = '#aaddff'
+    ctx.beginPath()
+    ctx.arc(gunX + 14.5, gunY - 2.8, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    // Rail on top
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 2, gunY - 0.5, 14, 1)
+    // Gun highlight
+    ctx.fillStyle = COLORS.player.gunLight
+    ctx.fillRect(gunX + 2, gunY + 1.5, 12, 0.8)
+    // Stock
+    ctx.fillStyle = '#4a3a28'
+    roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
+    ctx.fill()
+    ctx.fillStyle = '#5a4a38'
+    ctx.fillRect(gunX - 5, gunY + 1.5, 6, 2)
+    // Forward grip
+    ctx.fillStyle = '#3a3a3a'
+    ctx.fillRect(gunX + 13, gunY + 6, 3, 4)
+  }
+
+  // Muzzle flash (adjusted position based on weapon)
+  const muzzleX = weapon === 'sniper' ? gunX + 38 : weapon === 'launcher' ? gunX + 30 : weapon === 'smg' ? gunX + 22 : weapon === 'shotgun' ? gunX + 26 : weapon === 'plasma' ? gunX + 32 : gunX + 30
   if (player.shootCooldown > 0.12) {
     ctx.globalAlpha = 0.9
-    const flashGrad = ctx.createRadialGradient(gunX + 30, gunY + 2, 0, gunX + 30, gunY + 2, 12)
+    const flashGrad = ctx.createRadialGradient(muzzleX, gunY + 2, 0, muzzleX, gunY + 2, 12)
     flashGrad.addColorStop(0, '#ffffff')
-    flashGrad.addColorStop(0.2, '#ffffaa')
-    flashGrad.addColorStop(0.4, '#ffaa00')
-    flashGrad.addColorStop(0.7, '#ff6600')
-    flashGrad.addColorStop(1, 'rgba(255,100,0,0)')
+    flashGrad.addColorStop(0.2, weapon === 'plasma' ? '#ddaaff' : '#ffffaa')
+    flashGrad.addColorStop(0.4, weapon === 'plasma' ? '#aa66ff' : '#ffaa00')
+    flashGrad.addColorStop(0.7, weapon === 'plasma' ? '#6622aa' : '#ff6600')
+    flashGrad.addColorStop(1, weapon === 'plasma' ? 'rgba(102,34,170,0)' : 'rgba(255,100,0,0)')
     ctx.fillStyle = flashGrad
     ctx.beginPath()
-    ctx.arc(gunX + 30, gunY + 2, 12, 0, Math.PI * 2)
+    ctx.arc(muzzleX, gunY + 2, 12, 0, Math.PI * 2)
     ctx.fill()
     // Flash spikes
-    ctx.strokeStyle = '#ffdd44'
+    ctx.strokeStyle = weapon === 'plasma' ? '#cc88ff' : '#ffdd44'
     ctx.lineWidth = 1.5
     ctx.globalAlpha = 0.6
     for (let i = 0; i < 4; i++) {
       const sAngle = (i / 4) * Math.PI * 2 + Date.now() * 0.01
       ctx.beginPath()
-      ctx.moveTo(gunX + 30, gunY + 2)
-      ctx.lineTo(gunX + 30 + Math.cos(sAngle) * 14, gunY + 2 + Math.sin(sAngle) * 14)
+      ctx.moveTo(muzzleX, gunY + 2)
+      ctx.lineTo(muzzleX + Math.cos(sAngle) * 14, gunY + 2 + Math.sin(sAngle) * 14)
       ctx.stroke()
     }
     ctx.globalAlpha = 1
