@@ -536,7 +536,9 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             player.score += scoreMap[enemy.type]
 
             for (let i = 0; i < 15; i++) {
-              const colors = ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ffffff']
+              const colors = bullet.weaponType === 'launcher' 
+                ? ['#ff6600', '#ff8800', '#ffaa00', '#ff4400']
+                : ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ffffff']
               particles.push(createParticle(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, colors[Math.floor(Math.random() * colors.length)]))
             }
 
