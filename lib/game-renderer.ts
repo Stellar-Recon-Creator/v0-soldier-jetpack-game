@@ -746,19 +746,19 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillRect(gunX + 3, gunY + 10, 4, 2)
     // Large scope
     ctx.fillStyle = '#505050'
-    roundRect(ctx, gunX + 5, gunY - 6, 14, 5, 2)
+    roundRect(ctx, gunX + 5, gunY - 6, 18, 5, 2)
     ctx.fill()
     // Scope lens front
     ctx.fillStyle = '#4488cc'
     ctx.globalAlpha = 0.7
     ctx.beginPath()
-    ctx.arc(gunX + 18, gunY - 3.5, 2.2, 0, Math.PI * 2)
+    ctx.arc(gunX + 20, gunY - 3.5, 2.2, 0, Math.PI * 2)
     ctx.fill()
     ctx.globalAlpha = 1
     // Scope lens glint
     ctx.fillStyle = '#aaddff'
     ctx.beginPath()
-    ctx.arc(gunX + 17.5, gunY - 4, 0.7, 0, Math.PI * 2)
+    ctx.arc(gunX + 19.5, gunY - 4, 0.7, 0, Math.PI * 2)
     ctx.fill()
     // Rail
     ctx.fillStyle = '#4a4a4a'
