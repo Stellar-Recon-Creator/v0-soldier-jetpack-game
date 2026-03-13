@@ -517,6 +517,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           bullet.y - bullet.radius < enemy.y + enemy.height
         ) {
           bullet.active = false
+          console.log("[v0] Bullet hit enemy - damage:", bullet.damage, "enemy health before:", enemy.health, "after:", enemy.health - bullet.damage)
           enemy.health -= bullet.damage
           soundEvents.alienHit = true
 
