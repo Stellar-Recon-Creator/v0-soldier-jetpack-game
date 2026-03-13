@@ -291,6 +291,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         fromPlayer: true,
         active: true,
         damage: weaponCfg.damage,
+        weaponType: player.weapon,
       })
     }
   }
@@ -521,7 +522,10 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           soundEvents.alienHit = true
 
           for (let i = 0; i < 5; i++) {
-            particles.push(createParticle(bullet.x, bullet.y, '#44ffaa'))
+            const hitColor = bullet.weaponType === 'launcher'
+              ? ['#ff6600', '#ff8800', '#ffaa00', '#ff4400'][Math.floor(Math.random() * 4)]
+              : '#44ffaa'
+            particles.push(createParticle(bullet.x, bullet.y, hitColor))
           }
 
           if (enemy.health <= 0) {

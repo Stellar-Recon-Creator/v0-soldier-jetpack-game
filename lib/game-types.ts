@@ -75,6 +75,7 @@ export interface Bullet {
   active: boolean
   damage: number
   isRedAcid?: boolean
+  weaponType?: WeaponType
 }
 
 export interface Particle {

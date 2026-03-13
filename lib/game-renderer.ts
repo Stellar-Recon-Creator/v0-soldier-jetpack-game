@@ -2068,21 +2068,23 @@ export function drawBullet(ctx: CanvasRenderingContext2D, bullet: Bullet, camera
     return
   }
 
-  ctx.shadowColor = bullet.fromPlayer ? COLORS.bullet.playerGlow : COLORS.bullet.enemyGlow
+  const isPlasma = bullet.fromPlayer && bullet.weaponType === 'plasma'
+
+  ctx.shadowColor = bullet.fromPlayer ? (isPlasma ? '#0088ff' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
   ctx.shadowBlur = 10
 
   // Outer glow
-  ctx.fillStyle = bullet.fromPlayer ? COLORS.bullet.playerGlow : COLORS.bullet.enemyGlow
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#0066ff' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 1.5, 0, Math.PI * 2)
   ctx.fill()
   // Main bullet
-  ctx.fillStyle = bullet.fromPlayer ? COLORS.bullet.player : COLORS.bullet.enemy
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#0044cc' : COLORS.bullet.player) : COLORS.bullet.enemy
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius, 0, Math.PI * 2)
   ctx.fill()
   // Core
-  ctx.fillStyle = bullet.fromPlayer ? COLORS.bullet.playerCore : COLORS.bullet.enemyCore
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#88ccff' : COLORS.bullet.playerCore) : COLORS.bullet.enemyCore
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 0.4, 0, Math.PI * 2)
   ctx.fill()
