@@ -11,13 +11,13 @@ const BULLET_SPEED = 700
 const SHOOT_COOLDOWN = 0.18
 
 // Weapon configs
-const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number }> = {
-  rifle: { speed: 700, cooldown: 0.18, damage: 1, count: 1, spread: 0, radius: 4 },
-  smg: { speed: 650, cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3 },
-  shotgun: { speed: 500, cooldown: 0.6, damage: 1, count: 5, spread: 0.15, radius: 3 },
-  sniper: { speed: 1200, cooldown: 1.2, damage: 8, count: 1, spread: 0, radius: 3 },
-  plasma: { speed: 400, cooldown: 0.8, damage: 4, count: 1, spread: 0, radius: 7 },
-  launcher: { speed: 350, cooldown: 1.5, damage: 10, count: 1, spread: 0, radius: 10 },
+const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number; ammoCost: number }> = {
+  rifle:    { speed: 700,  cooldown: 0.18, damage: 1,  count: 1, spread: 0,    radius: 4,  ammoCost: 1 },
+  smg:      { speed: 650,  cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3,  ammoCost: 0.2 },
+  shotgun:  { speed: 500,  cooldown: 0.6,  damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2 },
+  sniper:   { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 8 },
+  plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
+  launcher: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 10 },
 }
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
@@ -278,7 +278,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     player.shooting = true
     soundEvents.playerShoot = true
     player.bulletsFired++
-    player.bulletsRemaining--
+    player.bulletsRemaining = Math.max(0, player.bulletsRemaining - weaponCfg.ammoCost)
     const bulletAngle = player.aimAngle
     for (let i = 0; i < weaponCfg.count; i++) {
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
@@ -517,7 +517,6 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           bullet.y - bullet.radius < enemy.y + enemy.height
         ) {
           bullet.active = false
-          console.log("[v0] Bullet hit enemy - damage:", bullet.damage, "enemy health before:", enemy.health, "after:", enemy.health - bullet.damage)
           enemy.health -= bullet.damage
           soundEvents.alienHit = true
 
