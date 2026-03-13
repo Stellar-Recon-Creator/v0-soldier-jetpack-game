@@ -13,7 +13,7 @@ const SHOOT_COOLDOWN = 0.18
 // Weapon configs
 const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number }> = {
   rifle: { speed: 700, cooldown: 0.18, damage: 1, count: 1, spread: 0, radius: 4 },
-  smg: { speed: 650, cooldown: 0.08, damage: 1, count: 1, spread: 0.08, radius: 3 },
+  smg: { speed: 650, cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3 },
   shotgun: { speed: 500, cooldown: 0.6, damage: 1, count: 5, spread: 0.15, radius: 3 },
   sniper: { speed: 1200, cooldown: 1.2, damage: 8, count: 1, spread: 0, radius: 3 },
   plasma: { speed: 400, cooldown: 0.8, damage: 4, count: 1, spread: 0, radius: 7 },
