@@ -54,7 +54,11 @@ export default function GameCanvas() {
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
   const [starCurrency, setStarCurrency] = useState(100000)
   const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['rifle'])
+  const ownedWeaponsRef = useRef<WeaponType[]>(['rifle'])
   const [crateResult, setCrateResult] = useState<{ weapon: WeaponType; isDuplicate: boolean } | null>(null)
+
+  // Keep ref in sync with state
+  useEffect(() => { ownedWeaponsRef.current = ownedWeapons }, [ownedWeapons])
 
   // Weapon loot tables per crate tier
   const crateLootTables: Record<string, WeaponType[]> = {
@@ -250,9 +254,13 @@ export default function GameCanvas() {
           keys.jetpack = true
           break
         case 'KeyJ': keys.shoot = true; break
-        case 'Digit1': keys.switchWeapon = 'rifle'; break
-        case 'Digit2': keys.switchWeapon = 'shotgun'; break
-        case 'Digit3': keys.switchWeapon = 'plasma'; break
+        case 'Digit1': case 'Digit2': case 'Digit3':
+        case 'Digit4': case 'Digit5': case 'Digit6': {
+          const idx = parseInt(e.code.charAt(5)) - 1
+          const w = ownedWeaponsRef.current[idx]
+          if (w) keys.switchWeapon = w
+          break
+        }
       }
     }
 
