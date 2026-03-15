@@ -104,89 +104,33 @@ export function drawBackground(ctx: CanvasRenderingContext2D, state: GameState, 
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, canvasW, canvasH)
 
-  // Sun with rays and lens flare
+  // Sun with rays
   const sunX = canvasW * 0.82
   const sunY = 70
-  const time = Date.now() * 0.0005
-
-  // Outer atmospheric glow
-  const glowGrad3 = ctx.createRadialGradient(sunX, sunY, 20, sunX, sunY, 250)
-  glowGrad3.addColorStop(0, 'rgba(255,240,180,0.25)')
-  glowGrad3.addColorStop(0.3, 'rgba(255,220,150,0.1)')
-  glowGrad3.addColorStop(0.6, 'rgba(255,200,120,0.03)')
-  glowGrad3.addColorStop(1, 'rgba(255,180,100,0)')
-  ctx.fillStyle = glowGrad3
-  ctx.beginPath()
-  ctx.arc(sunX, sunY, 250, 0, Math.PI * 2)
-  ctx.fill()
-
-  // Sun rays (animated)
-  ctx.save()
-  ctx.translate(sunX, sunY)
-  ctx.globalAlpha = 0.15
-  for (let i = 0; i < 12; i++) {
-    const rayAngle = (i / 12) * Math.PI * 2 + time
-    const rayLen = 100 + Math.sin(time * 2 + i) * 20
-    ctx.fillStyle = 'rgba(255,248,200,0.5)'
-    ctx.beginPath()
-    ctx.moveTo(0, 0)
-    ctx.lineTo(Math.cos(rayAngle - 0.08) * 35, Math.sin(rayAngle - 0.08) * 35)
-    ctx.lineTo(Math.cos(rayAngle) * rayLen, Math.sin(rayAngle) * rayLen)
-    ctx.lineTo(Math.cos(rayAngle + 0.08) * 35, Math.sin(rayAngle + 0.08) * 35)
-    ctx.closePath()
-    ctx.fill()
-  }
-  ctx.restore()
-  ctx.globalAlpha = 1
-
   // Outer glow
   const glowGrad2 = ctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, 180)
-  glowGrad2.addColorStop(0, 'rgba(255,244,200,0.35)')
-  glowGrad2.addColorStop(0.3, 'rgba(255,244,200,0.12)')
-  glowGrad2.addColorStop(0.6, 'rgba(255,244,200,0.04)')
+  glowGrad2.addColorStop(0, 'rgba(255,244,200,0.3)')
+  glowGrad2.addColorStop(0.4, 'rgba(255,244,200,0.08)')
   glowGrad2.addColorStop(1, 'rgba(255,244,200,0)')
   ctx.fillStyle = glowGrad2
-  ctx.beginPath()
-  ctx.arc(sunX, sunY, 180, 0, Math.PI * 2)
-  ctx.fill()
-
+  ctx.fillRect(sunX - 180, sunY - 180, 360, 360)
   // Inner glow
   const glowGrad = ctx.createRadialGradient(sunX, sunY, 15, sunX, sunY, 80)
-  glowGrad.addColorStop(0, 'rgba(255,250,230,0.6)')
-  glowGrad.addColorStop(0.4, 'rgba(255,248,210,0.2)')
+  glowGrad.addColorStop(0, 'rgba(255,248,220,0.5)')
+  glowGrad.addColorStop(0.5, 'rgba(255,244,200,0.15)')
   glowGrad.addColorStop(1, 'rgba(255,244,200,0)')
   ctx.fillStyle = glowGrad
+  ctx.fillRect(sunX - 80, sunY - 80, 160, 160)
+  // Sun disc
+  ctx.fillStyle = COLORS.sun
   ctx.beginPath()
-  ctx.arc(sunX, sunY, 80, 0, Math.PI * 2)
+  ctx.arc(sunX, sunY, 28, 0, Math.PI * 2)
   ctx.fill()
-
-  // Sun disc with gradient
-  const sunGrad = ctx.createRadialGradient(sunX - 5, sunY - 5, 0, sunX, sunY, 30)
-  sunGrad.addColorStop(0, '#fffff8')
-  sunGrad.addColorStop(0.3, '#fffef0')
-  sunGrad.addColorStop(0.7, '#fff8dd')
-  sunGrad.addColorStop(1, '#ffeeaa')
-  ctx.fillStyle = sunGrad
-  ctx.beginPath()
-  ctx.arc(sunX, sunY, 30, 0, Math.PI * 2)
-  ctx.fill()
-
   // Sun core
-  ctx.fillStyle = '#ffffff'
+  ctx.fillStyle = '#fffef5'
   ctx.beginPath()
-  ctx.arc(sunX - 3, sunY - 3, 15, 0, Math.PI * 2)
+  ctx.arc(sunX, sunY, 18, 0, Math.PI * 2)
   ctx.fill()
-
-  // Subtle lens flare
-  ctx.globalAlpha = 0.1
-  ctx.fillStyle = '#ffcc88'
-  ctx.beginPath()
-  ctx.arc(sunX - 60, sunY + 40, 8, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.arc(sunX - 90, sunY + 60, 5, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.globalAlpha = 1
 }
 
 export function drawStars(ctx: CanvasRenderingContext2D, stars: Star[], cameraX: number) {
@@ -1034,140 +978,69 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   // ─ NECK ─
   ctx.fillStyle = COLORS.player.skin
   ctx.fillRect(-2, -hh + 6, 6, 5)
-  // Neck shadow and muscle definition
+  // Neck shadow
   ctx.fillStyle = COLORS.player.skinShadow
   ctx.fillRect(-2, -hh + 9, 6, 2)
-  ctx.globalAlpha = 0.3
-  ctx.fillRect(0, -hh + 7, 2, 3)
-  ctx.globalAlpha = 1
 
   // ─ HEAD ─
-  // Helmet base with gradient
-  const helmetGrad = ctx.createLinearGradient(-8, -hh - 7, 10, -hh + 9)
-  helmetGrad.addColorStop(0, COLORS.player.helmetLight)
-  helmetGrad.addColorStop(0.4, COLORS.player.helmet)
-  helmetGrad.addColorStop(1, COLORS.player.helmetDark)
-  ctx.fillStyle = helmetGrad
+  // Helmet
+  ctx.fillStyle = COLORS.player.helmet
   roundRect(ctx, -8, -hh - 7, 18, 16, 6)
   ctx.fill()
-
-  // Helmet top highlight (shiny)
+  // Helmet top highlight
   ctx.fillStyle = COLORS.player.helmetLight
-  ctx.globalAlpha = 0.7
-  roundRect(ctx, -6, -hh - 6, 8, 5, 4)
+  roundRect(ctx, -6, -hh - 6, 10, 7, 4)
   ctx.fill()
-  ctx.globalAlpha = 1
-
-  // Helmet ridge detail
-  ctx.fillStyle = COLORS.player.helmetDark
-  ctx.fillRect(-6, -hh - 3, 14, 1.5)
-
   // Helmet dark bottom edge
   ctx.fillStyle = COLORS.player.helmetDark
   ctx.fillRect(-8, -hh + 4, 18, 3)
-
-  // Helmet rim with metallic look
-  const rimGrad = ctx.createLinearGradient(-8, -hh + 2, -8, -hh + 5)
-  rimGrad.addColorStop(0, '#4a6a3a')
-  rimGrad.addColorStop(0.5, '#5a7a4a')
-  rimGrad.addColorStop(1, '#3a5a2a')
-  ctx.fillStyle = rimGrad
+  // Helmet rim
+  ctx.fillStyle = COLORS.player.helmetBand
   ctx.fillRect(-8, -hh + 2, 18, 3)
-
-  // Goggle strap with texture
+  // Goggle strap
   ctx.fillStyle = COLORS.player.helmetStrap
   ctx.fillRect(-8, -hh, 18, 2)
-  ctx.fillStyle = '#5a5a40'
-  ctx.globalAlpha = 0.5
-  for (let i = 0; i < 9; i++) {
-    ctx.fillRect(-8 + i * 2, -hh, 1, 2)
-  }
-  ctx.globalAlpha = 1
-
-  // Helmet chin strap with buckle
+  // Helmet chin strap
   ctx.strokeStyle = COLORS.player.helmetStrap
   ctx.lineWidth = 1.5
   ctx.beginPath()
   ctx.moveTo(8, -hh + 4)
   ctx.quadraticCurveTo(10, -hh + 8, 8, -hh + 10)
   ctx.stroke()
-  // Buckle
-  ctx.fillStyle = '#888'
-  ctx.fillRect(8, -hh + 6, 2, 2)
 
-  // Face area with skin gradient
-  const skinGrad = ctx.createRadialGradient(2, -hh + 6, 2, 2, -hh + 6, 10)
-  skinGrad.addColorStop(0, COLORS.player.skinLight)
-  skinGrad.addColorStop(0.5, COLORS.player.skin)
-  skinGrad.addColorStop(1, COLORS.player.skinShadow)
-  ctx.fillStyle = skinGrad
+  // Face area
+  ctx.fillStyle = COLORS.player.skin
   roundRect(ctx, -4, -hh + 1, 13, 11, 3)
   ctx.fill()
-
   // Cheek shadow
   ctx.fillStyle = COLORS.player.skinShadow
-  ctx.globalAlpha = 0.25
+  ctx.globalAlpha = 0.3
   roundRect(ctx, -3, -hh + 7, 10, 5, 2)
   ctx.fill()
   ctx.globalAlpha = 1
-
-  // Jaw with stubble suggestion
+  // Jaw
   ctx.fillStyle = COLORS.player.skinShadow
   roundRect(ctx, -2, -hh + 8, 9, 4, 2)
   ctx.fill()
-  ctx.fillStyle = '#a08060'
-  ctx.globalAlpha = 0.15
-  for (let i = 0; i < 8; i++) {
-    ctx.fillRect(-1 + (i % 4) * 2, -hh + 9 + Math.floor(i / 4) * 2, 1, 1)
-  }
-  ctx.globalAlpha = 1
 
-  // Eye socket shadow
-  ctx.fillStyle = COLORS.player.skinShadow
-  ctx.globalAlpha = 0.3
-  roundRect(ctx, 1, -hh + 2, 8, 5, 2)
-  ctx.fill()
-  ctx.globalAlpha = 1
-
-  // Eye white with gradient
-  const eyeGrad = ctx.createRadialGradient(5, -hh + 4.5, 0, 5, -hh + 4.5, 4)
-  eyeGrad.addColorStop(0, '#ffffff')
-  eyeGrad.addColorStop(0.7, '#f8f8ff')
-  eyeGrad.addColorStop(1, '#e8e8f0')
-  ctx.fillStyle = eyeGrad
+  // Eye
+  ctx.fillStyle = '#ffffff'
   roundRect(ctx, 2, -hh + 3, 6, 3.5, 1.5)
   ctx.fill()
-
-  // Eye outline
-  ctx.strokeStyle = '#666'
-  ctx.lineWidth = 0.5
-  roundRect(ctx, 2, -hh + 3, 6, 3.5, 1.5)
-  ctx.stroke()
-
-  // Iris with gradient
-  const irisGrad = ctx.createRadialGradient(5.5, -hh + 4.8, 0, 5.5, -hh + 4.8, 2)
-  irisGrad.addColorStop(0, '#4a8a4a')
-  irisGrad.addColorStop(0.6, '#3a6a3a')
-  irisGrad.addColorStop(1, '#2a4a2a')
-  ctx.fillStyle = irisGrad
+  // Iris
+  ctx.fillStyle = '#3a6a3a'
   ctx.beginPath()
   ctx.arc(5.5, -hh + 4.8, 1.8, 0, Math.PI * 2)
   ctx.fill()
-
   // Pupil
   ctx.fillStyle = '#111'
   ctx.beginPath()
   ctx.arc(5.5, -hh + 4.8, 0.9, 0, Math.PI * 2)
   ctx.fill()
-
-  // Eye highlight (main)
+  // Eye highlight
   ctx.fillStyle = '#fff'
   ctx.beginPath()
-  ctx.arc(6.2, -hh + 4.2, 0.6, 0, Math.PI * 2)
-  ctx.fill()
-  // Secondary highlight
-  ctx.beginPath()
-  ctx.arc(4.8, -hh + 5.2, 0.3, 0, Math.PI * 2)
+  ctx.arc(6.2, -hh + 4.2, 0.5, 0, Math.PI * 2)
   ctx.fill()
   // Eyebrow
   ctx.strokeStyle = COLORS.player.hair
@@ -1508,238 +1381,101 @@ function drawGrunt(ctx: CanvasRenderingContext2D, enemy: Enemy) {
   const hw = enemy.width / 2
   const hh = enemy.height / 2
   const bob = Math.sin(enemy.animFrame * 0.15) * 2
-  const pulse = Math.sin(enemy.animFrame * 0.1) * 0.1
 
-  // Shadow with blur effect
-  ctx.fillStyle = 'rgba(0,0,0,0.2)'
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.15)'
   ctx.beginPath()
-  ctx.ellipse(0, hh + 2, hw, 4, 0, 0, Math.PI * 2)
+  ctx.ellipse(0, hh, hw - 2, 3, 0, 0, Math.PI * 2)
   ctx.fill()
 
-  // Stubby legs with animation and muscle detail
+  // Stubby legs with animation
   ctx.fillStyle = c.bodyDark
   const legAnim = Math.sin(enemy.animFrame * 0.2) * 4
-  // Left leg
-  ctx.beginPath()
-  ctx.ellipse(-hw + 6 + legAnim, hh - 2, 5, 7, 0.1, 0, Math.PI * 2)
-  ctx.fill()
-  // Right leg
-  ctx.beginPath()
-  ctx.ellipse(hw - 6 - legAnim, hh - 2, 5, 7, -0.1, 0, Math.PI * 2)
-  ctx.fill()
-  // Leg highlights
-  ctx.fillStyle = c.body
-  ctx.globalAlpha = 0.5
-  ctx.beginPath()
-  ctx.ellipse(-hw + 5 + legAnim, hh - 3, 2, 4, 0, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.ellipse(hw - 5 - legAnim, hh - 3, 2, 4, 0, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.globalAlpha = 1
-  // Feet with claws
+  ctx.fillRect(-hw + 3 + legAnim, hh - 7, 7, 10)
+  ctx.fillRect(hw - 10 - legAnim, hh - 7, 7, 10)
+  // Feet
   ctx.fillStyle = c.bodyDark
-  roundRect(ctx, -hw + 1 + legAnim, hh + 3, 10, 5, 2)
+  roundRect(ctx, -hw + 2 + legAnim, hh + 1, 9, 4, 2)
   ctx.fill()
-  roundRect(ctx, hw - 11 - legAnim, hh + 3, 10, 5, 2)
+  roundRect(ctx, hw - 11 - legAnim, hh + 1, 9, 4, 2)
   ctx.fill()
-  // Toe claws
-  ctx.fillStyle = '#1a5a20'
-  for (let i = 0; i < 3; i++) {
-    ctx.beginPath()
-    ctx.moveTo(-hw + 2 + i * 3 + legAnim, hh + 7)
-    ctx.lineTo(-hw + 3.5 + i * 3 + legAnim, hh + 10)
-    ctx.lineTo(-hw + 5 + i * 3 + legAnim, hh + 7)
-    ctx.fill()
-    ctx.beginPath()
-    ctx.moveTo(hw - 10 + i * 3 - legAnim, hh + 7)
-    ctx.lineTo(hw - 8.5 + i * 3 - legAnim, hh + 10)
-    ctx.lineTo(hw - 7 + i * 3 - legAnim, hh + 7)
-    ctx.fill()
-  }
 
-  // Body with organic texture
-  // Body glow/subsurface
-  ctx.shadowColor = c.bodyLight
-  ctx.shadowBlur = 6
+  // Body
   ctx.fillStyle = c.body
   ctx.beginPath()
-  ctx.ellipse(0, bob, hw - 1, hh - 2, 0, 0, Math.PI * 2)
+  ctx.ellipse(0, bob, hw - 2, hh - 3, 0, 0, Math.PI * 2)
   ctx.fill()
-  ctx.shadowBlur = 0
-
-  // Body texture bumps
+  // Body lighter belly
+  ctx.fillStyle = c.bodyLight
+  ctx.beginPath()
+  ctx.ellipse(0, bob + 3, hw - 7, hh - 9, 0, 0, Math.PI * 2)
+  ctx.fill()
+  // Spots/bumps
   ctx.fillStyle = c.bodyDark
-  ctx.globalAlpha = 0.3
-  for (let i = 0; i < 6; i++) {
-    const bx = Math.sin(i * 1.2) * (hw - 6)
-    const by = bob + Math.cos(i * 0.9) * (hh - 8)
-    ctx.beginPath()
-    ctx.arc(bx, by, 2 + (i % 2), 0, Math.PI * 2)
-    ctx.fill()
-  }
+  ctx.globalAlpha = 0.4
+  ctx.beginPath()
+  ctx.arc(-6, bob - 2, 3, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(4, bob + 2, 2, 0, Math.PI * 2)
+  ctx.fill()
   ctx.globalAlpha = 1
 
-  // Body lighter belly with gradient
-  const bellyGrad = ctx.createRadialGradient(0, bob + 5, 2, 0, bob + 3, hh - 6)
-  bellyGrad.addColorStop(0, c.bodyLight)
-  bellyGrad.addColorStop(1, c.body)
-  ctx.fillStyle = bellyGrad
+  // Small arms
+  ctx.fillStyle = c.body
+  ctx.fillRect(-hw - 2, bob - 4, 5, 8)
+  ctx.fillRect(hw - 3, bob - 4, 5, 8)
+  // Claws
+  ctx.fillStyle = c.bodyDark
   ctx.beginPath()
-  ctx.ellipse(0, bob + 3, hw - 6, hh - 8, 0, 0, Math.PI * 2)
+  ctx.moveTo(-hw - 2, bob + 4)
+  ctx.lineTo(-hw - 4, bob + 8)
+  ctx.lineTo(-hw, bob + 4)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.moveTo(hw + 2, bob + 4)
+  ctx.lineTo(hw + 4, bob + 8)
+  ctx.lineTo(hw, bob + 4)
   ctx.fill()
 
-  // Veins on body
+  // Eye (big single eye)
+  ctx.fillStyle = c.eye
+  ctx.beginPath()
+  ctx.ellipse(4, bob - 5, 7, 8, 0, 0, Math.PI * 2)
+  ctx.fill()
+  // Eye outline
   ctx.strokeStyle = c.bodyDark
-  ctx.globalAlpha = 0.3
-  ctx.lineWidth = 0.8
+  ctx.lineWidth = 1
   ctx.beginPath()
-  ctx.moveTo(-5, bob - 6)
-  ctx.quadraticCurveTo(-8, bob, -3, bob + 5)
+  ctx.ellipse(4, bob - 5, 7, 8, 0, 0, Math.PI * 2)
   ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(8, bob - 4)
-  ctx.quadraticCurveTo(10, bob + 2, 6, bob + 7)
-  ctx.stroke()
-  ctx.globalAlpha = 1
-
-  // Small arms with segments
-  ctx.fillStyle = c.body
-  // Upper arms
-  ctx.beginPath()
-  ctx.ellipse(-hw - 1, bob - 2, 4, 5, -0.3, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.ellipse(hw + 1, bob - 2, 4, 5, 0.3, 0, Math.PI * 2)
-  ctx.fill()
-  // Forearms
-  ctx.fillStyle = c.bodyDark
-  ctx.beginPath()
-  ctx.ellipse(-hw - 3, bob + 4, 3, 4, -0.2, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.ellipse(hw + 3, bob + 4, 3, 4, 0.2, 0, Math.PI * 2)
-  ctx.fill()
-  // Claws (3 per hand)
-  ctx.fillStyle = '#1a5a20'
-  for (let i = 0; i < 3; i++) {
-    const angle = -0.5 + i * 0.25
-    ctx.beginPath()
-    ctx.moveTo(-hw - 3, bob + 7)
-    ctx.lineTo(-hw - 5 + Math.cos(angle) * 5, bob + 10 + Math.sin(angle) * 3)
-    ctx.lineTo(-hw - 2, bob + 7)
-    ctx.fill()
-    ctx.beginPath()
-    ctx.moveTo(hw + 3, bob + 7)
-    ctx.lineTo(hw + 5 - Math.cos(angle) * 5, bob + 10 + Math.sin(angle) * 3)
-    ctx.lineTo(hw + 2, bob + 7)
-    ctx.fill()
-  }
-
-  // Eye with detail (big single eye)
-  // Eye socket shadow
-  ctx.fillStyle = c.bodyDark
-  ctx.beginPath()
-  ctx.ellipse(4, bob - 4, 9, 10, 0, 0, Math.PI * 2)
-  ctx.fill()
-  // Eye white with gradient
-  const eyeGrad = ctx.createRadialGradient(4, bob - 5, 1, 4, bob - 5, 8)
-  eyeGrad.addColorStop(0, '#ffffff')
-  eyeGrad.addColorStop(0.7, '#eeeeff')
-  eyeGrad.addColorStop(1, '#ccccdd')
-  ctx.fillStyle = eyeGrad
-  ctx.beginPath()
-  ctx.ellipse(4, bob - 5, 7.5, 8.5, 0, 0, Math.PI * 2)
-  ctx.fill()
-  // Eye blood vessels
-  ctx.strokeStyle = '#ffaaaa'
-  ctx.lineWidth = 0.4
-  ctx.globalAlpha = 0.5
-  ctx.beginPath()
-  ctx.moveTo(-2, bob - 7)
-  ctx.quadraticCurveTo(1, bob - 5, 2, bob - 3)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(10, bob - 8)
-  ctx.quadraticCurveTo(7, bob - 5, 8, bob - 2)
-  ctx.stroke()
-  ctx.globalAlpha = 1
-  // Iris with gradient
-  const irisGrad = ctx.createRadialGradient(6, bob - 5, 0.5, 6, bob - 5, 4)
-  irisGrad.addColorStop(0, '#225522')
-  irisGrad.addColorStop(0.5, '#113311')
-  irisGrad.addColorStop(1, '#000000')
-  ctx.fillStyle = irisGrad
-  ctx.beginPath()
-  ctx.arc(6, bob - 5, 4, 0, Math.PI * 2)
-  ctx.fill()
   // Pupil
-  ctx.fillStyle = '#000000'
+  ctx.fillStyle = c.pupil
   ctx.beginPath()
-  ctx.arc(6, bob - 5, 2, 0, Math.PI * 2)
+  ctx.arc(6, bob - 5, 3.5, 0, Math.PI * 2)
   ctx.fill()
-  // Eye highlights
-  ctx.fillStyle = '#ffffff'
+  // Eye highlight
+  ctx.fillStyle = '#fff'
   ctx.beginPath()
-  ctx.arc(3, bob - 7, 2, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.arc(8, bob - 3, 1, 0, Math.PI * 2)
+  ctx.arc(3, bob - 7, 1.5, 0, Math.PI * 2)
   ctx.fill()
 
-  // Brow ridge
-  ctx.fillStyle = c.bodyDark
+  // Mouth with teeth
+  ctx.fillStyle = '#2a6a30'
   ctx.beginPath()
-  ctx.moveTo(-5, bob - 10)
-  ctx.quadraticCurveTo(4, bob - 14, 12, bob - 10)
-  ctx.lineTo(11, bob - 8)
-  ctx.quadraticCurveTo(4, bob - 11, -4, bob - 8)
-  ctx.closePath()
+  ctx.ellipse(1, bob + 5, 7, 4, 0, 0, Math.PI)
   ctx.fill()
-
-  // Mouth with teeth detail
-  ctx.fillStyle = '#1a4a1a'
-  ctx.beginPath()
-  ctx.ellipse(1, bob + 6, 8, 5, 0, 0.1, Math.PI - 0.1)
-  ctx.fill()
-  // Gums
-  ctx.fillStyle = '#cc4466'
-  ctx.beginPath()
-  ctx.ellipse(1, bob + 5, 6, 2, 0, 0, Math.PI)
-  ctx.fill()
-  // Teeth with 3D effect
   ctx.fillStyle = c.teeth
-  for (let i = 0; i < 5; i++) {
-    const tx = -5 + i * 2.5
-    const th = 3 + Math.sin(i * 1.5) * 1
-    ctx.fillRect(tx, bob + 4, 2, th)
-    // Tooth highlight
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(tx, bob + 4, 0.5, th - 1)
-    ctx.fillStyle = c.teeth
-  }
-  // Bottom teeth
   for (let i = 0; i < 4; i++) {
-    const tx = -4 + i * 2.5
-    ctx.fillRect(tx, bob + 8, 2, 2)
+    ctx.fillRect(-4 + i * 3, bob + 3, 2, 3)
   }
-
-  // Drool with animation
+  // Drool
   ctx.fillStyle = c.drool
-  ctx.shadowColor = c.drool
-  ctx.shadowBlur = 3
-  const droolLen = 2 + Math.sin(enemy.animFrame * 0.08) * 2
-  ctx.globalAlpha = 0.6 + Math.sin(enemy.animFrame * 0.1) * 0.3
+  ctx.globalAlpha = 0.5 + Math.sin(enemy.animFrame * 0.1) * 0.3
   ctx.beginPath()
-  ctx.moveTo(2, bob + 9)
-  ctx.quadraticCurveTo(3, bob + 10 + droolLen / 2, 3, bob + 10 + droolLen)
-  ctx.quadraticCurveTo(4, bob + 10 + droolLen / 2, 4, bob + 9)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.arc(3, bob + 10 + droolLen, 1.5, 0, Math.PI * 2)
+  ctx.ellipse(3, bob + 9, 1.5, 2 + Math.sin(enemy.animFrame * 0.08) * 1, 0, 0, Math.PI * 2)
   ctx.fill()
   ctx.globalAlpha = 1
-  ctx.shadowBlur = 0
 }
 
 function drawSpitter(ctx: CanvasRenderingContext2D, enemy: Enemy) {
@@ -2370,36 +2106,12 @@ export function drawBullet(ctx: CanvasRenderingContext2D, bullet: Bullet, camera
 // ─── Particles ───
 export function drawParticle(ctx: CanvasRenderingContext2D, particle: Particle, cameraX: number, cameraY: number) {
   const alpha = particle.life / particle.maxLife
-  const px = particle.x - cameraX
-  const py = particle.y - cameraY
-  const size = particle.size * (0.5 + alpha * 0.5)
-
-  // Outer glow
-  ctx.globalAlpha = alpha * 0.4
-  ctx.shadowColor = particle.color
-  ctx.shadowBlur = 8
+  ctx.globalAlpha = alpha
   ctx.fillStyle = particle.color
   ctx.beginPath()
-  ctx.arc(px, py, size * 1.8, 0, Math.PI * 2)
+  ctx.arc(particle.x - cameraX, particle.y - cameraY, particle.size * alpha, 0, Math.PI * 2)
   ctx.fill()
-
-  // Main particle body
-  ctx.globalAlpha = alpha * 0.9
-  ctx.shadowBlur = 4
-  ctx.beginPath()
-  ctx.arc(px, py, size, 0, Math.PI * 2)
-  ctx.fill()
-
-  // Bright core
-  ctx.globalAlpha = alpha
-  ctx.shadowBlur = 0
-  ctx.fillStyle = '#ffffff'
-  ctx.beginPath()
-  ctx.arc(px, py, size * 0.4, 0, Math.PI * 2)
-  ctx.fill()
-
   ctx.globalAlpha = 1
-  ctx.shadowBlur = 0
 }
 
 // ─── HUD ───
@@ -2520,88 +2232,23 @@ export function drawJetpackFlame(ctx: CanvasRenderingContext2D, player: Player, 
 
   const baseX = px - f * 10
   const baseY = py + 18
-  const time = Date.now() * 0.01
 
-  // Outer heat distortion glow
-  const heatGrad = ctx.createRadialGradient(baseX, baseY + 12, 2, baseX, baseY + 20, 25)
-  heatGrad.addColorStop(0, 'rgba(255,150,50,0.3)')
-  heatGrad.addColorStop(0.5, 'rgba(255,100,0,0.15)')
-  heatGrad.addColorStop(1, 'rgba(255,50,0,0)')
-  ctx.fillStyle = heatGrad
-  ctx.beginPath()
-  ctx.arc(baseX, baseY + 15, 25, 0, Math.PI * 2)
-  ctx.fill()
-
-  // Multiple flame layers for depth
-  for (let layer = 0; layer < 3; layer++) {
-    const layerOffset = layer * 3
-    const layerAlpha = 0.7 - layer * 0.15
-
-    for (let i = 0; i < 5; i++) {
-      const flameH = 12 + Math.random() * 18 - layerOffset
-      const flameW = 3 + Math.random() * 5 - layer
-      const wobble = Math.sin(time + i * 1.5) * 2
-      const xOffset = (Math.random() - 0.5) * 8 + wobble
-
-      // Flame gradient from orange to yellow
-      const flameGrad = ctx.createLinearGradient(baseX + xOffset, baseY, baseX + xOffset, baseY + flameH)
-      if (layer === 0) {
-        flameGrad.addColorStop(0, '#ff2200')
-        flameGrad.addColorStop(0.3, '#ff6600')
-        flameGrad.addColorStop(0.7, '#ffaa00')
-        flameGrad.addColorStop(1, 'rgba(255,200,50,0)')
-      } else if (layer === 1) {
-        flameGrad.addColorStop(0, '#ff8800')
-        flameGrad.addColorStop(0.5, '#ffcc22')
-        flameGrad.addColorStop(1, 'rgba(255,220,100,0)')
-      } else {
-        flameGrad.addColorStop(0, '#ffdd44')
-        flameGrad.addColorStop(0.5, '#ffff88')
-        flameGrad.addColorStop(1, 'rgba(255,255,200,0)')
-      }
-
-      ctx.fillStyle = flameGrad
-      ctx.globalAlpha = layerAlpha + Math.random() * 0.2
-      ctx.shadowColor = '#ff6600'
-      ctx.shadowBlur = 8
-
-      ctx.beginPath()
-      ctx.ellipse(baseX + xOffset, baseY + flameH / 2, flameW, flameH, 0, 0, Math.PI * 2)
-      ctx.fill()
-    }
-  }
-
-  // Bright sparks
-  ctx.shadowBlur = 4
-  for (let i = 0; i < 3; i++) {
-    const sparkX = baseX + (Math.random() - 0.5) * 10
-    const sparkY = baseY + 5 + Math.random() * 15
-    ctx.fillStyle = '#ffff88'
+  for (let i = 0; i < 4; i++) {
+    const flameH = 10 + Math.random() * 14
+    const flameW = 3 + Math.random() * 4
+    ctx.fillStyle = COLORS.player.flame[i % 3]
     ctx.globalAlpha = 0.6 + Math.random() * 0.4
     ctx.beginPath()
-    ctx.arc(sparkX, sparkY, 1 + Math.random(), 0, Math.PI * 2)
+    ctx.ellipse(baseX + (Math.random() - 0.5) * 6, baseY + flameH / 2, flameW, flameH, 0, 0, Math.PI * 2)
     ctx.fill()
   }
-
-  // White-hot core with glow
-  ctx.shadowColor = '#ffffff'
-  ctx.shadowBlur = 12
-  ctx.fillStyle = '#ffffee'
-  ctx.globalAlpha = 0.95
+  // White-hot core
+  ctx.fillStyle = '#ffffcc'
+  ctx.globalAlpha = 0.8
   ctx.beginPath()
-  ctx.ellipse(baseX, baseY + 3, 3, 5, 0, 0, Math.PI * 2)
+  ctx.ellipse(baseX, baseY + 2, 2, 4, 0, 0, Math.PI * 2)
   ctx.fill()
-
-  // Inner bright core
-  ctx.shadowBlur = 0
-  ctx.fillStyle = '#ffffff'
   ctx.globalAlpha = 1
-  ctx.beginPath()
-  ctx.ellipse(baseX, baseY + 2, 1.5, 3, 0, 0, Math.PI * 2)
-  ctx.fill()
-
-  ctx.globalAlpha = 1
-  ctx.shadowBlur = 0
 }
 
 // ─── Utility ───
