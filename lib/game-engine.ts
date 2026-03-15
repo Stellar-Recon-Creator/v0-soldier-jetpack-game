@@ -521,12 +521,36 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           enemy.health -= bullet.damage
           soundEvents.alienHit = true
 
-          for (let i = 0; i < 5; i++) {
-            const hitColor = bullet.weaponType === 'launcher'
-              ? ['#ff6600', '#ff8800', '#ffaa00', '#ff4400'][Math.floor(Math.random() * 4)]
-              : '#44ffaa'
-            particles.push(createParticle(bullet.x, bullet.y, hitColor))
+          // Impact particles
+          const isLauncherHit = bullet.weaponType === 'launcher'
+          for (let i = 0; i < 8; i++) {
+            const hitColors = isLauncherHit
+              ? ['#ff4400', '#ff6600', '#ff8800', '#ffaa00', '#ffcc22']
+              : ['#44ffaa', '#66ffbb', '#88ffcc', '#22ff88', '#55ffaa']
+            const angle = (i / 8) * Math.PI * 2 + Math.random() * 0.5
+            const speed = 50 + Math.random() * 80
+            particles.push({
+              x: bullet.x,
+              y: bullet.y,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              life: 0.25 + Math.random() * 0.2,
+              maxLife: 0.45,
+              color: hitColors[Math.floor(Math.random() * hitColors.length)],
+              size: 2 + Math.random() * 3,
+            })
           }
+          // Bright impact flash
+          particles.push({
+            x: bullet.x,
+            y: bullet.y,
+            vx: 0,
+            vy: 0,
+            life: 0.1,
+            maxLife: 0.1,
+            color: '#ffffff',
+            size: 6 + Math.random() * 4,
+          })
 
           if (enemy.health <= 0) {
             enemy.active = false
@@ -535,11 +559,59 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             const scoreMap: Record<EnemyType, number> = { grunt: 100, spitter: 200, flyer: 250, brute: 500, boss: 2000 }
             player.score += scoreMap[enemy.type]
 
-            for (let i = 0; i < 15; i++) {
-              const colors = bullet.weaponType === 'launcher' 
-                ? ['#ff6600', '#ff8800', '#ffaa00', '#ff4400']
-                : ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ffffff']
-              particles.push(createParticle(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, colors[Math.floor(Math.random() * colors.length)]))
+            // Death explosion particles
+            const cx = enemy.x + enemy.width / 2
+            const cy = enemy.y + enemy.height / 2
+            const isLauncher = bullet.weaponType === 'launcher'
+
+            // Main explosion burst
+            for (let i = 0; i < 25; i++) {
+              const colors = isLauncher 
+                ? ['#ff4400', '#ff6600', '#ff8800', '#ffaa00', '#ffcc22']
+                : ['#44ff44', '#66ff66', '#88ff88', '#22dd22', '#55cc55']
+              const angle = (i / 25) * Math.PI * 2 + Math.random() * 0.3
+              const speed = 80 + Math.random() * 120
+              particles.push({
+                x: cx + (Math.random() - 0.5) * 10,
+                y: cy + (Math.random() - 0.5) * 10,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 30,
+                life: 0.4 + Math.random() * 0.4,
+                maxLife: 0.8,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                size: 3 + Math.random() * 4,
+              })
+            }
+
+            // Alien goo splatter
+            for (let i = 0; i < 12; i++) {
+              const gooColors = ['#44aa44', '#55bb55', '#338833', '#66cc66']
+              const angle = Math.random() * Math.PI * 2
+              const speed = 40 + Math.random() * 80
+              particles.push({
+                x: cx,
+                y: cy,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 20,
+                life: 0.5 + Math.random() * 0.3,
+                maxLife: 0.8,
+                color: gooColors[Math.floor(Math.random() * gooColors.length)],
+                size: 4 + Math.random() * 5,
+              })
+            }
+
+            // Bright flash particles
+            for (let i = 0; i < 8; i++) {
+              particles.push({
+                x: cx + (Math.random() - 0.5) * 15,
+                y: cy + (Math.random() - 0.5) * 15,
+                vx: (Math.random() - 0.5) * 60,
+                vy: (Math.random() - 0.5) * 60,
+                life: 0.15 + Math.random() * 0.1,
+                maxLife: 0.25,
+                color: '#ffffff',
+                size: 2 + Math.random() * 3,
+              })
             }
 
             if (enemy.type === 'boss') {
@@ -604,17 +676,47 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   if (usingJetpack) {
     const baseX = player.x + player.width / 2 - player.facing * 10
     const baseY = player.y + player.height - 2
-    for (let i = 0; i < 2; i++) {
-      const colors = ['#ff6622', '#ffaa22', '#ffdd44']
+
+    // Main flame particles
+    for (let i = 0; i < 4; i++) {
+      const colors = ['#ff4400', '#ff6622', '#ff8833', '#ffaa44', '#ffcc66', '#ffdd88']
+      particles.push({
+        x: baseX + (Math.random() - 0.5) * 8,
+        y: baseY + Math.random() * 4,
+        vx: (Math.random() - 0.5) * 50,
+        vy: 120 + Math.random() * 100,
+        life: 0.35 + Math.random() * 0.25,
+        maxLife: 0.6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 3 + Math.random() * 4,
+      })
+    }
+
+    // Bright sparks
+    if (Math.random() > 0.5) {
       particles.push({
         x: baseX + (Math.random() - 0.5) * 6,
         y: baseY,
-        vx: (Math.random() - 0.5) * 40,
-        vy: 100 + Math.random() * 80,
-        life: 0.3 + Math.random() * 0.2,
-        maxLife: 0.5,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        size: 2 + Math.random() * 3,
+        vx: (Math.random() - 0.5) * 80,
+        vy: 80 + Math.random() * 60,
+        life: 0.2 + Math.random() * 0.15,
+        maxLife: 0.35,
+        color: '#ffffaa',
+        size: 1 + Math.random() * 1.5,
+      })
+    }
+
+    // Smoke trail
+    if (Math.random() > 0.7) {
+      particles.push({
+        x: baseX + (Math.random() - 0.5) * 10,
+        y: baseY + 10 + Math.random() * 10,
+        vx: (Math.random() - 0.5) * 20,
+        vy: 30 + Math.random() * 20,
+        life: 0.5 + Math.random() * 0.3,
+        maxLife: 0.8,
+        color: 'rgba(100,100,100,0.4)',
+        size: 4 + Math.random() * 4,
       })
     }
   }
