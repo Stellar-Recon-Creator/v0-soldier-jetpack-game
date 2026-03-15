@@ -564,11 +564,21 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             const cy = enemy.y + enemy.height / 2
             const isLauncher = bullet.weaponType === 'launcher'
 
+            // Per-enemy color palettes
+            const enemyColorMap: Record<EnemyType, string[]> = {
+              grunt:   ['#3da34d', '#5cc06c', '#2a8a3a', '#7de08d', '#44bb55'],
+              spitter: ['#4a9a7a', '#6abba0', '#387a5a', '#88ccaa', '#55aaaa'],
+              flyer:   ['#5578bb', '#7799dd', '#3a5588', '#88aaee', '#4466cc'],
+              brute:   ['#cc8844', '#eeaa66', '#aa6622', '#ffbb77', '#dd9933'],
+              boss:    ['#cc2233', '#ee4455', '#991122', '#ff5566', '#dd1133'],
+            }
+            const baseColors = isLauncher
+              ? ['#ff4400', '#ff6600', '#ff8800', '#ffaa00', '#ffcc22']
+              : enemyColorMap[enemy.type]
+            const gooColors = enemyColorMap[enemy.type]
+
             // Main explosion burst
             for (let i = 0; i < 25; i++) {
-              const colors = isLauncher 
-                ? ['#ff4400', '#ff6600', '#ff8800', '#ffaa00', '#ffcc22']
-                : ['#44ff44', '#66ff66', '#88ff88', '#22dd22', '#55cc55']
               const angle = (i / 25) * Math.PI * 2 + Math.random() * 0.3
               const speed = 80 + Math.random() * 120
               particles.push({
@@ -578,14 +588,13 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
                 vy: Math.sin(angle) * speed - 30,
                 life: 0.4 + Math.random() * 0.4,
                 maxLife: 0.8,
-                color: colors[Math.floor(Math.random() * colors.length)],
+                color: baseColors[Math.floor(Math.random() * baseColors.length)],
                 size: 3 + Math.random() * 4,
               })
             }
 
             // Alien goo splatter
             for (let i = 0; i < 12; i++) {
-              const gooColors = ['#44aa44', '#55bb55', '#338833', '#66cc66']
               const angle = Math.random() * Math.PI * 2
               const speed = 40 + Math.random() * 80
               particles.push({
