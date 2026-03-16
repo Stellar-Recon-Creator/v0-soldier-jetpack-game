@@ -93,6 +93,9 @@ export default function GameCanvas() {
     const stars = generateStars(200, canvas.width, canvas.height)
 
     const player = createPlayer()
+    const healthMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 0.75 : 0.5
+    player.health = Math.round(player.health * healthMultiplier)
+    player.maxHealth = Math.round(player.maxHealth * healthMultiplier)
     player.bulletsRemaining = startingAmmo
     player.bulletsMax = startingAmmo
     player.weapons = [...ownedWeapons]
