@@ -55,7 +55,7 @@ export default function GameCanvas() {
   const [starCurrency, setStarCurrency] = useState(100000)
   const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['rifle'])
   const ownedWeaponsRef = useRef<WeaponType[]>(['rifle'])
-  const [crateResult, setCrateResult] = useState<{ weapon: WeaponType; isDuplicate: boolean } | null>(null)
+  const [crateResult, setCrateResult] = useState<{ weapon: WeaponType; isDuplicate: boolean; refund: number } | null>(null)
 
   // Keep ref in sync with state
   useEffect(() => { ownedWeaponsRef.current = ownedWeapons }, [ownedWeapons])
@@ -79,8 +79,12 @@ export default function GameCanvas() {
     const isDuplicate = ownedWeapons.includes(weapon)
     if (!isDuplicate) {
       setOwnedWeapons(prev => [...prev, weapon])
+    } else {
+      // Refund 50% of crate cost for duplicates
+      const refund = Math.floor(cost * 0.5)
+      setStarCurrency(prev => prev + refund)
     }
-    setCrateResult({ weapon, isDuplicate })
+    setCrateResult({ weapon, isDuplicate, refund: isDuplicate ? Math.floor(cost * 0.5) : 0 })
   }
 
   const initGame = useCallback((lvl: number, diff: 'easy' | 'medium' | 'hard' = 'easy') => {
@@ -569,7 +573,10 @@ export default function GameCanvas() {
                   {crateResult.weapon.toUpperCase()}
                 </div>
                 {crateResult.isDuplicate && (
-                  <p className="text-lg font-sans" style={{ color: 'rgba(255,255,255,0.6)' }}>You already own this weapon</p>
+                  <div className="space-y-2">
+                    <p className="text-lg font-sans" style={{ color: 'rgba(255,255,255,0.6)' }}>You already own this weapon</p>
+                    <p className="text-xl font-bold font-sans" style={{ color: '#ffdd44' }}>+{crateResult.refund} refund</p>
+                  </div>
                 )}
                 <button
                   onClick={() => setCrateResult(null)}
