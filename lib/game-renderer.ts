@@ -2220,7 +2220,7 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText('W or Space - Jump', canvasW - 20, 46)
   ctx.fillText('Shift - Jetpack', canvasW - 20, 62)
   ctx.fillText('Mouse Aim + Click - Shoot', canvasW - 20, 78)
-  ctx.fillText('1/2/3 - Switch Weapon', canvasW - 20, 94)
+  ctx.fillText('1/2/3/4/5/6 - Switch Weapon', canvasW - 20, 94)
   ctx.textAlign = 'left'
 }
 

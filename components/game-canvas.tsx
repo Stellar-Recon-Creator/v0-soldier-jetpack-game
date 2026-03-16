@@ -758,8 +758,7 @@ export default function GameCanvas() {
                 style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.1)' }}
               >
                 <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
-                <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> {'Shoot  |  '}<span style={{ color: '#66cc66' }}>1/2/3</span> Switch Weapon</p>
-                <p style={{ color: 'rgba(255,255,255,0.6)' }}>Shoot crates for ammo, health, and new weapons!</p>
+                <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> {'Shoot  |  '}<span style={{ color: '#66cc66' }}>1/2/3/4/5/6</span> Switch Weapon</p>
               </div>
 
               <button
