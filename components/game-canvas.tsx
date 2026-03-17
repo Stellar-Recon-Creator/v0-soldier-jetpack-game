@@ -687,11 +687,11 @@ export default function GameCanvas() {
             })}
           </div>
 
-          <div className="flex-1 flex items-center justify-center z-10">
-            <div className="text-center space-y-8">
+          <div className="flex-1 flex items-center justify-center z-10 py-4">
+            <div className="text-center space-y-4">
               <div className="relative">
                 <h1
-                  className="text-7xl font-black tracking-wider font-sans uppercase"
+                  className="text-6xl font-black tracking-wider font-sans uppercase"
                   style={{
                     color: '#8a2be2',
                     textShadow: '0 0 10px rgba(138,43,226,0.8), 0 0 20px rgba(138,43,226,0.6), 0 0 30px rgba(100,20,180,0.5), 0 4px 8px rgba(0,0,0,0.6)',
@@ -702,7 +702,7 @@ export default function GameCanvas() {
                   STELLAR RECON
                 </h1>
                 <p
-                  className="text-xl font-sans mt-3 font-semibold"
+                  className="text-base font-sans mt-1 font-semibold"
                   style={{ color: '#9a6acc', textShadow: '0 0 10px rgba(154,106,204,0.5)' }}
                 >
                   Jetpack Assault
@@ -710,8 +710,8 @@ export default function GameCanvas() {
               </div>
 
               {/* Weapon selector */}
-              <div className="space-y-3">
-                <p className="text-lg font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Weapon</p>
+              <div className="space-y-2">
+                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Weapon</p>
                 <div className="flex justify-center">
                   <div className="flex items-center gap-3 px-4 py-2 rounded-lg flex-wrap" style={{ background: 'rgba(0,0,0,0.4)' }}>
                     {ownedWeapons.map(w => (
@@ -733,12 +733,12 @@ export default function GameCanvas() {
                 </div>
               </div>
 
-              <div className="space-y-5">
-                <p className="text-lg font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Difficulty</p>
-                <div className="flex gap-6 justify-center">
+              <div className="space-y-3">
+                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Difficulty</p>
+                <div className="flex gap-4 justify-center">
                   <button
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('easy'); initGame(1, 'easy') }}
-                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
                       background: 'linear-gradient(135deg, #22aa44, #44dd66)',
                       color: '#0a1a0a',
@@ -749,7 +749,7 @@ export default function GameCanvas() {
                   </button>
                   <button
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('medium'); initGame(1, 'medium') }}
-                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
                       background: 'linear-gradient(135deg, #cc8822, #ffaa44)',
                       color: '#1a1a0a',
@@ -760,7 +760,7 @@ export default function GameCanvas() {
                   </button>
                   <button
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('hard'); initGame(1, 'hard') }}
-                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
                       background: 'linear-gradient(135deg, #aa2222, #dd4444)',
                       color: '#ffffff',
@@ -773,7 +773,7 @@ export default function GameCanvas() {
               </div>
 
               <div
-                className="text-sm font-sans space-y-2 mt-8 p-5 rounded-xl"
+                className="text-sm font-sans space-y-1 p-3 rounded-xl"
                 style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.1)' }}
               >
                 <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
