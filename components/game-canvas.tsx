@@ -52,6 +52,7 @@ export default function GameCanvas() {
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
+  const [equippedWeapon, setEquippedWeapon] = useState<WeaponType>('rifle')
   const [starCurrency, setStarCurrency] = useState(100000)
   const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['rifle'])
   const ownedWeaponsRef = useRef<WeaponType[]>(['rifle'])
@@ -103,6 +104,7 @@ export default function GameCanvas() {
     player.bulletsRemaining = startingAmmo
     player.bulletsMax = startingAmmo
     player.weapons = [...ownedWeapons]
+    player.weapon = equippedWeapon
 
     stateRef.current = {
       player,
@@ -261,13 +263,6 @@ export default function GameCanvas() {
           keys.jetpack = true
           break
         case 'KeyJ': keys.shoot = true; break
-        case 'Digit1': case 'Digit2': case 'Digit3':
-        case 'Digit4': case 'Digit5': case 'Digit6': {
-          const idx = parseInt(e.code.charAt(5)) - 1
-          const w = ownedWeaponsRef.current[idx]
-          if (w) keys.switchWeapon = w
-          break
-        }
       }
     }
 
@@ -714,6 +709,30 @@ export default function GameCanvas() {
                 </p>
               </div>
 
+              {/* Weapon selector */}
+              <div className="space-y-3">
+                <p className="text-lg font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Weapon</p>
+                <div className="flex justify-center">
+                  <div className="flex items-center gap-3 px-4 py-2 rounded-lg flex-wrap" style={{ background: 'rgba(0,0,0,0.4)' }}>
+                    {ownedWeapons.map(w => (
+                      <button
+                        key={w}
+                        onClick={() => setEquippedWeapon(w)}
+                        className="text-xs font-bold font-sans px-3 py-1.5 rounded transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        style={{
+                          color: crateColors[w],
+                          background: equippedWeapon === w ? `${crateColors[w]}33` : 'rgba(255,255,255,0.08)',
+                          border: equippedWeapon === w ? `1px solid ${crateColors[w]}` : '1px solid transparent',
+                          boxShadow: equippedWeapon === w ? `0 0 10px ${crateColors[w]}66` : 'none',
+                        }}
+                      >
+                        {w.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-5">
                 <p className="text-lg font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Difficulty</p>
                 <div className="flex gap-6 justify-center">
@@ -758,7 +777,7 @@ export default function GameCanvas() {
                 style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.1)' }}
               >
                 <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
-                <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> {'Shoot  |  '}<span style={{ color: '#66cc66' }}>1/2/3/4/5/6</span> Switch Weapon</p>
+                <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> Shoot</p>
               </div>
 
               <button
