@@ -302,7 +302,6 @@ function drawDetailedTreeline(ctx: CanvasRenderingContext2D, offset: number, w: 
 
 // ─── Ground ───
 export function drawGround(ctx: CanvasRenderingContext2D, cameraX: number, cameraY: number, canvasW: number, canvasH: number, groundY: number) {
-  const gx = -((cameraX) % 64)
   const gy = groundY - cameraY
 
   // Main dirt fill with gradient
@@ -314,15 +313,18 @@ export function drawGround(ctx: CanvasRenderingContext2D, cameraX: number, camer
   ctx.fillStyle = dirtGrad
   ctx.fillRect(0, gy + 6, canvasW, canvasH - gy)
 
-  // Rock/stone layer
+  // Rock/stone layer — world-space x so positions never shift
   ctx.fillStyle = COLORS.ground.stone
   ctx.globalAlpha = 0.15
-  for (let rx = gx; rx < canvasW + 64; rx += 30) {
-    const seed = Math.abs(Math.sin(rx * 0.07 + cameraX * 0.07) * 100)
+  const rockStep = 30
+  const rockStartW = Math.floor(cameraX / rockStep) * rockStep
+  for (let wx = rockStartW; wx < cameraX + canvasW + rockStep; wx += rockStep) {
+    const seed = Math.abs(Math.sin(wx * 0.07) * 100)
     if (seed % 4 < 1) {
+      const sx = wx - cameraX
       const rw = 8 + (seed % 12)
       const ry = gy + 30 + (seed % 30)
-      roundRect(ctx, rx, ry, rw, rw * 0.6, 3)
+      roundRect(ctx, sx, ry, rw, rw * 0.6, 3)
       ctx.fill()
     }
   }
@@ -342,43 +344,51 @@ export function drawGround(ctx: CanvasRenderingContext2D, cameraX: number, camer
   ctx.fillRect(0, gy, canvasW, 2)
   ctx.globalAlpha = 1
 
-  // Grass blades (varied sizes and shades)
-  for (let bx = gx; bx < canvasW + 20; bx += 3) {
-    const seed = Math.sin(bx * 0.4 + cameraX * 0.4) * 1000
+  // Grass blades — world-space x so blades don't shuffle
+  const bladeStep = 3
+  const bladeStartW = Math.floor(cameraX / bladeStep) * bladeStep
+  for (let wx = bladeStartW; wx < cameraX + canvasW + bladeStep; wx += bladeStep) {
+    const seed = Math.sin(wx * 0.4) * 1000
     const bladeH = 3 + Math.abs(seed % 7)
-    const sway = Math.sin(bx * 0.08 + Date.now() * 0.001) * 1.5
+    const sway = Math.sin(wx * 0.08 + Date.now() * 0.001) * 1.5
     ctx.fillStyle = Math.abs(seed) % 3 < 1 ? COLORS.ground.grassTip : COLORS.ground.grassLight
     ctx.globalAlpha = 0.8
     ctx.save()
-    ctx.translate(bx + sway, gy)
+    ctx.translate(wx - cameraX + sway, gy)
     ctx.fillRect(0, -bladeH, 1.5, bladeH)
     ctx.restore()
   }
   ctx.globalAlpha = 1
 
-  // Dirt texture - pebbles and root hints
+  // Dirt texture pebbles — world-space so they stay put
   ctx.fillStyle = COLORS.ground.dirtLight
-  for (let px = gx; px < canvasW + 64; px += 48) {
+  const pebbleStep = 48
+  const pebbleStartW = Math.floor(cameraX / pebbleStep) * pebbleStep
+  for (let wx = pebbleStartW; wx < cameraX + canvasW + pebbleStep; wx += pebbleStep) {
     for (let py = gy + 14; py < Math.min(canvasH, gy + 70); py += 14) {
-      const seed = Math.abs(Math.sin(px * 0.12 + py * 0.18) * 100)
+      const seed = Math.abs(Math.sin(wx * 0.12 + py * 0.18) * 100)
       if (seed % 3 < 1) {
+        const sx = wx - cameraX
         ctx.beginPath()
-        ctx.arc(px + (seed % 10), py, 1 + (seed % 2), 0, Math.PI * 2)
+        ctx.arc(sx + (seed % 10), py, 1 + (seed % 2), 0, Math.PI * 2)
         ctx.fill()
       }
     }
   }
 
-  // Worm/root lines
+  // Worm/root lines — world-space
   ctx.strokeStyle = COLORS.ground.dirtLight
   ctx.globalAlpha = 0.15
   ctx.lineWidth = 1
-  for (let wx = gx; wx < canvasW + 64; wx += 100) {
-    const seed = Math.abs(Math.sin(wx * 0.03 + cameraX * 0.03) * 100)
+  const rootStep = 100
+  const rootStartW = Math.floor(cameraX / rootStep) * rootStep
+  for (let wx = rootStartW; wx < cameraX + canvasW + rootStep; wx += rootStep) {
+    const seed = Math.abs(Math.sin(wx * 0.03) * 100)
     if (seed % 3 < 1) {
+      const sx = wx - cameraX
       ctx.beginPath()
-      ctx.moveTo(wx, gy + 18 + (seed % 20))
-      ctx.quadraticCurveTo(wx + 15, gy + 14 + (seed % 25), wx + 30, gy + 20 + (seed % 20))
+      ctx.moveTo(sx, gy + 18 + (seed % 20))
+      ctx.quadraticCurveTo(sx + 15, gy + 14 + (seed % 25), sx + 30, gy + 20 + (seed % 20))
       ctx.stroke()
     }
   }
