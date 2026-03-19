@@ -126,7 +126,7 @@ export default function GameCanvas() {
 
     setScreen('playing')
     lastTimeRef.current = performance.now()
-  }, [ownedWeapons])
+  }, [ownedWeapons, equippedWeapon])
 
   // ─── Game Loop ───
   const gameLoop = useCallback((timestamp: number) => {
