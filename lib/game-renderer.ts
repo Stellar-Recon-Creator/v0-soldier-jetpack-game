@@ -1104,7 +1104,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
 }
 
 // ─── Player Zoomed (for home screen) ───
-export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number = 3) {
+export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number = 3, weapon: WeaponType = 'rifle') {
   ctx.save()
   ctx.translate(x, y)
   ctx.scale(scale, scale)
@@ -1295,57 +1295,177 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillStyle = COLORS.player.skin
   ctx.fillRect(10, -3, 14, 6)
   
-  // Gun - large and detailed (fully visible)
+  // Gun - varies by weapon type (matches in-game weapon visuals)
   const gunX = 22
   const gunY = -5
-  // Gun body / receiver
-  ctx.fillStyle = '#2a2a2a'
-  roundRect(ctx, gunX, gunY, 28, 9, 2)
-  ctx.fill()
-  // Gun body highlight
-  ctx.fillStyle = '#3a3a3a'
-  ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
-  // Barrel
-  ctx.fillStyle = '#4a4a4a'
-  ctx.fillRect(gunX + 26, gunY + 2, 16, 5)
-  // Barrel tip / muzzle
-  ctx.fillStyle = '#333'
-  roundRect(ctx, gunX + 40, gunY + 1, 5, 7, 1)
-  ctx.fill()
-  // Muzzle holes
-  ctx.fillStyle = '#222'
-  ctx.fillRect(gunX + 43, gunY + 2, 2, 1)
-  ctx.fillRect(gunX + 43, gunY + 5, 2, 1)
-  // Magazine
-  ctx.fillStyle = '#2a2a2a'
-  roundRect(ctx, gunX + 6, gunY + 8, 6, 10, 1)
-  ctx.fill()
-  // Scope mount
-  ctx.fillStyle = '#444'
-  ctx.fillRect(gunX + 10, gunY - 2, 12, 3)
-  // Scope tube
-  ctx.fillStyle = '#555'
-  roundRect(ctx, gunX + 8, gunY - 6, 16, 5, 2)
-  ctx.fill()
-  // Scope lens
-  ctx.fillStyle = '#66aaff'
-  ctx.shadowColor = '#66aaff'
-  ctx.shadowBlur = 3
-  ctx.beginPath()
-  ctx.arc(gunX + 22, gunY - 3.5, 2.5, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.shadowBlur = 0
-  // Stock
-  ctx.fillStyle = '#5a4a3a'
-  roundRect(ctx, gunX - 14, gunY + 0, 16, 8, 2)
-  ctx.fill()
-  // Stock detail
-  ctx.fillStyle = '#4a3a2a'
-  ctx.fillRect(gunX - 12, gunY + 3, 12, 2)
-  // Grip
-  ctx.fillStyle = '#3a3a3a'
-  roundRect(ctx, gunX + 14, gunY + 7, 5, 8, 1)
-  ctx.fill()
+
+  if (weapon === 'smg') {
+    // Compact receiver
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX, gunY + 1, 18, 7, 1)
+    ctx.fill()
+    ctx.fillStyle = '#3a3a3a'
+    ctx.fillRect(gunX + 2, gunY + 2, 12, 2)
+    // Short barrel
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 16, gunY + 3, 9, 3)
+    // Drum magazine
+    ctx.fillStyle = '#2a2a2a'
+    ctx.beginPath()
+    ctx.arc(gunX + 9, gunY + 15, 7, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#222'
+    ctx.beginPath()
+    ctx.arc(gunX + 9, gunY + 15, 4, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock
+    ctx.fillStyle = '#5a4a3a'
+    roundRect(ctx, gunX - 8, gunY + 2, 10, 6, 2)
+    ctx.fill()
+  } else if (weapon === 'sniper') {
+    // Long receiver
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX, gunY, 28, 9, 2)
+    ctx.fill()
+    ctx.fillStyle = '#3a3a3a'
+    ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
+    // Long barrel
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 26, gunY + 2, 24, 4)
+    ctx.fillStyle = '#333'
+    roundRect(ctx, gunX + 48, gunY + 1, 5, 6, 1)
+    ctx.fill()
+    // Magazine
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX + 4, gunY + 8, 6, 10, 1)
+    ctx.fill()
+    // Large scope
+    ctx.fillStyle = '#555'
+    roundRect(ctx, gunX + 7, gunY - 8, 22, 6, 2)
+    ctx.fill()
+    ctx.fillStyle = '#66aaff'
+    ctx.shadowColor = '#66aaff'
+    ctx.shadowBlur = 3
+    ctx.beginPath()
+    ctx.arc(gunX + 27, gunY - 5, 2.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    // Stock
+    ctx.fillStyle = '#5a4a3a'
+    roundRect(ctx, gunX - 14, gunY, 16, 8, 2)
+    ctx.fill()
+  } else if (weapon === 'launcher') {
+    // Wide receiver
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX, gunY - 2, 22, 14, 3)
+    ctx.fill()
+    ctx.fillStyle = '#3a3a3a'
+    ctx.fillRect(gunX + 2, gunY, 16, 2)
+    // Wide barrel
+    ctx.fillStyle = '#555'
+    roundRect(ctx, gunX + 20, gunY - 4, 22, 16, 4)
+    ctx.fill()
+    // Barrel opening
+    ctx.fillStyle = '#222'
+    ctx.beginPath()
+    ctx.arc(gunX + 40, gunY + 4, 5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#111'
+    ctx.beginPath()
+    ctx.arc(gunX + 40, gunY + 4, 3, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock
+    ctx.fillStyle = '#5a4a3a'
+    roundRect(ctx, gunX - 14, gunY + 1, 16, 8, 2)
+    ctx.fill()
+  } else if (weapon === 'shotgun') {
+    // Receiver
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX, gunY, 22, 9, 2)
+    ctx.fill()
+    ctx.fillStyle = '#3a3a3a'
+    ctx.fillRect(gunX + 2, gunY + 1, 16, 2)
+    // Shorter thick barrel
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 20, gunY + 1, 14, 6)
+    ctx.fillStyle = '#333'
+    roundRect(ctx, gunX + 32, gunY, 5, 8, 1)
+    ctx.fill()
+    // Pump grip
+    ctx.fillStyle = '#5a4a3a'
+    roundRect(ctx, gunX + 14, gunY + 8, 9, 4, 1)
+    ctx.fill()
+    // Stock
+    ctx.fillStyle = '#5a4a3a'
+    roundRect(ctx, gunX - 14, gunY, 16, 8, 2)
+    ctx.fill()
+  } else if (weapon === 'plasma') {
+    // Wider receiver
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX, gunY - 1, 26, 11, 2)
+    ctx.fill()
+    ctx.fillStyle = '#3a3a3a'
+    ctx.fillRect(gunX + 2, gunY + 1, 20, 2)
+    // Wider longer barrel with purple
+    ctx.fillStyle = '#6644aa'
+    roundRect(ctx, gunX + 24, gunY - 1, 20, 9, 3)
+    ctx.fill()
+    // Barrel glow
+    ctx.fillStyle = '#aa66ff'
+    ctx.shadowColor = '#aa66ff'
+    ctx.shadowBlur = 6
+    roundRect(ctx, gunX + 40, gunY, 5, 7, 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    // Energy cell
+    ctx.fillStyle = '#aa66ff'
+    ctx.globalAlpha = 0.7
+    roundRect(ctx, gunX + 4, gunY + 10, 7, 9, 1)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Stock
+    ctx.fillStyle = '#3a3a4a'
+    roundRect(ctx, gunX - 14, gunY + 1, 16, 8, 2)
+    ctx.fill()
+  } else {
+    // Rifle (default)
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX, gunY, 28, 9, 2)
+    ctx.fill()
+    ctx.fillStyle = '#3a3a3a'
+    ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 26, gunY + 2, 16, 5)
+    ctx.fillStyle = '#333'
+    roundRect(ctx, gunX + 40, gunY + 1, 5, 7, 1)
+    ctx.fill()
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX + 43, gunY + 2, 2, 1)
+    ctx.fillRect(gunX + 43, gunY + 5, 2, 1)
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX + 6, gunY + 8, 6, 10, 1)
+    ctx.fill()
+    ctx.fillStyle = '#444'
+    ctx.fillRect(gunX + 10, gunY - 2, 12, 3)
+    ctx.fillStyle = '#555'
+    roundRect(ctx, gunX + 8, gunY - 6, 16, 5, 2)
+    ctx.fill()
+    ctx.fillStyle = '#66aaff'
+    ctx.shadowColor = '#66aaff'
+    ctx.shadowBlur = 3
+    ctx.beginPath()
+    ctx.arc(gunX + 22, gunY - 3.5, 2.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    ctx.fillStyle = '#5a4a3a'
+    roundRect(ctx, gunX - 14, gunY + 0, 16, 8, 2)
+    ctx.fill()
+    ctx.fillStyle = '#4a3a2a'
+    ctx.fillRect(gunX - 12, gunY + 3, 12, 2)
+    ctx.fillStyle = '#3a3a3a'
+    roundRect(ctx, gunX + 14, gunY + 7, 5, 8, 1)
+    ctx.fill()
+  }
   
   ctx.restore()
 
