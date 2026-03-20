@@ -802,6 +802,13 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#555'
     roundRect(ctx, gunX + 14, gunY - 3, 14, 12, 3)
     ctx.fill()
+    // Barrel glow ring (red)
+    ctx.fillStyle = '#ff4444'
+    ctx.shadowColor = '#ff4444'
+    ctx.shadowBlur = 6
+    roundRect(ctx, gunX + 26, gunY - 2.5, 3, 11, 1)
+    ctx.fill()
+    ctx.shadowBlur = 0
     // Barrel hole
     ctx.fillStyle = '#222'
     ctx.beginPath()
@@ -811,6 +818,13 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.beginPath()
     ctx.arc(gunX + 27, gunY + 3, 3, 0, Math.PI * 2)
     ctx.fill()
+    // Inner glow
+    ctx.fillStyle = '#ff6644'
+    ctx.globalAlpha = 0.6
+    ctx.beginPath()
+    ctx.arc(gunX + 27, gunY + 3, 2, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
     // Gun highlight
     ctx.fillStyle = COLORS.player.gunLight
     ctx.fillRect(gunX + 2, gunY, 12, 0.8)
@@ -1365,6 +1379,13 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#555'
     roundRect(ctx, gunX + 20, gunY - 4, 22, 16, 4)
     ctx.fill()
+    // Barrel glow ring (red)
+    ctx.fillStyle = '#ff4444'
+    ctx.shadowColor = '#ff4444'
+    ctx.shadowBlur = 6
+    roundRect(ctx, gunX + 38, gunY - 3, 4, 14, 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
     // Barrel opening
     ctx.fillStyle = '#222'
     ctx.beginPath()
@@ -1374,6 +1395,13 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.beginPath()
     ctx.arc(gunX + 40, gunY + 4, 3, 0, Math.PI * 2)
     ctx.fill()
+    // Inner glow
+    ctx.fillStyle = '#ff6644'
+    ctx.globalAlpha = 0.6
+    ctx.beginPath()
+    ctx.arc(gunX + 40, gunY + 4, 2, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
     // Stock
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 14, gunY + 1, 16, 8, 2)
@@ -2199,22 +2227,23 @@ export function drawBullet(ctx: CanvasRenderingContext2D, bullet: Bullet, camera
   }
 
   const isPlasma = bullet.fromPlayer && bullet.weaponType === 'plasma'
+  const isLauncher = bullet.fromPlayer && bullet.weaponType === 'launcher'
 
-  ctx.shadowColor = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
+  ctx.shadowColor = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : isLauncher ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
   ctx.shadowBlur = 10
 
   // Outer glow
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : isLauncher ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 1.5, 0, Math.PI * 2)
   ctx.fill()
   // Main bullet
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#6644aa' : COLORS.bullet.player) : COLORS.bullet.enemy
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#6644aa' : isLauncher ? '#cc2222' : COLORS.bullet.player) : COLORS.bullet.enemy
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius, 0, Math.PI * 2)
   ctx.fill()
   // Core
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#cc88ff' : COLORS.bullet.playerCore) : COLORS.bullet.enemyCore
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#cc88ff' : isLauncher ? '#ffaa88' : COLORS.bullet.playerCore) : COLORS.bullet.enemyCore
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 0.4, 0, Math.PI * 2)
   ctx.fill()
