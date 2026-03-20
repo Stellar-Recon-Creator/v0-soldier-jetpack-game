@@ -282,11 +282,11 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     const bulletAngle = player.aimAngle
     for (let i = 0; i < weaponCfg.count; i++) {
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
-      // Barrel spawn distance varies by weapon
-      const barrelOffset = player.weapon === 'sniper' ? 38 : player.weapon === 'launcher' ? 30 : player.weapon === 'shotgun' ? 26 : player.weapon === 'plasma' ? 32 : player.weapon === 'smg' ? 22 : 30 // rifle: 30
+      // Barrel spawn distance varies by weapon - apply full offset along bullet direction
+      const barrelOffset = player.weapon === 'sniper' ? 38 : player.weapon === 'launcher' ? 32 : player.weapon === 'shotgun' ? 26 : player.weapon === 'plasma' ? 34 : player.weapon === 'smg' ? 22 : 30 // rifle: 30
       bullets.push({
-        x: player.x + player.width / 2 + Math.cos(angle) * barrelOffset,
-        y: player.y + 12 + Math.sin(angle) * barrelOffset,
+        x: player.x + player.width / 2 + Math.cos(bulletAngle) * barrelOffset,
+        y: player.y + 12 + Math.sin(bulletAngle) * barrelOffset,
         vx: Math.cos(angle) * weaponCfg.speed,
         vy: Math.sin(angle) * weaponCfg.speed,
         radius: weaponCfg.radius,
