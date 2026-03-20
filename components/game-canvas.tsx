@@ -396,10 +396,11 @@ export default function GameCanvas() {
                       el.width = 500
                       el.height = 200
                       ctx.clearRect(0, 0, 500, 200)
-                      drawPlayerZoomed(ctx, 200, 100, 3.5)
+                      drawPlayerZoomed(ctx, 200, 100, 3.5, equippedWeapon)
                     }
                   }
                 }}
+                key={equippedWeapon}
                 width={500}
                 height={200}
                 style={{ imageRendering: 'pixelated' }}
