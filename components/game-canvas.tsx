@@ -470,15 +470,14 @@ export default function GameCanvas() {
             
             {/* Buttons in the dirt */}
             <div className="absolute left-0 right-0 z-20 flex items-center justify-center" style={{ bottom: '30px' }}>
-              {/* Settings gear button on the left */}
+              {/* Settings gear button on the left - same size/font/glow as shop */}
               <button
                 onClick={() => {/* Settings handler */}}
-                className="absolute left-8 p-3 rounded-lg transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                className="absolute left-8 px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
                   background: 'linear-gradient(135deg, #ff8800, #ffaa22)',
-                  color: '#000000',
-                  boxShadow: '0 4px 20px rgba(255,170,34,0.5), 0 0 30px rgba(255,170,34,0.3)',
-                  fontSize: '24px',
+                  color: '#0a0a0a',
+                  boxShadow: '0 4px 20px rgba(255,136,0,0.5), 0 0 40px rgba(255,136,0,0.3)',
                 }}
               >
                 ⚙️
