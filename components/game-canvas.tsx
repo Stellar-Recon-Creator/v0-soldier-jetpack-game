@@ -52,10 +52,10 @@ export default function GameCanvas() {
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
-  const [equippedWeapon, setEquippedWeapon] = useState<WeaponType>('rifle')
+  const [equippedWeapon, setEquippedWeapon] = useState<WeaponType>('blastop')
   const [starCurrency, setStarCurrency] = useState(100000)
-  const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['rifle'])
-  const ownedWeaponsRef = useRef<WeaponType[]>(['rifle'])
+  const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['blastop'])
+  const ownedWeaponsRef = useRef<WeaponType[]>(['blastop'])
   const [crateResult, setCrateResult] = useState<{ weapon: WeaponType; isDuplicate: boolean; refund: number } | null>(null)
 
   // Keep ref in sync with state
@@ -69,7 +69,7 @@ export default function GameCanvas() {
   }
 
   const crateColors: Record<string, string> = {
-    relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222', rifle: '#ffcc22',
+    relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222', blastop: '#ffcc22',
   }
 
   const openCrate = (tier: 'pulsar' | 'nova' | 'stellar', cost: number) => {

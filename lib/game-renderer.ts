@@ -833,7 +833,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     roundRect(ctx, gunX - 7, gunY + 1, 9, 5, 2)
     ctx.fill()
   } else if (weapon === 'spalmer') {
-    // Spalmer - smaller/shorter barrel, no scope
+    // Spalmer - receiver
     // Receiver
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 15, 6, 1)
@@ -909,7 +909,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
     ctx.fill()
   } else {
-    // Rifle (default) - assault rifle with scope
+    // Blastop (default) - assault rifle with scope
     // Gun body / receiver
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 18, 7, 1)
@@ -2329,8 +2329,8 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText(`AMMO: ${Math.round((player.bulletsRemaining / player.bulletsMax) * 100)}%`, 20, 92)
 
   // Current weapon
-  const weaponNames: Record<string, string> = { rifle: 'RIFLE', relav: 'RELAV', spalmer: 'SPALMER', lerange: 'LERANGE', plasma: 'PLASMA', launcher: 'LAUNCHER' }
-  const weaponColors: Record<string, string> = { rifle: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222' }
+  const weaponNames: Record<string, string> = { blastop: 'BLASTOP', relav: 'RELAV', spalmer: 'SPALMER', lerange: 'LERANGE', plasma: 'PLASMA', launcher: 'LAUNCHER' }
+  const weaponColors: Record<string, string> = { blastop: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222' }
   ctx.fillStyle = weaponColors[player.weapon] || COLORS.hud.text
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)
