@@ -282,11 +282,46 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     const bulletAngle = player.aimAngle
     for (let i = 0; i < weaponCfg.count; i++) {
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
-      // Barrel spawn distance varies by weapon - apply full offset along bullet direction
-      const barrelOffset = player.weapon === 'sniper' ? 38 : player.weapon === 'launcher' ? 32 : player.weapon === 'shotgun' ? 26 : player.weapon === 'plasma' ? 34 : player.weapon === 'smg' ? 22 : 30 // rifle: 30
+
+      // Muzzle tip offsets in arm-local space (matches renderer gunX/muzzleX, gunY+2)
+      const muzzleTipX: Record<string, number> = { rifle: 30, smg: 22, sniper: 38, launcher: 29, shotgun: 26, plasma: 31 }
+      const tipLocal = muzzleTipX[player.weapon] ?? 30
+
+      // Reconstruct world-space muzzle position matching the renderer transforms:
+      // 1. shoulder offset from player center (shoulderX = hw-4, shoulderY = -hh+16)
+      // 2. arm rotation by drawAngle (clamped aimAngle, flipped if facing left)
+      // 3. muzzle tip at (tipLocal, 1.5) in arm-local space
+      const hw = player.width / 2
+      const hh = player.height / 2
+      const f = player.facing
+      const shoulderX = hw - 4
+      const shoulderY = -hh + 16
+      let drawAngle = player.aimAngle
+      if (f === -1) drawAngle = Math.PI - player.aimAngle
+      drawAngle = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, drawAngle))
+
+      // Tip in arm space
+      const tipArmX = tipLocal
+      const tipArmY = 1.5
+
+      // Rotate by drawAngle
+      const rotX = tipArmX * Math.cos(drawAngle) - tipArmY * Math.sin(drawAngle)
+      const rotY = tipArmX * Math.sin(drawAngle) + tipArmY * Math.cos(drawAngle)
+
+      // Apply shoulder offset
+      let localX = shoulderX + rotX
+      const localY = shoulderY + rotY
+
+      // Flip for facing
+      if (f === -1) localX = -localX
+
+      // World space
+      const spawnX = player.x + player.width / 2 + localX
+      const spawnY = player.y + player.height / 2 + localY
+
       bullets.push({
-        x: player.x + player.width / 2 + Math.cos(bulletAngle) * barrelOffset,
-        y: player.y + 12 + Math.sin(bulletAngle) * barrelOffset,
+        x: spawnX,
+        y: spawnY,
         vx: Math.cos(angle) * weaponCfg.speed,
         vy: Math.sin(angle) * weaponCfg.speed,
         radius: weaponCfg.radius,
