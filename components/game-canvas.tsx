@@ -469,45 +469,45 @@ export default function GameCanvas() {
             />
             
             {/* Buttons in the dirt */}
-            <div className="absolute left-0 right-0 z-20 flex items-center justify-center" style={{ bottom: '30px' }}>
-              {/* Settings gear button on the left - same size/font/glow as shop */}
+            <div className="absolute left-1/2 -translate-x-1/2 z-20 flex gap-4 items-center" style={{ bottom: '30px' }}>
+              {/* Gear settings button */}
               <button
                 onClick={() => {/* Settings handler */}}
-                className="absolute left-8 px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
                   background: 'linear-gradient(135deg, #ff8800, #ffaa22)',
                   color: '#0a0a0a',
                   boxShadow: '0 4px 20px rgba(255,136,0,0.5), 0 0 40px rgba(255,136,0,0.3)',
                 }}
               >
-                ⚙️
+                GEAR
               </button>
 
-              {/* Play button centered */}
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setScreen('title')}
-                  className="px-16 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                  style={{
-                    background: 'linear-gradient(135deg, #22aa44, #44dd66)',
-                    color: '#0a1a0a',
-                    boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
-                  }}
-                >
-                  PLAY
-                </button>
-                <button
-                  onClick={() => setScreen('shop')}
-                  className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                  style={{
-                    background: 'linear-gradient(135deg, #aa2222, #dd4444)',
-                    color: '#ffffff',
-                    boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
-                  }}
-                >
-                  SHOP
-                </button>
-              </div>
+              {/* Play button */}
+              <button
+                onClick={() => setScreen('title')}
+                className="px-16 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #22aa44, #44dd66)',
+                  color: '#0a1a0a',
+                  boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
+                }}
+              >
+                PLAY
+              </button>
+
+              {/* Shop button */}
+              <button
+                onClick={() => setScreen('shop')}
+                className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #aa2222, #dd4444)',
+                  color: '#ffffff',
+                  boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
+                }}
+              >
+                SHOP
+              </button>
             </div>
           </div>
         </div>
