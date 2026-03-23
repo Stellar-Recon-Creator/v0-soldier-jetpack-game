@@ -63,13 +63,13 @@ export default function GameCanvas() {
 
   // Weapon loot tables per crate tier
   const crateLootTables: Record<string, WeaponType[]> = {
-    pulsar: ['smg', 'shotgun'],
-    nova: ['shotgun', 'sniper', 'plasma'],
-    stellar: ['sniper', 'plasma', 'launcher'],
+    pulsar: ['relav', 'spalmer'],
+    nova: ['spalmer', 'lerange', 'plasma'],
+    stellar: ['lerange', 'plasma', 'launcher'],
   }
 
   const crateColors: Record<string, string> = {
-    smg: '#44ddff', shotgun: '#ff8844', sniper: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222', rifle: '#ffcc22',
+    relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222', rifle: '#ffcc22',
   }
 
   const openCrate = (tier: 'pulsar' | 'nova' | 'stellar', cost: number) => {

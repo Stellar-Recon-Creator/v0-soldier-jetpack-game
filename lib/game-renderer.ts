@@ -687,8 +687,8 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   const weapon = player.weapon
 
   // Draw weapon based on type
-  if (weapon === 'smg') {
-    // SMG - small tommy gun style, no scope
+  if (weapon === 'relav') {
+    // Relav - small tommy gun style, no scope
     // Receiver (compact)
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 14, 6, 1)
@@ -726,8 +726,8 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#4a3a28'
     roundRect(ctx, gunX - 5, gunY + 1, 7, 4, 2)
     ctx.fill()
-  } else if (weapon === 'sniper') {
-    // Sniper - long barrel with scope
+  } else if (weapon === 'lerange') {
+    // Lerange - long barrel with scope
     // Receiver
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 20, 6, 1)
@@ -832,8 +832,8 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#4a3a28'
     roundRect(ctx, gunX - 7, gunY + 1, 9, 5, 2)
     ctx.fill()
-  } else if (weapon === 'shotgun') {
-    // Shotgun - smaller/shorter barrel, no scope
+  } else if (weapon === 'spalmer') {
+    // Spalmer - smaller/shorter barrel, no scope
     // Receiver
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 15, 6, 1)
@@ -970,7 +970,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   }
 
   // Muzzle flash (adjusted position based on weapon)
-  const muzzleX = weapon === 'sniper' ? gunX + 38 : weapon === 'launcher' ? gunX + 30 : weapon === 'smg' ? gunX + 22 : weapon === 'shotgun' ? gunX + 26 : weapon === 'plasma' ? gunX + 32 : gunX + 30
+  const muzzleX = weapon === 'lerange' ? gunX + 38 : weapon === 'launcher' ? gunX + 30 : weapon === 'relav' ? gunX + 22 : weapon === 'spalmer' ? gunX + 26 : weapon === 'plasma' ? gunX + 32 : gunX + 30
   if (player.shootCooldown > 0.12) {
     ctx.globalAlpha = 0.9
     const flashGrad = ctx.createRadialGradient(muzzleX, gunY + 2, 0, muzzleX, gunY + 2, 12)
@@ -1313,7 +1313,7 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   const gunX = 22
   const gunY = -5
 
-  if (weapon === 'smg') {
+  if (weapon === 'relav') {
     // Compact receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY + 1, 18, 7, 1)
@@ -1336,7 +1336,7 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 8, gunY + 2, 10, 6, 2)
     ctx.fill()
-  } else if (weapon === 'sniper') {
+  } else if (weapon === 'lerange') {
     // Long receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY, 28, 9, 2)
@@ -1406,7 +1406,7 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 14, gunY + 1, 16, 8, 2)
     ctx.fill()
-  } else if (weapon === 'shotgun') {
+  } else if (weapon === 'spalmer') {
     // Receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY, 22, 9, 2)
@@ -2329,8 +2329,8 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText(`AMMO: ${Math.round((player.bulletsRemaining / player.bulletsMax) * 100)}%`, 20, 92)
 
   // Current weapon
-  const weaponNames: Record<string, string> = { rifle: 'RIFLE', smg: 'SMG', shotgun: 'SHOTGUN', sniper: 'SNIPER', plasma: 'PLASMA', launcher: 'LAUNCHER' }
-  const weaponColors: Record<string, string> = { rifle: '#ffcc22', smg: '#44ddff', shotgun: '#ff8844', sniper: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222' }
+  const weaponNames: Record<string, string> = { rifle: 'RIFLE', relav: 'RELAV', spalmer: 'SPALMER', lerange: 'LERANGE', plasma: 'PLASMA', launcher: 'LAUNCHER' }
+  const weaponColors: Record<string, string> = { rifle: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222' }
   ctx.fillStyle = weaponColors[player.weapon] || COLORS.hud.text
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)
