@@ -48,7 +48,7 @@ export default function GameCanvas() {
   const lastTimeRef = useRef<number>(0)
   const animFrameRef = useRef<number>(0)
   const jetpackPlayingRef = useRef<boolean>(false)
-  const [screen, setScreen] = useState<'home' | 'shop' | 'title' | 'playing' | 'dead' | 'won'>('home')
+  const [screen, setScreen] = useState<'home' | 'shop' | 'gear' | 'title' | 'playing' | 'dead' | 'won'>('home')
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
@@ -472,7 +472,7 @@ export default function GameCanvas() {
             <div className="absolute left-1/2 -translate-x-1/2 z-20 flex gap-4 items-center" style={{ bottom: '30px' }}>
               {/* Gear settings button */}
               <button
-                onClick={() => {/* Settings handler */}}
+                onClick={() => setScreen('gear')}
                 className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
                   background: 'linear-gradient(135deg, #ff8800, #ffaa22)',
@@ -514,6 +514,47 @@ export default function GameCanvas() {
       )}
 
       {/* Shop Screen */}
+      {screen === 'gear' && (
+        <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
+          {/* Stars background */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(60)].map((_, i) => {
+              const seed = (i + 200) * 137.5
+              const size = (i % 4 === 0) ? '2px' : '1px'
+              const left = ((seed * 7) % 100)
+              const top = ((seed * 3) % 100)
+              const opacity = 0.3 + ((seed * 11) % 50) / 100
+              return (
+                <div
+                  key={i}
+                  className="absolute rounded-full bg-white"
+                  style={{ width: size, height: size, left: `${left}%`, top: `${top}%`, opacity }}
+                />
+              )
+            })}
+          </div>
+
+          <div className="flex-1 flex flex-col items-center justify-center z-10 gap-8">
+            <h1
+              className="text-7xl font-black tracking-wider font-sans uppercase"
+              style={{ color: '#ff8800', textShadow: '0 0 40px rgba(255,136,0,0.8), 0 0 80px rgba(255,136,0,0.4)' }}
+            >
+              GEAR
+            </h1>
+          </div>
+
+          <div className="flex justify-center pb-8 z-10">
+            <button
+              onClick={() => setScreen('home')}
+              className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.2)' }}
+            >
+              BACK
+            </button>
+          </div>
+        </div>
+      )}
+
       {screen === 'shop' && (
         <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
           {/* Stars background */}
