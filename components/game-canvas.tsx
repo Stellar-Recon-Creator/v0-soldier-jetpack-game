@@ -658,9 +658,9 @@ export default function GameCanvas() {
           <div className="flex-1 flex items-center justify-center gap-8 z-10 px-8">
             {/* Pulsar Crate - Green */}
             {([
-              { tier: 'pulsar' as const, cost: 100, color: '#44aa44', colorLight: '#44dd44', bgFrom: '#1a4a1a', bgMid: '#2a6a2a', plankLight: '#4a6a3a', plankMid: '#3a5a2a', plankDark: '#2a4a1a', border: '#1a3a0a', beamLight: '#3a5a2a', nailColor: '#666', filterGlow: 'rgba(68,255,68,0.4)', label: 'PULSAR', weapons: ['SMG', 'SHOTGUN'] },
-              { tier: 'nova' as const, cost: 300, color: '#dd8844', colorLight: '#ffaa44', bgFrom: '#4a2a0a', bgMid: '#6a3a1a', plankLight: '#7a5a3a', plankMid: '#6a4a2a', plankDark: '#5a3a1a', border: '#3a2a0a', beamLight: '#6a4a2a', nailColor: '#777', filterGlow: 'rgba(255,170,68,0.4)', label: 'NOVA', weapons: ['SHOTGUN', 'SNIPER', 'PLASMA'] },
-              { tier: 'stellar' as const, cost: 750, color: '#aa66dd', colorLight: '#bb88ff', bgFrom: '#2a1a4a', bgMid: '#3a2a6a', plankLight: '#5a4a6a', plankMid: '#4a3a5a', plankDark: '#3a2a4a', border: '#2a1a3a', beamLight: '#4a3a5a', nailColor: '#888', filterGlow: 'rgba(170,102,255,0.4)', label: 'STELLAR', weapons: ['SNIPER', 'PLASMA', 'LAUNCHER'] },
+              { tier: 'pulsar' as const, cost: 100, color: '#44aa44', colorLight: '#44dd44', bgFrom: '#1a4a1a', bgMid: '#2a6a2a', plankLight: '#4a6a3a', plankMid: '#3a5a2a', plankDark: '#2a4a1a', border: '#1a3a0a', beamLight: '#3a5a2a', nailColor: '#666', filterGlow: 'rgba(68,255,68,0.4)', label: 'PULSAR', weapons: ['RELAV', 'SPALMER'] },
+              { tier: 'nova' as const, cost: 300, color: '#dd8844', colorLight: '#ffaa44', bgFrom: '#4a2a0a', bgMid: '#6a3a1a', plankLight: '#7a5a3a', plankMid: '#6a4a2a', plankDark: '#5a3a1a', border: '#3a2a0a', beamLight: '#6a4a2a', nailColor: '#777', filterGlow: 'rgba(255,170,68,0.4)', label: 'NOVA', weapons: ['SPALMER', 'LERANGE', 'PLASMA'] },
+              { tier: 'stellar' as const, cost: 750, color: '#aa66dd', colorLight: '#bb88ff', bgFrom: '#2a1a4a', bgMid: '#3a2a6a', plankLight: '#5a4a6a', plankMid: '#4a3a5a', plankDark: '#3a2a4a', border: '#2a1a3a', beamLight: '#4a3a5a', nailColor: '#888', filterGlow: 'rgba(170,102,255,0.4)', label: 'STELLAR', weapons: ['LERANGE', 'PLASMA', 'HYPERSHOT'] },
             ]).map(crate => {
               const canAfford = starCurrency >= crate.cost
               return (
