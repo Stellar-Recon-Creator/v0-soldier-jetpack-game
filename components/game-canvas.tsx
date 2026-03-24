@@ -592,8 +592,8 @@ export default function GameCanvas() {
             <h1
               className="text-5xl font-black tracking-wider font-sans uppercase"
               style={{
-                color: '#ffaa00',
-                textShadow: '0 0 10px rgba(255,170,0,0.8), 0 0 20px rgba(255,170,0,0.5), 0 4px 8px rgba(0,0,0,0.6)',
+                color: '#dd4444',
+                textShadow: '0 0 10px rgba(221,68,68,0.8), 0 0 20px rgba(221,68,68,0.5), 0 4px 8px rgba(0,0,0,0.6)',
               }}
             >
               SHOP
