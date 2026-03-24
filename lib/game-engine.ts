@@ -17,7 +17,7 @@ const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; dama
   spalmer:  { speed: 500,  cooldown: 0.6,  damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2 },
   lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 8 },
   plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
-  launcher: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 10 },
+  hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 10 },
 }
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
@@ -284,7 +284,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
 
       // Muzzle tip offsets in arm-local space (matches renderer gunX/muzzleX, gunY+2)
-      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, launcher: 29, spalmer: 26, plasma: 31 }
+      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31 }
       const tipLocal = muzzleTipX[player.weapon] ?? 30
 
       // Reconstruct world-space muzzle position matching the renderer transforms:

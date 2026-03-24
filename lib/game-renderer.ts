@@ -782,8 +782,8 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fill()
     ctx.fillStyle = '#5a4a38'
     ctx.fillRect(gunX - 7, gunY + 1.5, 7, 2)
-  } else if (weapon === 'launcher') {
-    // Launcher - wide big barrel, no scope
+  } else if (weapon === 'hypershot') {
+    // Hypershot - wide big barrel, no scope
     // Receiver (wide)
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY - 2, 16, 10, 2)
@@ -970,7 +970,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   }
 
   // Muzzle flash (adjusted position based on weapon)
-  const muzzleX = weapon === 'lerange' ? gunX + 38 : weapon === 'launcher' ? gunX + 30 : weapon === 'relav' ? gunX + 22 : weapon === 'spalmer' ? gunX + 26 : weapon === 'plasma' ? gunX + 32 : gunX + 30
+  const muzzleX = weapon === 'lerange' ? gunX + 38 : weapon === 'hypershot' ? gunX + 30 : weapon === 'relav' ? gunX + 22 : weapon === 'spalmer' ? gunX + 26 : weapon === 'plasma' ? gunX + 32 : gunX + 30
   if (player.shootCooldown > 0.12) {
     ctx.globalAlpha = 0.9
     const flashGrad = ctx.createRadialGradient(muzzleX, gunY + 2, 0, muzzleX, gunY + 2, 12)
@@ -1368,7 +1368,7 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 14, gunY, 16, 8, 2)
     ctx.fill()
-  } else if (weapon === 'launcher') {
+  } else if (weapon === 'hypershot') {
     // Wide receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY - 2, 22, 14, 3)
@@ -2227,23 +2227,23 @@ export function drawBullet(ctx: CanvasRenderingContext2D, bullet: Bullet, camera
   }
 
   const isPlasma = bullet.fromPlayer && bullet.weaponType === 'plasma'
-  const isLauncher = bullet.fromPlayer && bullet.weaponType === 'launcher'
+  const isHypershot = bullet.fromPlayer && bullet.weaponType === 'hypershot'
 
-  ctx.shadowColor = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : isLauncher ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
+  ctx.shadowColor = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : isHypershot ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
   ctx.shadowBlur = 10
 
   // Outer glow
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : isLauncher ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : isHypershot ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 1.5, 0, Math.PI * 2)
   ctx.fill()
   // Main bullet
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#6644aa' : isLauncher ? '#cc2222' : COLORS.bullet.player) : COLORS.bullet.enemy
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#6644aa' : isHypershot ? '#cc2222' : COLORS.bullet.player) : COLORS.bullet.enemy
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius, 0, Math.PI * 2)
   ctx.fill()
   // Core
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#cc88ff' : isLauncher ? '#ffaa88' : COLORS.bullet.playerCore) : COLORS.bullet.enemyCore
+  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#cc88ff' : isHypershot ? '#ffaa88' : COLORS.bullet.playerCore) : COLORS.bullet.enemyCore
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 0.4, 0, Math.PI * 2)
   ctx.fill()
@@ -2329,8 +2329,8 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText(`AMMO: ${Math.round((player.bulletsRemaining / player.bulletsMax) * 100)}%`, 20, 92)
 
   // Current weapon
-  const weaponNames: Record<string, string> = { blastop: 'BLASTOP', relav: 'RELAV', spalmer: 'SPALMER', lerange: 'LERANGE', plasma: 'PLASMA', launcher: 'LAUNCHER' }
-  const weaponColors: Record<string, string> = { blastop: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222' }
+  const weaponNames: Record<string, string> = { blastop: 'BLASTOP', relav: 'RELAV', spalmer: 'SPALMER', lerange: 'LERANGE', plasma: 'PLASMA', hypershot: 'HYPERSHOT' }
+  const weaponColors: Record<string, string> = { blastop: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222' }
   ctx.fillStyle = weaponColors[player.weapon] || COLORS.hud.text
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)
