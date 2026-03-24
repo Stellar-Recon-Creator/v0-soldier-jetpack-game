@@ -534,15 +534,23 @@ export default function GameCanvas() {
             })}
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center z-10 gap-8">
+          {/* Title at top */}
+          <div className="pt-8 z-10 text-center">
             <h1
-              className="text-7xl font-black tracking-wider font-sans uppercase"
-              style={{ color: '#ff8800', textShadow: '0 0 40px rgba(255,136,0,0.8), 0 0 80px rgba(255,136,0,0.4)' }}
+              className="text-5xl font-black tracking-wider font-sans uppercase"
+              style={{
+                color: '#ff8800',
+                textShadow: '0 0 10px rgba(255,136,0,0.8), 0 0 20px rgba(255,136,0,0.5), 0 4px 8px rgba(0,0,0,0.6)',
+              }}
             >
               GEAR
             </h1>
           </div>
 
+          {/* Empty space in middle */}
+          <div className="flex-1" />
+
+          {/* Back button at bottom */}
           <div className="flex justify-center pb-8 z-10">
             <button
               onClick={() => setScreen('home')}
