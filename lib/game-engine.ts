@@ -319,17 +319,38 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       const spawnX = player.x + player.width / 2 + localX
       const spawnY = player.y + player.height / 2 + localY
 
-      bullets.push({
-        x: spawnX,
-        y: spawnY,
-        vx: Math.cos(angle) * weaponCfg.speed,
-        vy: Math.sin(angle) * weaponCfg.speed,
-        radius: weaponCfg.radius,
-        fromPlayer: true,
-        active: true,
-        damage: weaponCfg.damage,
-        weaponType: player.weapon,
-      })
+      // Check if bullet spawn point is inside a platform - skip if so
+      let blockedByPlatform = false
+      for (const plat of platforms) {
+        const platY = plat.y + (plat.type === 'floating' ? Math.sin((Date.now() * 0.002) + (plat.floatOffset || 0)) * 6 : 0)
+        if (
+          spawnX > plat.x &&
+          spawnX < plat.x + plat.width &&
+          spawnY > platY &&
+          spawnY < platY + plat.height
+        ) {
+          blockedByPlatform = true
+          break
+        }
+      }
+      // Also check ground collision
+      if (spawnY > groundY) {
+        blockedByPlatform = true
+      }
+
+      if (!blockedByPlatform) {
+        bullets.push({
+          x: spawnX,
+          y: spawnY,
+          vx: Math.cos(angle) * weaponCfg.speed,
+          vy: Math.sin(angle) * weaponCfg.speed,
+          radius: weaponCfg.radius,
+          fromPlayer: true,
+          active: true,
+          damage: weaponCfg.damage,
+          weaponType: player.weapon,
+        })
+      }
     }
   }
 
