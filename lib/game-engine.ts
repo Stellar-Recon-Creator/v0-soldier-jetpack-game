@@ -321,7 +321,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
 
       // Check if bullet spawn point is inside a platform - skip if so
       let blockedByPlatform = false
-      for (const plat of platforms) {
+      for (const plat of state.platforms) {
         const platY = plat.y + (plat.type === 'floating' ? Math.sin((Date.now() * 0.002) + (plat.floatOffset || 0)) * 6 : 0)
         if (
           spawnX > plat.x &&
@@ -334,7 +334,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         }
       }
       // Also check ground collision
-      if (spawnY > groundY) {
+      if (spawnY > GROUND_Y) {
         blockedByPlatform = true
       }
 
