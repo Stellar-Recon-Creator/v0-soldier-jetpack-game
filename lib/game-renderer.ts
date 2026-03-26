@@ -2277,11 +2277,11 @@ export function drawParticle(ctx: CanvasRenderingContext2D, particle: Particle, 
 export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: number, canvasH: number) {
   // Panel background
   ctx.fillStyle = COLORS.hud.panelBg
-  roundRect(ctx, 10, 10, 220, 130, 8)
+  roundRect(ctx, 10, 10, 220, 115, 8)
   ctx.fill()
   ctx.strokeStyle = COLORS.hud.panelBorder
   ctx.lineWidth = 1
-  roundRect(ctx, 10, 10, 220, 130, 8)
+  roundRect(ctx, 10, 10, 220, 115, 8)
   ctx.stroke()
 
   // Health
@@ -2334,10 +2334,6 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillStyle = weaponColors[player.weapon] || COLORS.hud.text
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)
-  // Weapon slots hint
-  ctx.fillStyle = 'rgba(255,255,255,0.5)'
-  ctx.font = '10px Geist, sans-serif'
-  ctx.fillText(player.weapons.map((w, i) => `[${i + 1}]${w === player.weapon ? '*' : ''}`).join(' '), 20, 128)
 
   // LOW OXYGEN warning
   if (player.lowOxygen) {
