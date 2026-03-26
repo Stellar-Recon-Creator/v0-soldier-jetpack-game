@@ -48,27 +48,28 @@ export default function GameCanvas() {
   const lastTimeRef = useRef<number>(0)
   const animFrameRef = useRef<number>(0)
   const jetpackPlayingRef = useRef<boolean>(false)
-  const [screen, setScreen] = useState<'home' | 'shop' | 'title' | 'playing' | 'dead' | 'won'>('home')
+  const [screen, setScreen] = useState<'home' | 'shop' | 'gear' | 'title' | 'playing' | 'dead' | 'won'>('home')
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
+  const [equippedWeapon, setEquippedWeapon] = useState<WeaponType>('blastop')
   const [starCurrency, setStarCurrency] = useState(100000)
-  const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['rifle'])
-  const ownedWeaponsRef = useRef<WeaponType[]>(['rifle'])
-  const [crateResult, setCrateResult] = useState<{ weapon: WeaponType; isDuplicate: boolean } | null>(null)
+  const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['blastop'])
+  const ownedWeaponsRef = useRef<WeaponType[]>(['blastop'])
+  const [crateResult, setCrateResult] = useState<{ weapon: WeaponType; isDuplicate: boolean; refund: number } | null>(null)
 
   // Keep ref in sync with state
   useEffect(() => { ownedWeaponsRef.current = ownedWeapons }, [ownedWeapons])
 
   // Weapon loot tables per crate tier
   const crateLootTables: Record<string, WeaponType[]> = {
-    pulsar: ['smg', 'shotgun'],
-    nova: ['shotgun', 'sniper', 'plasma'],
-    stellar: ['sniper', 'plasma', 'launcher'],
+    pulsar: ['relav', 'spalmer'],
+    nova: ['spalmer', 'lerange', 'plasma'],
+    stellar: ['lerange', 'plasma', 'hypershot'],
   }
 
   const crateColors: Record<string, string> = {
-    smg: '#44ddff', shotgun: '#ff8844', sniper: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222', rifle: '#ffcc22',
+    relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', blastop: '#ffcc22',
   }
 
   const openCrate = (tier: 'pulsar' | 'nova' | 'stellar', cost: number) => {
@@ -79,8 +80,12 @@ export default function GameCanvas() {
     const isDuplicate = ownedWeapons.includes(weapon)
     if (!isDuplicate) {
       setOwnedWeapons(prev => [...prev, weapon])
+    } else {
+      // Refund 50% of crate cost for duplicates
+      const refund = Math.floor(cost * 0.5)
+      setStarCurrency(prev => prev + refund)
     }
-    setCrateResult({ weapon, isDuplicate })
+    setCrateResult({ weapon, isDuplicate, refund: isDuplicate ? Math.floor(cost * 0.5) : 0 })
   }
 
   const initGame = useCallback((lvl: number, diff: 'easy' | 'medium' | 'hard' = 'easy') => {
@@ -93,9 +98,13 @@ export default function GameCanvas() {
     const stars = generateStars(200, canvas.width, canvas.height)
 
     const player = createPlayer()
+    const healthMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 0.75 : 0.5
+    player.health = Math.round(player.health * healthMultiplier)
+    player.maxHealth = Math.round(player.maxHealth * healthMultiplier)
     player.bulletsRemaining = startingAmmo
     player.bulletsMax = startingAmmo
     player.weapons = [...ownedWeapons]
+    player.weapon = equippedWeapon
 
     stateRef.current = {
       player,
@@ -117,7 +126,7 @@ export default function GameCanvas() {
 
     setScreen('playing')
     lastTimeRef.current = performance.now()
-  }, [ownedWeapons])
+  }, [ownedWeapons, equippedWeapon])
 
   // ─── Game Loop ───
   const gameLoop = useCallback((timestamp: number) => {
@@ -254,13 +263,6 @@ export default function GameCanvas() {
           keys.jetpack = true
           break
         case 'KeyJ': keys.shoot = true; break
-        case 'Digit1': case 'Digit2': case 'Digit3':
-        case 'Digit4': case 'Digit5': case 'Digit6': {
-          const idx = parseInt(e.code.charAt(5)) - 1
-          const w = ownedWeaponsRef.current[idx]
-          if (w) keys.switchWeapon = w
-          break
-        }
       }
     }
 
@@ -394,10 +396,11 @@ export default function GameCanvas() {
                       el.width = 500
                       el.height = 200
                       ctx.clearRect(0, 0, 500, 200)
-                      drawPlayerZoomed(ctx, 200, 100, 3.5)
+                      drawPlayerZoomed(ctx, 200, 100, 3.5, equippedWeapon)
                     }
                   }
                 }}
+                key={equippedWeapon}
                 width={500}
                 height={200}
                 style={{ imageRendering: 'pixelated' }}
@@ -466,7 +469,21 @@ export default function GameCanvas() {
             />
             
             {/* Buttons in the dirt */}
-            <div className="absolute left-1/2 -translate-x-1/2 z-20 flex gap-4" style={{ bottom: '30px' }}>
+            <div className="absolute left-1/2 -translate-x-1/2 z-20 flex gap-4 items-center" style={{ bottom: '30px' }}>
+              {/* Gear settings button */}
+              <button
+                onClick={() => setScreen('gear')}
+                className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #ff8800, #ffaa22)',
+                  color: '#0a0a0a',
+                  boxShadow: '0 4px 20px rgba(255,136,0,0.5), 0 0 40px rgba(255,136,0,0.3)',
+                }}
+              >
+                GEAR
+              </button>
+
+              {/* Play button */}
               <button
                 onClick={() => setScreen('title')}
                 className="px-16 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -478,6 +495,8 @@ export default function GameCanvas() {
               >
                 PLAY
               </button>
+
+              {/* Shop button */}
               <button
                 onClick={() => setScreen('shop')}
                 className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -495,6 +514,55 @@ export default function GameCanvas() {
       )}
 
       {/* Shop Screen */}
+      {screen === 'gear' && (
+        <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
+          {/* Stars background */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(60)].map((_, i) => {
+              const seed = (i + 200) * 137.5
+              const size = (i % 4 === 0) ? '2px' : '1px'
+              const left = ((seed * 7) % 100)
+              const top = ((seed * 3) % 100)
+              const opacity = 0.3 + ((seed * 11) % 50) / 100
+              return (
+                <div
+                  key={i}
+                  className="absolute rounded-full bg-white"
+                  style={{ width: size, height: size, left: `${left}%`, top: `${top}%`, opacity }}
+                />
+              )
+            })}
+          </div>
+
+          {/* Title at top */}
+          <div className="pt-8 z-10 text-center">
+            <h1
+              className="text-5xl font-black tracking-wider font-sans uppercase"
+              style={{
+                color: '#ff8800',
+                textShadow: '0 0 10px rgba(255,136,0,0.8), 0 0 20px rgba(255,136,0,0.5), 0 4px 8px rgba(0,0,0,0.6)',
+              }}
+            >
+              GEAR
+            </h1>
+          </div>
+
+          {/* Empty space in middle */}
+          <div className="flex-1" />
+
+          {/* Back button at bottom */}
+          <div className="flex justify-center pb-8 z-10">
+            <button
+              onClick={() => setScreen('home')}
+              className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.2)' }}
+            >
+              BACK
+            </button>
+          </div>
+        </div>
+      )}
+
       {screen === 'shop' && (
         <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
           {/* Stars background */}
@@ -532,8 +600,8 @@ export default function GameCanvas() {
             <h1
               className="text-5xl font-black tracking-wider font-sans uppercase"
               style={{
-                color: '#ffaa00',
-                textShadow: '0 0 10px rgba(255,170,0,0.8), 0 0 20px rgba(255,170,0,0.5), 0 4px 8px rgba(0,0,0,0.6)',
+                color: '#dd4444',
+                textShadow: '0 0 10px rgba(221,68,68,0.8), 0 0 20px rgba(221,68,68,0.5), 0 4px 8px rgba(0,0,0,0.6)',
               }}
             >
               SHOP
@@ -566,7 +634,10 @@ export default function GameCanvas() {
                   {crateResult.weapon.toUpperCase()}
                 </div>
                 {crateResult.isDuplicate && (
-                  <p className="text-lg font-sans" style={{ color: 'rgba(255,255,255,0.6)' }}>You already own this weapon</p>
+                  <div className="space-y-2">
+                    <p className="text-lg font-sans" style={{ color: 'rgba(255,255,255,0.6)' }}>You already own this weapon</p>
+                    <p className="text-xl font-bold font-sans" style={{ color: '#ffdd44' }}>+{crateResult.refund} refund</p>
+                  </div>
                 )}
                 <button
                   onClick={() => setCrateResult(null)}
@@ -587,9 +658,9 @@ export default function GameCanvas() {
           <div className="flex-1 flex items-center justify-center gap-8 z-10 px-8">
             {/* Pulsar Crate - Green */}
             {([
-              { tier: 'pulsar' as const, cost: 100, color: '#44aa44', colorLight: '#44dd44', bgFrom: '#1a4a1a', bgMid: '#2a6a2a', plankLight: '#4a6a3a', plankMid: '#3a5a2a', plankDark: '#2a4a1a', border: '#1a3a0a', beamLight: '#3a5a2a', nailColor: '#666', filterGlow: 'rgba(68,255,68,0.4)', label: 'PULSAR', weapons: ['SMG', 'SHOTGUN'] },
-              { tier: 'nova' as const, cost: 300, color: '#dd8844', colorLight: '#ffaa44', bgFrom: '#4a2a0a', bgMid: '#6a3a1a', plankLight: '#7a5a3a', plankMid: '#6a4a2a', plankDark: '#5a3a1a', border: '#3a2a0a', beamLight: '#6a4a2a', nailColor: '#777', filterGlow: 'rgba(255,170,68,0.4)', label: 'NOVA', weapons: ['SHOTGUN', 'SNIPER', 'PLASMA'] },
-              { tier: 'stellar' as const, cost: 750, color: '#aa66dd', colorLight: '#bb88ff', bgFrom: '#2a1a4a', bgMid: '#3a2a6a', plankLight: '#5a4a6a', plankMid: '#4a3a5a', plankDark: '#3a2a4a', border: '#2a1a3a', beamLight: '#4a3a5a', nailColor: '#888', filterGlow: 'rgba(170,102,255,0.4)', label: 'STELLAR', weapons: ['SNIPER', 'PLASMA', 'LAUNCHER'] },
+              { tier: 'pulsar' as const, cost: 100, color: '#44aa44', colorLight: '#44dd44', bgFrom: '#1a4a1a', bgMid: '#2a6a2a', plankLight: '#4a6a3a', plankMid: '#3a5a2a', plankDark: '#2a4a1a', border: '#1a3a0a', beamLight: '#3a5a2a', nailColor: '#666', filterGlow: 'rgba(68,255,68,0.4)', label: 'PULSAR', weapons: ['RELAV', 'SPALMER'] },
+              { tier: 'nova' as const, cost: 300, color: '#dd8844', colorLight: '#ffaa44', bgFrom: '#4a2a0a', bgMid: '#6a3a1a', plankLight: '#7a5a3a', plankMid: '#6a4a2a', plankDark: '#5a3a1a', border: '#3a2a0a', beamLight: '#6a4a2a', nailColor: '#777', filterGlow: 'rgba(255,170,68,0.4)', label: 'NOVA', weapons: ['SPALMER', 'LERANGE', 'PLASMA'] },
+              { tier: 'stellar' as const, cost: 750, color: '#aa66dd', colorLight: '#bb88ff', bgFrom: '#2a1a4a', bgMid: '#3a2a6a', plankLight: '#5a4a6a', plankMid: '#4a3a5a', plankDark: '#3a2a4a', border: '#2a1a3a', beamLight: '#4a3a5a', nailColor: '#888', filterGlow: 'rgba(170,102,255,0.4)', label: 'STELLAR', weapons: ['LERANGE', 'PLASMA', 'HYPERSHOT'] },
             ]).map(crate => {
               const canAfford = starCurrency >= crate.cost
               return (
@@ -682,11 +753,11 @@ export default function GameCanvas() {
             })}
           </div>
 
-          <div className="flex-1 flex items-center justify-center z-10">
-            <div className="text-center space-y-8">
+          <div className="flex-1 flex items-center justify-center z-10 py-4">
+            <div className="text-center space-y-4">
               <div className="relative">
                 <h1
-                  className="text-7xl font-black tracking-wider font-sans uppercase"
+                  className="text-6xl font-black tracking-wider font-sans uppercase"
                   style={{
                     color: '#8a2be2',
                     textShadow: '0 0 10px rgba(138,43,226,0.8), 0 0 20px rgba(138,43,226,0.6), 0 0 30px rgba(100,20,180,0.5), 0 4px 8px rgba(0,0,0,0.6)',
@@ -697,19 +768,43 @@ export default function GameCanvas() {
                   STELLAR RECON
                 </h1>
                 <p
-                  className="text-xl font-sans mt-3 font-semibold"
+                  className="text-base font-sans mt-1 font-semibold"
                   style={{ color: '#9a6acc', textShadow: '0 0 10px rgba(154,106,204,0.5)' }}
                 >
                   Jetpack Assault
                 </p>
               </div>
 
-              <div className="space-y-5">
-                <p className="text-lg font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Difficulty</p>
-                <div className="flex gap-6 justify-center">
+              {/* Weapon selector */}
+              <div className="space-y-2">
+                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Weapon</p>
+                <div className="flex justify-center">
+                  <div className="flex items-center gap-3 px-4 py-2 rounded-lg flex-wrap" style={{ background: 'rgba(0,0,0,0.4)' }}>
+                    {ownedWeapons.map(w => (
+                      <button
+                        key={w}
+                        onClick={() => setEquippedWeapon(w)}
+                        className="text-xs font-bold font-sans px-3 py-1.5 rounded transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        style={{
+                          color: crateColors[w],
+                          background: equippedWeapon === w ? `${crateColors[w]}33` : 'rgba(255,255,255,0.08)',
+                          border: equippedWeapon === w ? `1px solid ${crateColors[w]}` : '1px solid transparent',
+                          boxShadow: equippedWeapon === w ? `0 0 10px ${crateColors[w]}66` : 'none',
+                        }}
+                      >
+                        {w.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>Select Difficulty</p>
+                <div className="flex gap-4 justify-center">
                   <button
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('easy'); initGame(1, 'easy') }}
-                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
                       background: 'linear-gradient(135deg, #22aa44, #44dd66)',
                       color: '#0a1a0a',
@@ -720,7 +815,7 @@ export default function GameCanvas() {
                   </button>
                   <button
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('medium'); initGame(1, 'medium') }}
-                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
                       background: 'linear-gradient(135deg, #cc8822, #ffaa44)',
                       color: '#1a1a0a',
@@ -731,7 +826,7 @@ export default function GameCanvas() {
                   </button>
                   <button
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('hard'); initGame(1, 'hard') }}
-                    className="px-10 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                    className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
                       background: 'linear-gradient(135deg, #aa2222, #dd4444)',
                       color: '#ffffff',
@@ -744,12 +839,11 @@ export default function GameCanvas() {
               </div>
 
               <div
-                className="text-sm font-sans space-y-2 mt-8 p-5 rounded-xl"
+                className="text-sm font-sans space-y-1 p-3 rounded-xl"
                 style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.1)' }}
               >
                 <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
-                <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> {'Shoot  |  '}<span style={{ color: '#66cc66' }}>1/2/3</span> Switch Weapon</p>
-                <p style={{ color: 'rgba(255,255,255,0.6)' }}>Shoot crates for ammo, health, and new weapons!</p>
+                <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> Shoot</p>
               </div>
 
               <button
