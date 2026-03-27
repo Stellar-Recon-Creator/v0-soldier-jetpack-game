@@ -315,26 +315,49 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       // Flip for facing
       if (f === -1) localX = -localX
 
-      // World space
+      // World space - shoulder origin and muzzle tip
+      const shoulderWorldX = player.x + player.width / 2 + (f === -1 ? -shoulderX : shoulderX)
+      const shoulderWorldY = player.y + player.height / 2 + shoulderY
       const spawnX = player.x + player.width / 2 + localX
       const spawnY = player.y + player.height / 2 + localY
 
-      // Check if bullet spawn point is inside a platform - skip if so
+      // Check if the line from shoulder to muzzle intersects any platform
       let blockedByPlatform = false
       for (const plat of state.platforms) {
         const platY = plat.y + (plat.type === 'floating' ? Math.sin((Date.now() * 0.002) + (plat.floatOffset || 0)) * 6 : 0)
-        if (
-          spawnX > plat.x &&
-          spawnX < plat.x + plat.width &&
-          spawnY > platY &&
-          spawnY < platY + plat.height
-        ) {
+        // Line-segment vs AABB intersection test
+        const x1 = shoulderWorldX, y1 = shoulderWorldY
+        const x2 = spawnX, y2 = spawnY
+        const left = plat.x, right = plat.x + plat.width
+        const top = platY, bottom = platY + plat.height
+        
+        // Check if line segment intersects rectangle
+        // Using parametric line clipping (Liang-Barsky style)
+        let tMin = 0, tMax = 1
+        const dx = x2 - x1, dy = y2 - y1
+        const edges = [
+          { p: -dx, q: x1 - left },   // left
+          { p: dx, q: right - x1 },   // right
+          { p: -dy, q: y1 - top },    // top
+          { p: dy, q: bottom - y1 },  // bottom
+        ]
+        let intersects = true
+        for (const { p, q } of edges) {
+          if (p === 0) {
+            if (q < 0) { intersects = false; break }
+          } else {
+            const t = q / p
+            if (p < 0) { if (t > tMax) { intersects = false; break } else if (t > tMin) tMin = t }
+            else { if (t < tMin) { intersects = false; break } else if (t < tMax) tMax = t }
+          }
+        }
+        if (intersects && tMin <= tMax) {
           blockedByPlatform = true
           break
         }
       }
-      // Also check ground collision
-      if (spawnY > GROUND_Y) {
+      // Also check ground collision - line crosses ground level
+      if (spawnY > GROUND_Y || (shoulderWorldY < GROUND_Y && spawnY >= GROUND_Y)) {
         blockedByPlatform = true
       }
 
