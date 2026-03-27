@@ -219,7 +219,7 @@ export default function GameCanvas() {
     if (keysRef.current.jetpack && newState.player.jetpackFuel > 0) {
       drawJetpackFlame(ctx, newState.player, newState.cameraX, newState.cameraY)
     }
-    drawPlayer(ctx, newState.player, newState.cameraX, newState.cameraY)
+    drawPlayer(ctx, newState.player, newState.cameraX, newState.cameraY, newState.platforms, GROUND_Y)
 
     // Particles
     for (const particle of newState.particles) {
