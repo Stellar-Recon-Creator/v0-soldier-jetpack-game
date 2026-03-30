@@ -547,8 +547,44 @@ export default function GameCanvas() {
             </h1>
           </div>
 
-          {/* Empty space in middle */}
-          <div className="flex-1" />
+          {/* Gear options */}
+          <div className="flex-1 flex items-center justify-center z-10">
+            <div className="flex gap-6">
+              <button
+                onClick={() => {/* Jetpack handler */}}
+                className="px-10 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #2266dd, #44aaff)',
+                  color: '#ffffff',
+                  boxShadow: '0 4px 20px rgba(68,170,255,0.5), 0 0 40px rgba(68,170,255,0.3)',
+                }}
+              >
+                JETPACK
+              </button>
+              <button
+                onClick={() => {/* Ammo handler */}}
+                className="px-10 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #ddaa22, #ffcc44)',
+                  color: '#0a0a0a',
+                  boxShadow: '0 4px 20px rgba(255,204,68,0.5), 0 0 40px rgba(255,204,68,0.3)',
+                }}
+              >
+                AMMO
+              </button>
+              <button
+                onClick={() => {/* Armor handler */}}
+                className="px-10 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #666666, #888888)',
+                  color: '#ffffff',
+                  boxShadow: '0 4px 20px rgba(136,136,136,0.5), 0 0 40px rgba(136,136,136,0.3)',
+                }}
+              >
+                ARMOR
+              </button>
+            </div>
+          </div>
 
           {/* Back button at bottom */}
           <div className="flex justify-center pb-8 z-10">
