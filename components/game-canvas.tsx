@@ -64,7 +64,7 @@ export default function GameCanvas() {
   // Weapon loot tables per crate tier
   const crateLootTables: Record<string, WeaponType[]> = {
     pulsar: ['relav', 'spalmer'],
-    nova: ['spalmer', 'lerange', 'plasma'],
+    nova: ['spalmer', 'lerange'],
     stellar: ['lerange', 'plasma', 'hypershot'],
   }
 
@@ -219,7 +219,7 @@ export default function GameCanvas() {
     if (keysRef.current.jetpack && newState.player.jetpackFuel > 0) {
       drawJetpackFlame(ctx, newState.player, newState.cameraX, newState.cameraY)
     }
-    drawPlayer(ctx, newState.player, newState.cameraX, newState.cameraY)
+    drawPlayer(ctx, newState.player, newState.cameraX, newState.cameraY, newState.platforms, GROUND_Y)
 
     // Particles
     for (const particle of newState.particles) {
@@ -547,8 +547,44 @@ export default function GameCanvas() {
             </h1>
           </div>
 
-          {/* Empty space in middle */}
-          <div className="flex-1" />
+          {/* Gear options */}
+          <div className="flex-1 flex items-center justify-center z-10">
+            <div className="flex gap-6">
+              <button
+                onClick={() => {/* Jetpack handler */}}
+                className="w-40 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #aa2222, #dd4444)',
+                  color: '#ffffff',
+                  boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
+                }}
+              >
+                JETPACK
+              </button>
+              <button
+                onClick={() => {/* Ammo handler */}}
+                className="w-40 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #dddd22, #ffff44)',
+                  color: '#0a0a0a',
+                  boxShadow: '0 4px 20px rgba(255,255,68,0.5), 0 0 40px rgba(255,255,68,0.3)',
+                }}
+              >
+                AMMO
+              </button>
+              <button
+                onClick={() => {/* Armor handler */}}
+                className="w-40 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #22aa44, #44dd66)',
+                  color: '#0a1a0a',
+                  boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
+                }}
+              >
+                ARMOR
+              </button>
+            </div>
+          </div>
 
           {/* Back button at bottom */}
           <div className="flex justify-center pb-8 z-10">
@@ -659,7 +695,7 @@ export default function GameCanvas() {
             {/* Pulsar Crate - Green */}
             {([
               { tier: 'pulsar' as const, cost: 100, color: '#44aa44', colorLight: '#44dd44', bgFrom: '#1a4a1a', bgMid: '#2a6a2a', plankLight: '#4a6a3a', plankMid: '#3a5a2a', plankDark: '#2a4a1a', border: '#1a3a0a', beamLight: '#3a5a2a', nailColor: '#666', filterGlow: 'rgba(68,255,68,0.4)', label: 'PULSAR', weapons: ['RELAV', 'SPALMER'] },
-              { tier: 'nova' as const, cost: 300, color: '#dd8844', colorLight: '#ffaa44', bgFrom: '#4a2a0a', bgMid: '#6a3a1a', plankLight: '#7a5a3a', plankMid: '#6a4a2a', plankDark: '#5a3a1a', border: '#3a2a0a', beamLight: '#6a4a2a', nailColor: '#777', filterGlow: 'rgba(255,170,68,0.4)', label: 'NOVA', weapons: ['SPALMER', 'LERANGE', 'PLASMA'] },
+              { tier: 'nova' as const, cost: 300, color: '#dd8844', colorLight: '#ffaa44', bgFrom: '#4a2a0a', bgMid: '#6a3a1a', plankLight: '#7a5a3a', plankMid: '#6a4a2a', plankDark: '#5a3a1a', border: '#3a2a0a', beamLight: '#6a4a2a', nailColor: '#777', filterGlow: 'rgba(255,170,68,0.4)', label: 'NOVA', weapons: ['SPALMER', 'LERANGE'] },
               { tier: 'stellar' as const, cost: 750, color: '#aa66dd', colorLight: '#bb88ff', bgFrom: '#2a1a4a', bgMid: '#3a2a6a', plankLight: '#5a4a6a', plankMid: '#4a3a5a', plankDark: '#3a2a4a', border: '#2a1a3a', beamLight: '#4a3a5a', nailColor: '#888', filterGlow: 'rgba(170,102,255,0.4)', label: 'STELLAR', weapons: ['LERANGE', 'PLASMA', 'HYPERSHOT'] },
             ]).map(crate => {
               const canAfford = starCurrency >= crate.cost

@@ -453,7 +453,7 @@ export function drawPlatform(ctx: CanvasRenderingContext2D, platform: Platform, 
 }
 
 // ─── Player (Detailed Human Soldier) ───
-export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, cameraX: number, cameraY: number) {
+export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, cameraX: number, cameraY: number, platforms: { x: number; y: number; width: number; height: number; type?: string; floatOffset?: number }[] = [], groundY: number = 600) {
   const px = player.x - cameraX
   const py = player.y - cameraY
   const f = player.facing
@@ -666,6 +666,65 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     drawAngle = Math.PI - player.aimAngle
   }
   drawAngle = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, drawAngle))
+
+  // Get barrel length for current weapon to check collision
+  const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31 }
+  const barrelLen = muzzleTipX[player.weapon] ?? 30
+
+  // Calculate world-space muzzle position to check for platform clipping
+  const shoulderWorldX = player.x + player.width / 2 + (f === -1 ? -shoulderX : shoulderX)
+  const shoulderWorldY = player.y + player.height / 2 + shoulderY
+  const worldAngle = f === -1 ? Math.PI - drawAngle : drawAngle
+  const muzzleWorldX = shoulderWorldX + Math.cos(worldAngle) * barrelLen
+  const muzzleWorldY = shoulderWorldY + Math.sin(worldAngle) * barrelLen
+
+  // Check if barrel clips through any platform and limit angle if so
+  const checkBarrelClip = (testAngle: number): boolean => {
+    const testWorldAngle = f === -1 ? Math.PI - testAngle : testAngle
+    const testMuzzleX = shoulderWorldX + Math.cos(testWorldAngle) * barrelLen
+    const testMuzzleY = shoulderWorldY + Math.sin(testWorldAngle) * barrelLen
+    // Line segment from shoulder to muzzle
+    for (const plat of platforms) {
+      const platY = plat.y + (plat.type === 'floating' ? Math.sin((Date.now() * 0.002) + (plat.floatOffset || 0)) * 6 : 0)
+      // Liang-Barsky line-rect intersection
+      let tMin = 0, tMax = 1
+      const dx = testMuzzleX - shoulderWorldX, dy = testMuzzleY - shoulderWorldY
+      const edges = [
+        { p: -dx, q: shoulderWorldX - plat.x },
+        { p: dx, q: plat.x + plat.width - shoulderWorldX },
+        { p: -dy, q: shoulderWorldY - platY },
+        { p: dy, q: platY + plat.height - shoulderWorldY },
+      ]
+      let intersects = true
+      for (const { p, q } of edges) {
+        if (p === 0) { if (q < 0) { intersects = false; break } }
+        else {
+          const t = q / p
+          if (p < 0) { if (t > tMax) { intersects = false; break } else if (t > tMin) tMin = t }
+          else { if (t < tMin) { intersects = false; break } else if (t < tMax) tMax = t }
+        }
+      }
+      if (intersects && tMin <= tMax) return true
+    }
+    // Check ground
+    if (testMuzzleY > groundY) return true
+    return false
+  }
+
+  // If current angle clips, find the maximum safe angle
+  if (checkBarrelClip(drawAngle)) {
+    // Binary search for max safe angle (searching from 0 toward current angle)
+    let safeAngle = 0
+    const step = drawAngle > 0 ? 0.02 : -0.02
+    for (let testA = 0; Math.abs(testA) < Math.abs(drawAngle); testA += step) {
+      if (!checkBarrelClip(testA)) {
+        safeAngle = testA
+      } else {
+        break
+      }
+    }
+    drawAngle = safeAngle
+  }
 
   ctx.save()
   ctx.translate(shoulderX, shoulderY)
