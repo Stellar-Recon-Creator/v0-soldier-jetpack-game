@@ -555,9 +555,9 @@ export default function GameCanvas() {
 
           {/* Gear options */}
           <div className="flex-1 flex items-center justify-center z-10">
-            <div className="flex gap-10">
+            <div className="flex gap-6">
               {/* Jetpack column */}
-              <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-col items-center gap-3">
                 <button
                   onClick={() => {/* Jetpack handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -569,7 +569,7 @@ export default function GameCanvas() {
                 >
                   JETPACK
                 </button>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -596,7 +596,7 @@ export default function GameCanvas() {
               </div>
 
               {/* Ammo column */}
-              <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-col items-center gap-3">
                 <button
                   onClick={() => {/* Ammo handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -608,7 +608,7 @@ export default function GameCanvas() {
                 >
                   AMMO
                 </button>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
@@ -635,7 +635,7 @@ export default function GameCanvas() {
               </div>
 
               {/* Armor column */}
-              <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-col items-center gap-3">
                 <button
                   onClick={() => {/* Armor handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -647,7 +647,7 @@ export default function GameCanvas() {
                 >
                   ARMOR
                 </button>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
