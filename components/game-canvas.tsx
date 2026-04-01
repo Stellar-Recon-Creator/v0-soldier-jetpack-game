@@ -569,10 +569,10 @@ export default function GameCanvas() {
                 >
                   JETPACK
                 </button>
-                <div className="flex gap-2 mt-14">
+                <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
-                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -ml-3"
                     style={{
                       background: 'linear-gradient(135deg, #aa2222, #dd4444)',
                       color: '#ffffff',
@@ -583,7 +583,7 @@ export default function GameCanvas() {
                   </button>
                   <button
                     onClick={() => {}}
-                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
                       background: 'linear-gradient(135deg, #aa2222, #dd4444)',
                       color: '#ffffff',
@@ -608,10 +608,10 @@ export default function GameCanvas() {
                 >
                   AMMO
                 </button>
-                <div className="flex gap-2 mt-14">
+                <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
-                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
                       background: 'linear-gradient(135deg, #dddd22, #ffff44)',
                       color: '#0a0a0a',
@@ -622,7 +622,7 @@ export default function GameCanvas() {
                   </button>
                   <button
                     onClick={() => {}}
-                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -mr-3"
                     style={{
                       background: 'linear-gradient(135deg, #dddd22, #ffff44)',
                       color: '#0a0a0a',
@@ -647,10 +647,10 @@ export default function GameCanvas() {
                 >
                   ARMOR
                 </button>
-                <div className="flex gap-2 mt-14">
+                <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
-                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
                       background: 'linear-gradient(135deg, #22aa44, #44dd66)',
                       color: '#0a1a0a',
@@ -661,7 +661,7 @@ export default function GameCanvas() {
                   </button>
                   <button
                     onClick={() => {}}
-                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
                       background: 'linear-gradient(135deg, #22aa44, #44dd66)',
                       color: '#0a1a0a',
