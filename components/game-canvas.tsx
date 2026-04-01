@@ -569,7 +569,7 @@ export default function GameCanvas() {
                 >
                   JETPACK
                 </button>
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-2 mt-14">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -608,7 +608,7 @@ export default function GameCanvas() {
                 >
                   AMMO
                 </button>
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-2 mt-14">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
@@ -647,7 +647,7 @@ export default function GameCanvas() {
                 >
                   ARMOR
                 </button>
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-2 mt-14">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
