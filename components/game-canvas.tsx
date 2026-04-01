@@ -534,6 +534,12 @@ export default function GameCanvas() {
             })}
           </div>
 
+          {/* Star currency display - top right */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <span style={{ color: '#ffdd44', fontSize: '24px' }}>&#9733;</span>
+            <span className="text-xl font-bold font-sans" style={{ color: '#ffdd44' }}>{starCurrency}</span>
+          </div>
+
           {/* Title at top */}
           <div className="pt-8 z-10 text-center">
             <h1
@@ -549,9 +555,9 @@ export default function GameCanvas() {
 
           {/* Gear options */}
           <div className="flex-1 flex items-center justify-center z-10">
-            <div className="flex gap-6">
+            <div className="flex gap-10">
               {/* Jetpack column */}
-              <div className="flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-5">
                 <button
                   onClick={() => {/* Jetpack handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -590,7 +596,7 @@ export default function GameCanvas() {
               </div>
 
               {/* Ammo column */}
-              <div className="flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-5">
                 <button
                   onClick={() => {/* Ammo handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -629,7 +635,7 @@ export default function GameCanvas() {
               </div>
 
               {/* Armor column */}
-              <div className="flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-5">
                 <button
                   onClick={() => {/* Armor handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
