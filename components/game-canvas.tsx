@@ -570,7 +570,7 @@ export default function GameCanvas() {
                   JETPACK
                 </button>
                 {/* Connecting lines */}
-                <svg className="absolute pointer-events-none" style={{ top: '70px', left: 0, width: '100%', height: '100px', overflow: 'visible' }}>
+                <svg className="absolute pointer-events-none" style={{ top: '80px', left: 0, width: '100%', height: '80px', overflow: 'visible' }}>
                   <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(221,68,68,0.25)" strokeWidth="2" />
                   <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(221,68,68,0.25)" strokeWidth="2" />
                 </svg>
@@ -614,7 +614,7 @@ export default function GameCanvas() {
                   AMMO
                 </button>
                 {/* Connecting lines */}
-                <svg className="absolute pointer-events-none" style={{ top: '70px', left: 0, width: '100%', height: '100px', overflow: 'visible' }}>
+                <svg className="absolute pointer-events-none" style={{ top: '80px', left: 0, width: '100%', height: '80px', overflow: 'visible' }}>
                   <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(255,255,68,0.25)" strokeWidth="2" />
                   <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(255,255,68,0.25)" strokeWidth="2" />
                 </svg>
@@ -658,7 +658,7 @@ export default function GameCanvas() {
                   ARMOR
                 </button>
                 {/* Connecting lines */}
-                <svg className="absolute pointer-events-none" style={{ top: '70px', left: 0, width: '100%', height: '100px', overflow: 'visible' }}>
+                <svg className="absolute pointer-events-none" style={{ top: '80px', left: 0, width: '100%', height: '80px', overflow: 'visible' }}>
                   <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(68,221,100,0.25)" strokeWidth="2" />
                   <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(68,221,100,0.25)" strokeWidth="2" />
                 </svg>
