@@ -557,7 +557,7 @@ export default function GameCanvas() {
           <div className="flex-1 flex items-center justify-center z-10">
             <div className="flex gap-6">
               {/* Jetpack column */}
-              <div className="flex flex-col items-center gap-3">
+              <div className="relative flex flex-col items-center gap-3">
                 <button
                   onClick={() => {/* Jetpack handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -569,6 +569,11 @@ export default function GameCanvas() {
                 >
                   JETPACK
                 </button>
+                {/* Connecting lines */}
+                <svg className="absolute pointer-events-none" style={{ top: '70px', left: 0, width: '100%', height: '100px', overflow: 'visible' }}>
+                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(221,68,68,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(221,68,68,0.25)" strokeWidth="2" />
+                </svg>
                 <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
@@ -596,7 +601,7 @@ export default function GameCanvas() {
               </div>
 
               {/* Ammo column */}
-              <div className="flex flex-col items-center gap-3">
+              <div className="relative flex flex-col items-center gap-3">
                 <button
                   onClick={() => {/* Ammo handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -608,6 +613,11 @@ export default function GameCanvas() {
                 >
                   AMMO
                 </button>
+                {/* Connecting lines */}
+                <svg className="absolute pointer-events-none" style={{ top: '70px', left: 0, width: '100%', height: '100px', overflow: 'visible' }}>
+                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(255,255,68,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(255,255,68,0.25)" strokeWidth="2" />
+                </svg>
                 <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
@@ -635,7 +645,7 @@ export default function GameCanvas() {
               </div>
 
               {/* Armor column */}
-              <div className="flex flex-col items-center gap-3">
+              <div className="relative flex flex-col items-center gap-3">
                 <button
                   onClick={() => {/* Armor handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -647,6 +657,11 @@ export default function GameCanvas() {
                 >
                   ARMOR
                 </button>
+                {/* Connecting lines */}
+                <svg className="absolute pointer-events-none" style={{ top: '70px', left: 0, width: '100%', height: '100px', overflow: 'visible' }}>
+                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(68,221,100,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(68,221,100,0.25)" strokeWidth="2" />
+                </svg>
                 <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
