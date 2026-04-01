@@ -557,7 +557,7 @@ export default function GameCanvas() {
           <div className="flex-1 flex items-center justify-center z-10">
             <div className="flex gap-6">
               {/* Jetpack column */}
-              <div className="relative flex flex-col items-center gap-3">
+              <div className="relative flex flex-col items-center gap-3" style={{ transform: 'translateX(-20px)' }}>
                 <button
                   onClick={() => {/* Jetpack handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -645,7 +645,7 @@ export default function GameCanvas() {
               </div>
 
               {/* Armor column */}
-              <div className="relative flex flex-col items-center gap-3">
+              <div className="relative flex flex-col items-center gap-3" style={{ transform: 'translateX(20px)' }}>
                 <button
                   onClick={() => {/* Armor handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
