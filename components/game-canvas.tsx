@@ -550,39 +550,122 @@ export default function GameCanvas() {
           {/* Gear options */}
           <div className="flex-1 flex items-center justify-center z-10">
             <div className="flex gap-6">
-              <button
-                onClick={() => {/* Jetpack handler */}}
-                className="w-40 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                style={{
-                  background: 'linear-gradient(135deg, #aa2222, #dd4444)',
-                  color: '#ffffff',
-                  boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
-                }}
-              >
-                JETPACK
-              </button>
-              <button
-                onClick={() => {/* Ammo handler */}}
-                className="w-40 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                style={{
-                  background: 'linear-gradient(135deg, #dddd22, #ffff44)',
-                  color: '#0a0a0a',
-                  boxShadow: '0 4px 20px rgba(255,255,68,0.5), 0 0 40px rgba(255,255,68,0.3)',
-                }}
-              >
-                AMMO
-              </button>
-              <button
-                onClick={() => {/* Armor handler */}}
-                className="w-40 py-6 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                style={{
-                  background: 'linear-gradient(135deg, #22aa44, #44dd66)',
-                  color: '#0a1a0a',
-                  boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
-                }}
-              >
-                ARMOR
-              </button>
+              {/* Jetpack column */}
+              <div className="flex flex-col items-center gap-3">
+                <button
+                  onClick={() => {/* Jetpack handler */}}
+                  className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #aa2222, #dd4444)',
+                    color: '#ffffff',
+                    boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
+                  }}
+                >
+                  JETPACK
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {}}
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                    style={{
+                      background: 'linear-gradient(135deg, #aa2222, #dd4444)',
+                      color: '#ffffff',
+                      boxShadow: '0 2px 10px rgba(221,68,68,0.4)',
+                    }}
+                  >
+                    <span className="flex flex-col items-center leading-tight"><span>POWER</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                  </button>
+                  <button
+                    onClick={() => {}}
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                    style={{
+                      background: 'linear-gradient(135deg, #aa2222, #dd4444)',
+                      color: '#ffffff',
+                      boxShadow: '0 2px 10px rgba(221,68,68,0.4)',
+                    }}
+                  >
+                    <span className="flex flex-col items-center leading-tight"><span>FUEL</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Ammo column */}
+              <div className="flex flex-col items-center gap-3">
+                <button
+                  onClick={() => {/* Ammo handler */}}
+                  className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #dddd22, #ffff44)',
+                    color: '#0a0a0a',
+                    boxShadow: '0 4px 20px rgba(255,255,68,0.5), 0 0 40px rgba(255,255,68,0.3)',
+                  }}
+                >
+                  AMMO
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {}}
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                    style={{
+                      background: 'linear-gradient(135deg, #dddd22, #ffff44)',
+                      color: '#0a0a0a',
+                      boxShadow: '0 2px 10px rgba(255,255,68,0.4)',
+                    }}
+                  >
+                    <span className="flex flex-col items-center leading-tight"><span>STARTING AMMO</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                  </button>
+                  <button
+                    onClick={() => {}}
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                    style={{
+                      background: 'linear-gradient(135deg, #dddd22, #ffff44)',
+                      color: '#0a0a0a',
+                      boxShadow: '0 2px 10px rgba(255,255,68,0.4)',
+                    }}
+                  >
+                    <span className="flex flex-col items-center leading-tight"><span>AMMO USE</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Armor column */}
+              <div className="flex flex-col items-center gap-3">
+                <button
+                  onClick={() => {/* Armor handler */}}
+                  className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #22aa44, #44dd66)',
+                    color: '#0a1a0a',
+                    boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
+                  }}
+                >
+                  ARMOR
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {}}
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                    style={{
+                      background: 'linear-gradient(135deg, #22aa44, #44dd66)',
+                      color: '#0a1a0a',
+                      boxShadow: '0 2px 10px rgba(68,221,100,0.4)',
+                    }}
+                  >
+                    <span className="flex flex-col items-center leading-tight"><span>DURABILITY</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                  </button>
+                  <button
+                    onClick={() => {}}
+                    className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                    style={{
+                      background: 'linear-gradient(135deg, #22aa44, #44dd66)',
+                      color: '#0a1a0a',
+                      boxShadow: '0 2px 10px rgba(68,221,100,0.4)',
+                    }}
+                  >
+                    <span className="flex flex-col items-center leading-tight"><span>WEIGHT</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -590,7 +673,7 @@ export default function GameCanvas() {
           <div className="flex justify-center pb-8 z-10">
             <button
               onClick={() => setScreen('home')}
-              className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              className="px-[70px] py-[22px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.2)' }}
             >
               BACK
