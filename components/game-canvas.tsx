@@ -477,7 +477,7 @@ export default function GameCanvas() {
                 style={{
                   background: 'linear-gradient(135deg, #e67a00, #e6991f)',
                   color: '#0a0a0a',
-                  boxShadow: '0 4px 20px rgba(255,136,0,0.5), 0 0 40px rgba(255,136,0,0.3)',
+                  boxShadow: '0 4px 20px rgba(255,136,0,0.25), 0 0 40px rgba(255,136,0,0.15)',
                 }}
               >
                 GEAR
@@ -490,7 +490,7 @@ export default function GameCanvas() {
                 style={{
                   background: 'linear-gradient(135deg, #1f993d, #3dc75c)',
                   color: '#0a1a0a',
-                  boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
+                  boxShadow: '0 4px 20px rgba(68,221,100,0.25), 0 0 40px rgba(68,221,100,0.15)',
                 }}
               >
                 PLAY
@@ -503,7 +503,7 @@ export default function GameCanvas() {
                 style={{
                   background: 'linear-gradient(135deg, #991f1f, #c73d3d)',
                   color: '#ffffff',
-                  boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
+                  boxShadow: '0 4px 20px rgba(221,68,68,0.25), 0 0 40px rgba(221,68,68,0.15)',
                 }}
               >
                 SHOP
@@ -564,7 +564,7 @@ export default function GameCanvas() {
                   style={{
                     background: 'linear-gradient(135deg, #991f1f, #c73d3d)',
                     color: '#ffffff',
-                    boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
+                    boxShadow: '0 4px 20px rgba(221,68,68,0.25), 0 0 40px rgba(221,68,68,0.15)',
                   }}
                 >
                   JETPACK
@@ -581,7 +581,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #991f1f, #c73d3d)',
                       color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(221,68,68,0.4)',
+                      boxShadow: '0 2px 10px rgba(221,68,68,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>POWER</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -592,7 +592,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #991f1f, #c73d3d)',
                       color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(221,68,68,0.4)',
+                      boxShadow: '0 2px 10px rgba(221,68,68,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>FUEL</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -608,7 +608,7 @@ export default function GameCanvas() {
                   style={{
                     background: 'linear-gradient(135deg, #c7c71f, #e6e63d)',
                     color: '#0a0a0a',
-                    boxShadow: '0 4px 20px rgba(255,255,68,0.5), 0 0 40px rgba(255,255,68,0.3)',
+                    boxShadow: '0 4px 20px rgba(255,255,68,0.25), 0 0 40px rgba(255,255,68,0.15)',
                   }}
                 >
                   AMMO
@@ -625,7 +625,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #c7c71f, #e6e63d)',
                       color: '#0a0a0a',
-                      boxShadow: '0 2px 10px rgba(255,255,68,0.4)',
+                      boxShadow: '0 2px 10px rgba(255,255,68,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>STARTING AMMO</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -636,7 +636,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #c7c71f, #e6e63d)',
                       color: '#0a0a0a',
-                      boxShadow: '0 2px 10px rgba(255,255,68,0.4)',
+                      boxShadow: '0 2px 10px rgba(255,255,68,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>AMMO USE</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -652,7 +652,7 @@ export default function GameCanvas() {
                   style={{
                     background: 'linear-gradient(135deg, #1f993d, #3dc75c)',
                     color: '#0a1a0a',
-                    boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
+                    boxShadow: '0 4px 20px rgba(68,221,100,0.25), 0 0 40px rgba(68,221,100,0.15)',
                   }}
                 >
                   ARMOR
@@ -669,7 +669,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #1f993d, #3dc75c)',
                       color: '#0a1a0a',
-                      boxShadow: '0 2px 10px rgba(68,221,100,0.4)',
+                      boxShadow: '0 2px 10px rgba(68,221,100,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>DURABILITY</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -680,7 +680,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #1f993d, #3dc75c)',
                       color: '#0a1a0a',
-                      boxShadow: '0 2px 10px rgba(68,221,100,0.4)',
+                      boxShadow: '0 2px 10px rgba(68,221,100,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>WEIGHT</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -857,7 +857,7 @@ export default function GameCanvas() {
               style={{
                 background: 'linear-gradient(135deg, #3d3d3d, #5c5c5c)',
                 color: '#ffffff',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
               }}
             >
               BACK
@@ -948,7 +948,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #1f993d, #3dc75c)',
                       color: '#0a1a0a',
-                      boxShadow: '0 4px 20px rgba(68,221,100,0.5), 0 0 40px rgba(68,221,100,0.3)',
+                      boxShadow: '0 4px 20px rgba(68,221,100,0.25), 0 0 40px rgba(68,221,100,0.15)',
                     }}
                   >
                     EASY
@@ -959,7 +959,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #b87a1f, #e6993d)',
                       color: '#1a1a0a',
-                      boxShadow: '0 4px 20px rgba(255,170,68,0.5), 0 0 40px rgba(255,170,68,0.3)',
+                      boxShadow: '0 4px 20px rgba(255,170,68,0.25), 0 0 40px rgba(255,170,68,0.15)',
                     }}
                   >
                     MEDIUM
@@ -970,7 +970,7 @@ export default function GameCanvas() {
                     style={{
                       background: 'linear-gradient(135deg, #991f1f, #c73d3d)',
                       color: '#ffffff',
-                      boxShadow: '0 4px 20px rgba(221,68,68,0.5), 0 0 40px rgba(221,68,68,0.3)',
+                      boxShadow: '0 4px 20px rgba(221,68,68,0.25), 0 0 40px rgba(221,68,68,0.15)',
                     }}
                   >
                     HARD
@@ -1022,7 +1022,7 @@ export default function GameCanvas() {
                 style={{
                   background: 'linear-gradient(135deg, #b81f2e, #e63d4d)',
                   color: '#ffffff',
-                  boxShadow: '0 0 20px rgba(255,68,68,0.4)',
+                  boxShadow: '0 0 20px rgba(255,68,68,0.2)',
                 }}
               >
                 RETRY
@@ -1068,7 +1068,7 @@ export default function GameCanvas() {
                 style={{
                   background: 'linear-gradient(135deg, #1f993d, #3dc75c)',
                   color: '#0a1a0a',
-                  boxShadow: '0 0 20px rgba(68,221,100,0.4)',
+                  boxShadow: '0 0 20px rgba(68,221,100,0.2)',
                 }}
               >
                 NEXT LEVEL
