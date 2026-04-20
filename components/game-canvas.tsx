@@ -337,8 +337,8 @@ export default function GameCanvas() {
       {screen === 'home' && (
         <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#0a0a1a] via-[#1a1a3a] to-[#2a2a4a]">
           {/* Star currency display - top right */}
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(7,5,18,0.7)' }}>
-            <span style={{ color: '#d4aeff', fontSize: '24px' }}>&#9733;</span>
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(13,0,80,0.7)' }}>
+            <span style={{ color: '#f088ff', fontSize: '24px' }}>&#9733;</span>
             <span className="text-xl font-bold font-sans" style={{ color: '#d4aeff' }}>{starCurrency}</span>
           </div>
 
@@ -475,9 +475,9 @@ export default function GameCanvas() {
                 onClick={() => setScreen('gear')}
                 className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #3c1c6f, #7d49c6)',
-                  color: '#cdb5ff',
-                  boxShadow: '0 4px 20px rgba(125,73,198,0.25), 0 0 40px rgba(125,73,198,0.15)',
+                  background: 'linear-gradient(135deg, #1a00cc, #7733dd)',
+                  color: '#f088ff',
+                  boxShadow: '0 4px 20px rgba(119,51,221,0.25), 0 0 40px rgba(119,51,221,0.15)',
                 }}
               >
                 GEAR
@@ -488,9 +488,9 @@ export default function GameCanvas() {
                 onClick={() => setScreen('title')}
                 className="px-16 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #392062, #794eb8)',
-                  color: '#cdb5ff',
-                  boxShadow: '0 4px 20px rgba(121,78,184,0.25), 0 0 40px rgba(121,78,184,0.15)',
+                  background: 'linear-gradient(135deg, #0d0050, #7733dd)',
+                  color: '#f088ff',
+                  boxShadow: '0 4px 20px rgba(119,51,221,0.25), 0 0 40px rgba(119,51,221,0.15)',
                 }}
               >
                 PLAY
@@ -501,9 +501,9 @@ export default function GameCanvas() {
                 onClick={() => setScreen('shop')}
                 className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #1b0b3a, #3c1c6f)',
-                  color: '#cdb5ff',
-                  boxShadow: '0 4px 20px rgba(60,28,111,0.25), 0 0 40px rgba(60,28,111,0.15)',
+                  background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                  color: '#f088ff',
+                  boxShadow: '0 4px 20px rgba(26,0,204,0.25), 0 0 40px rgba(26,0,204,0.15)',
                 }}
               >
                 SHOP
@@ -535,8 +535,8 @@ export default function GameCanvas() {
           </div>
 
           {/* Star currency display - top right */}
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(7,5,18,0.7)' }}>
-            <span style={{ color: '#d4aeff', fontSize: '24px' }}>&#9733;</span>
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(13,0,80,0.7)' }}>
+            <span style={{ color: '#f088ff', fontSize: '24px' }}>&#9733;</span>
             <span className="text-xl font-bold font-sans" style={{ color: '#d4aeff' }}>{starCurrency}</span>
           </div>
 
@@ -562,26 +562,26 @@ export default function GameCanvas() {
                   onClick={() => {/* Jetpack handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
-                    background: 'linear-gradient(135deg, #392062, #794eb8)',
-                    color: '#d4aeff',
-                    boxShadow: '0 4px 20px rgba(121,78,184,0.25), 0 0 40px rgba(121,78,184,0.15)',
+                    background: 'linear-gradient(135deg, #0d0050, #7733dd)',
+                    color: '#f088ff',
+                    boxShadow: '0 4px 20px rgba(119,51,221,0.25), 0 0 40px rgba(119,51,221,0.15)',
                   }}
                 >
                   JETPACK
                 </button>
                 {/* Connecting lines */}
                 <svg className="absolute pointer-events-none" style={{ top: '125px', left: 0, width: '100%', height: '50px', overflow: 'visible' }}>
-                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(125,73,198,0.25)" strokeWidth="2" />
-                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(125,73,198,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(119,51,221,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(119,51,221,0.25)" strokeWidth="2" />
                 </svg>
                 <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -ml-3"
                     style={{
-                      background: 'linear-gradient(135deg, #392062, #794eb8)',
-                      color: '#d4aeff',
-                      boxShadow: '0 2px 10px rgba(121,78,184,0.2)',
+                      background: 'linear-gradient(135deg, #0d0050, #7733dd)',
+                      color: '#f088ff',
+                      boxShadow: '0 2px 10px rgba(119,51,221,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>POWER</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -590,9 +590,9 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
-                      background: 'linear-gradient(135deg, #392062, #794eb8)',
-                      color: '#d4aeff',
-                      boxShadow: '0 2px 10px rgba(121,78,184,0.2)',
+                      background: 'linear-gradient(135deg, #0d0050, #7733dd)',
+                      color: '#f088ff',
+                      boxShadow: '0 2px 10px rgba(119,51,221,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>FUEL</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -606,25 +606,25 @@ export default function GameCanvas() {
                   onClick={() => {/* Ammo handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
-                    background: 'linear-gradient(135deg, #3c1c6f, #7d49c6)',
-                    color: '#cdb5ff',
-                    boxShadow: '0 4px 20px rgba(125,73,198,0.25), 0 0 40px rgba(125,73,198,0.15)',
+                    background: 'linear-gradient(135deg, #1a00cc, #7733dd)',
+                    color: '#f088ff',
+                    boxShadow: '0 4px 20px rgba(119,51,221,0.25), 0 0 40px rgba(119,51,221,0.15)',
                   }}
                 >
                   AMMO
                 </button>
                 {/* Connecting lines */}
                 <svg className="absolute pointer-events-none" style={{ top: '125px', left: 0, width: '100%', height: '50px', overflow: 'visible' }}>
-                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(125,73,198,0.25)" strokeWidth="2" />
-                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(125,73,198,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(119,51,221,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(119,51,221,0.25)" strokeWidth="2" />
                 </svg>
                 <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
-                      background: 'linear-gradient(135deg, #3c1c6f, #7d49c6)',
-                      color: '#cdb5ff',
+                      background: 'linear-gradient(135deg, #1a00cc, #7733dd)',
+                      color: '#f088ff',
                       boxShadow: '0 2px 10px rgba(125,73,198,0.2)',
                     }}
                   >
@@ -634,8 +634,8 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -mr-3"
                     style={{
-                      background: 'linear-gradient(135deg, #3c1c6f, #7d49c6)',
-                      color: '#cdb5ff',
+                      background: 'linear-gradient(135deg, #1a00cc, #7733dd)',
+                      color: '#f088ff',
                       boxShadow: '0 2px 10px rgba(125,73,198,0.2)',
                     }}
                   >
@@ -650,26 +650,26 @@ export default function GameCanvas() {
                   onClick={() => {/* Armor handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
-                    background: 'linear-gradient(135deg, #1b0b3a, #3c1c6f)',
-                    color: '#cdb5ff',
-                    boxShadow: '0 4px 20px rgba(60,28,111,0.25), 0 0 40px rgba(60,28,111,0.15)',
+                    background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                    color: '#f088ff',
+                    boxShadow: '0 4px 20px rgba(26,0,204,0.25), 0 0 40px rgba(26,0,204,0.15)',
                   }}
                 >
                   ARMOR
                 </button>
                 {/* Connecting lines */}
                 <svg className="absolute pointer-events-none" style={{ top: '125px', left: 0, width: '100%', height: '50px', overflow: 'visible' }}>
-                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(125,73,198,0.25)" strokeWidth="2" />
-                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(125,73,198,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(119,51,221,0.25)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(119,51,221,0.25)" strokeWidth="2" />
                 </svg>
                 <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
-                      background: 'linear-gradient(135deg, #1b0b3a, #3c1c6f)',
-                      color: '#cdb5ff',
-                      boxShadow: '0 2px 10px rgba(60,28,111,0.2)',
+                      background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                      color: '#f088ff',
+                      boxShadow: '0 2px 10px rgba(26,0,204,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>DURABILITY</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -678,9 +678,9 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
-                      background: 'linear-gradient(135deg, #1b0b3a, #3c1c6f)',
-                      color: '#cdb5ff',
-                      boxShadow: '0 2px 10px rgba(60,28,111,0.2)',
+                      background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                      color: '#f088ff',
+                      boxShadow: '0 2px 10px rgba(26,0,204,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>WEIGHT</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -695,7 +695,7 @@ export default function GameCanvas() {
             <button
               onClick={() => setScreen('home')}
               className="px-[70px] py-[22px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              style={{ background: 'rgba(125,73,198,0.15)', color: 'rgba(205,181,255,0.8)', border: '1px solid rgba(125,73,198,0.3)' }}
+              style={{ background: 'rgba(26,0,204,0.15)', color: 'rgba(240,136,255,0.8)', border: '1px solid rgba(119,51,221,0.3)' }}
             >
               BACK
             </button>
@@ -730,8 +730,8 @@ export default function GameCanvas() {
           </div>
 
           {/* Star currency display - top right */}
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(7,5,18,0.7)' }}>
-            <span style={{ color: '#d4aeff', fontSize: '24px' }}>&#9733;</span>
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(13,0,80,0.7)' }}>
+            <span style={{ color: '#f088ff', fontSize: '24px' }}>&#9733;</span>
             <span className="text-xl font-bold font-sans" style={{ color: '#d4aeff' }}>{starCurrency}</span>
           </div>
 
@@ -751,9 +751,9 @@ export default function GameCanvas() {
           {/* Owned weapons display */}
           <div className="flex justify-center z-10 pb-2">
             <div className="flex items-center gap-3 px-4 py-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.4)' }}>
-              <span className="text-xs font-sans" style={{ color: 'rgba(205,181,255,0.6)' }}>OWNED:</span>
+              <span className="text-xs font-sans" style={{ color: 'rgba(240,136,255,0.6)' }}>OWNED:</span>
               {ownedWeapons.map(w => (
-                <span key={w} className="text-xs font-bold font-sans px-2 py-1 rounded" style={{ color: crateColors[w], background: 'rgba(125,73,198,0.12)' }}>
+                <span key={w} className="text-xs font-bold font-sans px-2 py-1 rounded" style={{ color: crateColors[w], background: 'rgba(26,0,204,0.12)' }}>
                   {w.toUpperCase()}
                 </span>
               ))}
@@ -775,7 +775,7 @@ export default function GameCanvas() {
                 </div>
                 {crateResult.isDuplicate && (
                   <div className="space-y-2">
-                    <p className="text-lg font-sans" style={{ color: 'rgba(205,181,255,0.6)' }}>You already own this weapon</p>
+                    <p className="text-lg font-sans" style={{ color: 'rgba(240,136,255,0.6)' }}>You already own this weapon</p>
                     <p className="text-xl font-bold font-sans" style={{ color: '#d4aeff' }}>+{crateResult.refund} refund</p>
                   </div>
                 )}
@@ -784,7 +784,7 @@ export default function GameCanvas() {
                   className="px-10 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
                     background: `linear-gradient(135deg, ${crateColors[crateResult.weapon]}88, ${crateColors[crateResult.weapon]})`,
-                    color: '#d4aeff',
+                    color: '#f088ff',
                     boxShadow: `0 4px 20px ${crateColors[crateResult.weapon]}60`,
                   }}
                 >
@@ -841,7 +841,7 @@ export default function GameCanvas() {
                     <span style={{ color: canAfford ? '#ffdd44' : '#888', fontSize: '18px' }}>&#9733;</span>
                     <span className="text-lg font-bold font-sans" style={{ color: canAfford ? '#ffdd44' : '#888' }}>{crate.cost}</span>
                   </div>
-                  <div className="text-xs font-sans text-center" style={{ color: 'rgba(205,181,255,0.4)' }}>
+                  <div className="text-xs font-sans text-center" style={{ color: 'rgba(240,136,255,0.4)' }}>
                     {crate.weapons.join(' / ')}
                   </div>
                 </div>
@@ -855,9 +855,9 @@ export default function GameCanvas() {
               onClick={() => { setCrateResult(null); setScreen('home') }}
               className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #130828, #1b0b3a)',
-                color: '#d4aeff',
-                boxShadow: '0 4px 15px rgba(19,8,40,0.4)',
+                background: 'linear-gradient(135deg, #0d0050, #0d0050)',
+                color: '#f088ff',
+                boxShadow: '0 4px 15px rgba(13,0,80,0.4)',
               }}
             >
               BACK
@@ -917,7 +917,7 @@ export default function GameCanvas() {
 
               {/* Weapon selector */}
               <div className="space-y-2">
-                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(205,181,255,0.8)' }}>Select Weapon</p>
+                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(240,136,255,0.8)' }}>Select Weapon</p>
                 <div className="flex justify-center">
                   <div className="flex items-center gap-3 px-4 py-2 rounded-lg flex-wrap" style={{ background: 'rgba(0,0,0,0.4)' }}>
                     {ownedWeapons.map(w => (
@@ -940,15 +940,15 @@ export default function GameCanvas() {
               </div>
 
               <div className="space-y-3">
-                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(205,181,255,0.8)' }}>Select Difficulty</p>
+                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(240,136,255,0.8)' }}>Select Difficulty</p>
                 <div className="flex gap-4 justify-center">
                   <button
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('easy'); initGame(1, 'easy') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: 'linear-gradient(135deg, #1b0b3a, #3c1c6f)',
-                      color: '#cdb5ff',
-                      boxShadow: '0 4px 20px rgba(60,28,111,0.25), 0 0 40px rgba(60,28,111,0.15)',
+                      background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                      color: '#f088ff',
+                      boxShadow: '0 4px 20px rgba(26,0,204,0.25), 0 0 40px rgba(26,0,204,0.15)',
                     }}
                   >
                     EASY
@@ -957,9 +957,9 @@ export default function GameCanvas() {
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('medium'); initGame(1, 'medium') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: 'linear-gradient(135deg, #392062, #7d49c6)',
-                      color: '#cdb5ff',
-                      boxShadow: '0 4px 20px rgba(121,78,184,0.25), 0 0 40px rgba(121,78,184,0.15)',
+                      background: 'linear-gradient(135deg, #0d0050, #7733dd)',
+                      color: '#f088ff',
+                      boxShadow: '0 4px 20px rgba(119,51,221,0.25), 0 0 40px rgba(119,51,221,0.15)',
                     }}
                   >
                     MEDIUM
@@ -968,9 +968,9 @@ export default function GameCanvas() {
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('hard'); initGame(1, 'hard') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: 'linear-gradient(135deg, #392062, #794eb8)',
-                      color: '#d4aeff',
-                      boxShadow: '0 4px 20px rgba(121,78,184,0.25), 0 0 40px rgba(121,78,184,0.15)',
+                      background: 'linear-gradient(135deg, #0d0050, #7733dd)',
+                      color: '#f088ff',
+                      boxShadow: '0 4px 20px rgba(119,51,221,0.25), 0 0 40px rgba(119,51,221,0.15)',
                     }}
                   >
                     HARD
@@ -980,7 +980,7 @@ export default function GameCanvas() {
 
               <div
                 className="text-sm font-sans space-y-1 p-3 rounded-xl"
-                style={{ background: 'rgba(7,5,18,0.7)', color: 'rgba(205,181,255,0.85)', border: '1px solid rgba(125,73,198,0.2)' }}
+                style={{ background: 'rgba(13,0,80,0.7)', color: 'rgba(240,136,255,0.85)', border: '1px solid rgba(119,51,221,0.2)' }}
               >
                 <p><span style={{ color: '#66cc66' }}>A/D</span> {'Move  |  '}<span style={{ color: '#66cc66' }}>W/Space</span> {'Jump  |  '}<span style={{ color: '#66cc66' }}>Shift</span> Jetpack</p>
                 <p><span style={{ color: '#66cc66' }}>Mouse</span> {'Aim  |  '}<span style={{ color: '#66cc66' }}>Click</span> Shoot</p>
@@ -990,9 +990,9 @@ export default function GameCanvas() {
                 onClick={() => setScreen('home')}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'rgba(125,73,198,0.15)',
-                  color: '#d4aeff',
-                  border: '1px solid rgba(125,73,198,0.3)',
+                  background: 'rgba(26,0,204,0.15)',
+                  color: '#f088ff',
+                  border: '1px solid rgba(119,51,221,0.3)',
                 }}
               >
                 BACK
@@ -1020,9 +1020,9 @@ export default function GameCanvas() {
                 onClick={() => { initAudio(); initGame(level, difficulty) }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #3c1c6f, #7d49c6)',
-                  color: '#d4aeff',
-                  boxShadow: '0 0 20px rgba(125,73,198,0.2)',
+                  background: 'linear-gradient(135deg, #1a00cc, #7733dd)',
+                  color: '#f088ff',
+                  boxShadow: '0 0 20px rgba(119,51,221,0.2)',
                 }}
               >
                 RETRY
@@ -1031,9 +1031,9 @@ export default function GameCanvas() {
                 onClick={() => { setScreen('home'); stateRef.current = null }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'rgba(125,73,198,0.15)',
-                  color: '#d4aeff',
-                  border: '1px solid rgba(125,73,198,0.3)',
+                  background: 'rgba(26,0,204,0.15)',
+                  color: '#f088ff',
+                  border: '1px solid rgba(119,51,221,0.3)',
                 }}
               >
                 HOME
@@ -1066,9 +1066,9 @@ export default function GameCanvas() {
                 }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #1b0b3a, #3c1c6f)',
-                  color: '#cdb5ff',
-                  boxShadow: '0 0 20px rgba(60,28,111,0.2)',
+                  background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                  color: '#f088ff',
+                  boxShadow: '0 0 20px rgba(26,0,204,0.2)',
                 }}
               >
                 NEXT LEVEL
@@ -1077,9 +1077,9 @@ export default function GameCanvas() {
                 onClick={() => { setScreen('home'); stateRef.current = null }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'rgba(125,73,198,0.15)',
-                  color: '#d4aeff',
-                  border: '1px solid rgba(125,73,198,0.3)',
+                  background: 'rgba(26,0,204,0.15)',
+                  color: '#f088ff',
+                  border: '1px solid rgba(119,51,221,0.3)',
                 }}
               >
                 MAIN MENU
