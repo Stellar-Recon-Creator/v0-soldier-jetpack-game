@@ -501,9 +501,9 @@ export default function GameCanvas() {
                 onClick={() => setScreen('shop')}
                 className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: '#9D00FF',
-                  color: '#0d0050',
-                  boxShadow: '0 4px 20px rgba(157,0,255,0.3), 0 0 40px rgba(157,0,255,0.15)',
+                  background: '#B31B1B',
+                  color: '#ffcccc',
+                  boxShadow: '0 4px 20px rgba(179,27,27,0.3), 0 0 40px rgba(179,27,27,0.15)',
                 }}
               >
                 SHOP
@@ -650,26 +650,26 @@ export default function GameCanvas() {
                   onClick={() => {/* Armor handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
-                    background: '#9D00FF',
-                    color: '#0d0050',
-                    boxShadow: '0 4px 20px rgba(157,0,255,0.3), 0 0 40px rgba(157,0,255,0.15)',
+                    background: '#B31B1B',
+                    color: '#ffcccc',
+                    boxShadow: '0 4px 20px rgba(179,27,27,0.3), 0 0 40px rgba(179,27,27,0.15)',
                   }}
                 >
                   ARMOR
                 </button>
                 {/* Connecting lines */}
                 <svg className="absolute pointer-events-none" style={{ top: '125px', left: 0, width: '100%', height: '50px', overflow: 'visible' }}>
-                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(157,0,255,0.3)" strokeWidth="2" />
-                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(157,0,255,0.3)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="25%" y2="100%" stroke="rgba(179,27,27,0.3)" strokeWidth="2" />
+                  <line x1="50%" y1="0" x2="75%" y2="100%" stroke="rgba(179,27,27,0.3)" strokeWidth="2" />
                 </svg>
                 <div className="flex gap-6 mt-24">
                   <button
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
-                      background: '#9D00FF',
-                      color: '#0d0050',
-                      boxShadow: '0 2px 10px rgba(157,0,255,0.2)',
+                      background: '#B31B1B',
+                      color: '#ffcccc',
+                      boxShadow: '0 2px 10px rgba(179,27,27,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>DURABILITY</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -678,9 +678,9 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
-                      background: '#9D00FF',
-                      color: '#0d0050',
-                      boxShadow: '0 2px 10px rgba(157,0,255,0.2)',
+                      background: '#B31B1B',
+                      color: '#ffcccc',
+                      boxShadow: '0 2px 10px rgba(179,27,27,0.2)',
                     }}
                   >
                     <span className="flex flex-col items-center leading-tight"><span>WEIGHT</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
@@ -740,8 +740,8 @@ export default function GameCanvas() {
             <h1
               className="text-5xl font-black tracking-wider font-sans uppercase"
               style={{
-                color: '#dd4444',
-                textShadow: '0 0 10px rgba(221,68,68,0.8), 0 0 20px rgba(221,68,68,0.5), 0 4px 8px rgba(0,0,0,0.6)',
+                color: '#B31B1B',
+                textShadow: '0 0 10px rgba(179,27,27,0.8), 0 0 20px rgba(179,27,27,0.5), 0 4px 8px rgba(0,0,0,0.6)',
               }}
             >
               SHOP
@@ -855,9 +855,9 @@ export default function GameCanvas() {
               onClick={() => { setCrateResult(null); setScreen('home') }}
               className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
-                background: '#0d0050',
-                color: '#9D00FF',
-                boxShadow: '0 4px 15px rgba(13,0,80,0.4)',
+                background: 'rgba(179,27,27,0.15)',
+                color: 'rgba(179,27,27,0.8)',
+                border: '1px solid rgba(179,27,27,0.3)',
               }}
             >
               BACK
@@ -968,9 +968,9 @@ export default function GameCanvas() {
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('hard'); initGame(1, 'hard') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: '#9D00FF',
-                      color: '#0d0050',
-                      boxShadow: '0 4px 20px rgba(157,0,255,0.3), 0 0 40px rgba(157,0,255,0.15)',
+                      background: '#B31B1B',
+                      color: '#ffcccc',
+                      boxShadow: '0 4px 20px rgba(179,27,27,0.3), 0 0 40px rgba(179,27,27,0.15)',
                     }}
                   >
                     HARD
@@ -1020,9 +1020,9 @@ export default function GameCanvas() {
                 onClick={() => { initAudio(); initGame(level, difficulty) }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: '#9D00FF',
-                  color: '#0d0050',
-                  boxShadow: '0 0 20px rgba(157,0,255,0.3)',
+                  background: '#B31B1B',
+                  color: '#ffcccc',
+                  boxShadow: '0 0 20px rgba(179,27,27,0.3)',
                 }}
               >
                 RETRY
