@@ -946,9 +946,9 @@ export default function GameCanvas() {
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('easy'); initGame(1, 'easy') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: '#b577ff',
-                      color: '#f088ff',
-                      boxShadow: '0 4px 20px rgba(181,119,255,0.3), 0 0 40px rgba(181,119,255,0.15)',
+                      background: '#0d0050',
+                      color: '#b577ff',
+                      boxShadow: '0 4px 20px rgba(13,0,80,0.3), 0 0 40px rgba(13,0,80,0.15)',
                     }}
                   >
                     EASY
@@ -957,9 +957,9 @@ export default function GameCanvas() {
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('medium'); initGame(1, 'medium') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: '#1a00cc',
-                      color: '#b577ff',
-                      boxShadow: '0 4px 20px rgba(26,0,204,0.3), 0 0 40px rgba(26,0,204,0.15)',
+                      background: '#7733dd',
+                      color: '#f088ff',
+                      boxShadow: '0 4px 20px rgba(119,51,221,0.3), 0 0 40px rgba(119,51,221,0.15)',
                     }}
                   >
                     MEDIUM
