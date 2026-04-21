@@ -475,7 +475,7 @@ export default function GameCanvas() {
                 onClick={() => setScreen('gear')}
                 className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                  background: '#1a00cc',
                   color: '#b577ff',
                   boxShadow: '0 4px 20px rgba(26,0,204,0.3), 0 0 40px rgba(26,0,204,0.15)',
                 }}
@@ -488,7 +488,7 @@ export default function GameCanvas() {
                 onClick={() => setScreen('title')}
                 className="px-16 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #7733dd, #b577ff)',
+                  background: '#7733dd',
                   color: '#f088ff',
                   boxShadow: '0 4px 20px rgba(181,119,255,0.3), 0 0 40px rgba(181,119,255,0.15)',
                 }}
@@ -501,7 +501,7 @@ export default function GameCanvas() {
                 onClick={() => setScreen('shop')}
                 className="px-12 py-5 text-2xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #7733dd, #f088ff)',
+                  background: '#f088ff',
                   color: '#0d0050',
                   boxShadow: '0 4px 20px rgba(240,136,255,0.3), 0 0 40px rgba(240,136,255,0.15)',
                 }}
@@ -562,7 +562,7 @@ export default function GameCanvas() {
                   onClick={() => {/* Jetpack handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
-                    background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                    background: '#1a00cc',
                     color: '#b577ff',
                     boxShadow: '0 4px 20px rgba(26,0,204,0.3), 0 0 40px rgba(26,0,204,0.15)',
                   }}
@@ -579,7 +579,7 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -ml-3"
                     style={{
-                      background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                      background: '#1a00cc',
                       color: '#b577ff',
                       boxShadow: '0 2px 10px rgba(26,0,204,0.2)',
                     }}
@@ -590,7 +590,7 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
-                      background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                      background: '#1a00cc',
                       color: '#b577ff',
                       boxShadow: '0 2px 10px rgba(26,0,204,0.2)',
                     }}
@@ -606,7 +606,7 @@ export default function GameCanvas() {
                   onClick={() => {/* Ammo handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
-                    background: 'linear-gradient(135deg, #1a00cc, #7733dd)',
+                    background: '#7733dd',
                     color: '#f088ff',
                     boxShadow: '0 4px 20px rgba(119,51,221,0.3), 0 0 40px rgba(119,51,221,0.15)',
                   }}
@@ -623,7 +623,7 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
-                      background: 'linear-gradient(135deg, #1a00cc, #7733dd)',
+                      background: '#7733dd',
                       color: '#f088ff',
                       boxShadow: '0 2px 10px rgba(119,51,221,0.2)',
                     }}
@@ -634,7 +634,7 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -mr-3"
                     style={{
-                      background: 'linear-gradient(135deg, #1a00cc, #7733dd)',
+                      background: '#7733dd',
                       color: '#f088ff',
                       boxShadow: '0 2px 10px rgba(119,51,221,0.2)',
                     }}
@@ -650,7 +650,7 @@ export default function GameCanvas() {
                   onClick={() => {/* Armor handler */}}
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
-                    background: 'linear-gradient(135deg, #7733dd, #f088ff)',
+                    background: '#f088ff',
                     color: '#0d0050',
                     boxShadow: '0 4px 20px rgba(240,136,255,0.3), 0 0 40px rgba(240,136,255,0.15)',
                   }}
@@ -667,7 +667,7 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
-                      background: 'linear-gradient(135deg, #7733dd, #f088ff)',
+                      background: '#f088ff',
                       color: '#0d0050',
                       boxShadow: '0 2px 10px rgba(240,136,255,0.2)',
                     }}
@@ -678,7 +678,7 @@ export default function GameCanvas() {
                     onClick={() => {}}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
-                      background: 'linear-gradient(135deg, #7733dd, #f088ff)',
+                      background: '#f088ff',
                       color: '#0d0050',
                       boxShadow: '0 2px 10px rgba(240,136,255,0.2)',
                     }}
@@ -855,7 +855,7 @@ export default function GameCanvas() {
               onClick={() => { setCrateResult(null); setScreen('home') }}
               className="px-12 py-4 text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #0d0050, #0d0050)',
+                background: '#0d0050',
                 color: '#f088ff',
                 boxShadow: '0 4px 15px rgba(13,0,80,0.4)',
               }}
@@ -946,7 +946,7 @@ export default function GameCanvas() {
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('easy'); initGame(1, 'easy') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: 'linear-gradient(135deg, #7733dd, #b577ff)',
+                      background: '#b577ff',
                       color: '#f088ff',
                       boxShadow: '0 4px 20px rgba(181,119,255,0.3), 0 0 40px rgba(181,119,255,0.15)',
                     }}
@@ -957,7 +957,7 @@ export default function GameCanvas() {
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('medium'); initGame(1, 'medium') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                      background: '#1a00cc',
                       color: '#b577ff',
                       boxShadow: '0 4px 20px rgba(26,0,204,0.3), 0 0 40px rgba(26,0,204,0.15)',
                     }}
@@ -968,7 +968,7 @@ export default function GameCanvas() {
                     onClick={() => { initAudio(); setLevel(1); setDifficulty('hard'); initGame(1, 'hard') }}
                     className="px-8 py-3 text-lg font-bold font-sans rounded-xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                     style={{
-                      background: 'linear-gradient(135deg, #7733dd, #f088ff)',
+                      background: '#f088ff',
                       color: '#0d0050',
                       boxShadow: '0 4px 20px rgba(240,136,255,0.3), 0 0 40px rgba(240,136,255,0.15)',
                     }}
@@ -1020,7 +1020,7 @@ export default function GameCanvas() {
                 onClick={() => { initAudio(); initGame(level, difficulty) }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #7733dd, #f088ff)',
+                  background: '#f088ff',
                   color: '#0d0050',
                   boxShadow: '0 0 20px rgba(240,136,255,0.3)',
                 }}
@@ -1066,7 +1066,7 @@ export default function GameCanvas() {
                 }}
                 className="px-8 py-3 text-lg font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #0d0050, #1a00cc)',
+                  background: '#1a00cc',
                   color: '#b577ff',
                   boxShadow: '0 0 20px rgba(26,0,204,0.3)',
                 }}
