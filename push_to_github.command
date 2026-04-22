@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add lib/game-renderer.ts push_to_github.command
 
 echo "Committing..."
-git commit -m "detail: enhance blastop weapon + character body (jetpack, vest, helmet, face, boots) in both views"
+git commit -m "revert: remove face detail changes, restore original face rendering"
 
 echo "Pushing to GitHub..."
 git push origin main

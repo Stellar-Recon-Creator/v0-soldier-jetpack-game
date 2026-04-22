@@ -1738,15 +1738,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   // Neck shadow
   ctx.fillStyle = COLORS.player.skinShadow
   ctx.fillRect(-2, -hh + 9, 6, 2)
-  // Neck muscle/tendon hint
-  ctx.strokeStyle = COLORS.player.skinShadow
-  ctx.lineWidth = 0.3
-  ctx.globalAlpha = 0.3
-  ctx.beginPath()
-  ctx.moveTo(0, -hh + 7)
-  ctx.lineTo(1, -hh + 10)
-  ctx.stroke()
-  ctx.globalAlpha = 1
 
   // ─ HEAD ─
   // Helmet
@@ -1763,26 +1754,9 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   // Helmet rim
   ctx.fillStyle = COLORS.player.helmetBand
   ctx.fillRect(-8, -hh + 2, 18, 3)
-  // Helmet band texture
-  ctx.strokeStyle = 'rgba(0,0,0,0.1)'
-  ctx.lineWidth = 0.3
-  for (let hx = -7; hx < 9; hx += 2) {
-    ctx.beginPath()
-    ctx.moveTo(hx, -hh + 2.5)
-    ctx.lineTo(hx, -hh + 4.5)
-    ctx.stroke()
-  }
   // Goggle strap
   ctx.fillStyle = COLORS.player.helmetStrap
   ctx.fillRect(-8, -hh, 18, 2)
-  // Helmet NVG mount bracket
-  ctx.fillStyle = COLORS.player.helmetDark
-  ctx.fillRect(-2, -hh - 7.5, 6, 2)
-  ctx.fillStyle = '#555'
-  ctx.fillRect(-0.5, -hh - 8, 3, 1.5)
-  // Helmet side rail
-  ctx.fillStyle = '#666'
-  ctx.fillRect(-8, -hh - 1, 2, 4)
   // Helmet chin strap
   ctx.strokeStyle = COLORS.player.helmetStrap
   ctx.lineWidth = 1.5
@@ -1790,9 +1764,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.moveTo(8, -hh + 4)
   ctx.quadraticCurveTo(10, -hh + 8, 8, -hh + 10)
   ctx.stroke()
-  // Chin strap buckle
-  ctx.fillStyle = '#777'
-  ctx.fillRect(8, -hh + 7, 2, 2)
 
   // Face area
   ctx.fillStyle = COLORS.player.skin
@@ -1808,11 +1779,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = COLORS.player.skinShadow
   roundRect(ctx, -2, -hh + 8, 9, 4, 2)
   ctx.fill()
-  // Stubble hint
-  ctx.fillStyle = COLORS.player.skinShadow
-  ctx.globalAlpha = 0.15
-  ctx.fillRect(-1, -hh + 8, 8, 3)
-  ctx.globalAlpha = 1
 
   // Eye
   ctx.fillStyle = '#ffffff'
@@ -1823,12 +1789,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.beginPath()
   ctx.arc(5.5, -hh + 4.8, 1.8, 0, Math.PI * 2)
   ctx.fill()
-  // Iris detail ring
-  ctx.strokeStyle = '#2a5a2a'
-  ctx.lineWidth = 0.3
-  ctx.beginPath()
-  ctx.arc(5.5, -hh + 4.8, 1.2, 0, Math.PI * 2)
-  ctx.stroke()
   // Pupil
   ctx.fillStyle = '#111'
   ctx.beginPath()
@@ -1839,13 +1799,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.beginPath()
   ctx.arc(6.2, -hh + 4.2, 0.5, 0, Math.PI * 2)
   ctx.fill()
-  // Lower eyelid line
-  ctx.strokeStyle = COLORS.player.skinShadow
-  ctx.lineWidth = 0.4
-  ctx.beginPath()
-  ctx.moveTo(2.5, -hh + 6)
-  ctx.quadraticCurveTo(5, -hh + 6.8, 7.5, -hh + 6)
-  ctx.stroke()
   // Eyebrow
   ctx.strokeStyle = COLORS.player.hair
   ctx.lineWidth = 2
@@ -1861,11 +1814,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.lineTo(6, -hh + 7)
   ctx.closePath()
   ctx.fill()
-  // Nose bridge highlight
-  ctx.fillStyle = COLORS.player.skin
-  ctx.globalAlpha = 0.5
-  ctx.fillRect(6.5, -hh + 5, 1, 1.5)
-  ctx.globalAlpha = 1
   // Mouth
   ctx.strokeStyle = '#a07050'
   ctx.lineWidth = 1
@@ -1873,11 +1821,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.moveTo(2, -hh + 9.5)
   ctx.quadraticCurveTo(4.5, -hh + 10.5, 7, -hh + 9.5)
   ctx.stroke()
-  // Lower lip highlight
-  ctx.fillStyle = COLORS.player.skin
-  ctx.globalAlpha = 0.3
-  ctx.fillRect(3, -hh + 10, 3, 0.8)
-  ctx.globalAlpha = 1
 
   // Ear
   ctx.fillStyle = COLORS.player.skin
@@ -1887,11 +1830,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = COLORS.player.skinShadow
   ctx.beginPath()
   ctx.ellipse(-5, -hh + 5, 1.2, 2, 0, 0, Math.PI * 2)
-  ctx.fill()
-  // Ear lobe
-  ctx.fillStyle = COLORS.player.skin
-  ctx.beginPath()
-  ctx.arc(-5, -hh + 7.5, 1, 0, Math.PI * 2)
   ctx.fill()
 
   // ─ DOG TAGS ─
@@ -1907,17 +1845,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = '#bbb'
   roundRect(ctx, 0, -hh + 16, 3, 2.5, 0.5)
   ctx.fill()
-  // Dog tag text lines
-  ctx.strokeStyle = '#999'
-  ctx.lineWidth = 0.2
-  ctx.beginPath()
-  ctx.moveTo(0, -hh + 16)
-  ctx.lineTo(2.5, -hh + 16)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(0, -hh + 17)
-  ctx.lineTo(2, -hh + 17)
-  ctx.stroke()
 
   ctx.restore()
   ctx.globalAlpha = 1
@@ -2227,17 +2154,6 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillStyle = COLORS.player.skin
   roundRect(ctx, -7, -hh + 0, 18, 14, 4)
   ctx.fill()
-  // Jaw shadow
-  ctx.fillStyle = COLORS.player.skinShadow
-  ctx.globalAlpha = 0.2
-  roundRect(ctx, -5, -hh + 9, 14, 5, 3)
-  ctx.fill()
-  ctx.globalAlpha = 1
-  // Stubble hint
-  ctx.fillStyle = COLORS.player.skinShadow
-  ctx.globalAlpha = 0.12
-  ctx.fillRect(-4, -hh + 8, 12, 4)
-  ctx.globalAlpha = 1
 
   // Left Eye
   ctx.fillStyle = '#ffffff'
@@ -2247,20 +2163,9 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.beginPath()
   ctx.arc(-2.5, -hh + 4, 1.5, 0, Math.PI * 2)
   ctx.fill()
-  // Left iris detail
-  ctx.strokeStyle = '#2a5a2a'
-  ctx.lineWidth = 0.3
-  ctx.beginPath()
-  ctx.arc(-2.5, -hh + 4, 1, 0, Math.PI * 2)
-  ctx.stroke()
   ctx.fillStyle = '#111'
   ctx.beginPath()
   ctx.arc(-2.5, -hh + 4, 0.7, 0, Math.PI * 2)
-  ctx.fill()
-  // Left eye highlight
-  ctx.fillStyle = '#fff'
-  ctx.beginPath()
-  ctx.arc(-2, -hh + 3.5, 0.4, 0, Math.PI * 2)
   ctx.fill()
 
   // Right Eye
@@ -2271,33 +2176,10 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.beginPath()
   ctx.arc(6.5, -hh + 4, 1.5, 0, Math.PI * 2)
   ctx.fill()
-  // Right iris detail
-  ctx.strokeStyle = '#2a5a2a'
-  ctx.lineWidth = 0.3
-  ctx.beginPath()
-  ctx.arc(6.5, -hh + 4, 1, 0, Math.PI * 2)
-  ctx.stroke()
   ctx.fillStyle = '#111'
   ctx.beginPath()
   ctx.arc(6.5, -hh + 4, 0.7, 0, Math.PI * 2)
   ctx.fill()
-  // Right eye highlight
-  ctx.fillStyle = '#fff'
-  ctx.beginPath()
-  ctx.arc(7, -hh + 3.5, 0.4, 0, Math.PI * 2)
-  ctx.fill()
-
-  // Lower eyelid lines
-  ctx.strokeStyle = COLORS.player.skinShadow
-  ctx.lineWidth = 0.4
-  ctx.beginPath()
-  ctx.moveTo(-5, -hh + 5.5)
-  ctx.quadraticCurveTo(-2.5, -hh + 6.5, 0, -hh + 5.5)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(4, -hh + 5.5)
-  ctx.quadraticCurveTo(6.5, -hh + 6.5, 9, -hh + 5.5)
-  ctx.stroke()
 
   // Eyebrows
   ctx.strokeStyle = COLORS.player.hair
@@ -2313,44 +2195,20 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
 
   // Nose
   ctx.fillStyle = COLORS.player.skinShadow
-  ctx.beginPath()
-  ctx.moveTo(1, -hh + 5)
-  ctx.lineTo(3, -hh + 8)
-  ctx.lineTo(0, -hh + 8)
-  ctx.closePath()
-  ctx.fill()
-  // Nose bridge highlight
-  ctx.fillStyle = COLORS.player.skin
-  ctx.globalAlpha = 0.5
-  ctx.fillRect(1.2, -hh + 5, 0.8, 2)
-  ctx.globalAlpha = 1
+  ctx.fillRect(1, -hh + 5, 2, 3)
 
-  // Mouth
+  // Mouth - pink
   ctx.fillStyle = '#e88099'
   roundRect(ctx, -1, -hh + 10, 6, 2, 1)
   ctx.fill()
-  // Lower lip highlight
-  ctx.fillStyle = COLORS.player.skin
-  ctx.globalAlpha = 0.3
-  ctx.fillRect(0, -hh + 11, 4, 0.8)
-  ctx.globalAlpha = 1
 
   // Ears
   ctx.fillStyle = COLORS.player.skin
   ctx.beginPath()
   ctx.ellipse(-8, -hh + 5, 2, 3, 0, 0, Math.PI * 2)
   ctx.fill()
-  ctx.fillStyle = COLORS.player.skinShadow
-  ctx.beginPath()
-  ctx.ellipse(-8, -hh + 5, 1, 1.5, 0, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.fillStyle = COLORS.player.skin
   ctx.beginPath()
   ctx.ellipse(12, -hh + 5, 2, 3, 0, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.fillStyle = COLORS.player.skinShadow
-  ctx.beginPath()
-  ctx.ellipse(12, -hh + 5, 1, 1.5, 0, 0, Math.PI * 2)
   ctx.fill()
 
   // Dog tags
@@ -2363,20 +2221,6 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillStyle = '#ccc'
   roundRect(ctx, -1, -hh + 15, 4, 3, 1)
   ctx.fill()
-  ctx.fillStyle = '#bbb'
-  roundRect(ctx, 0, -hh + 16, 3, 2.5, 0.5)
-  ctx.fill()
-  // Dog tag text lines
-  ctx.strokeStyle = '#999'
-  ctx.lineWidth = 0.2
-  ctx.beginPath()
-  ctx.moveTo(0, -hh + 16)
-  ctx.lineTo(2.5, -hh + 16)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(0, -hh + 17)
-  ctx.lineTo(2, -hh + 17)
-  ctx.stroke()
 
   // ─ ARM + GUN ─ (drawn last so it's in front)
   ctx.save()
