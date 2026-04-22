@@ -850,6 +850,9 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   let drawAngle = player.aimAngle
   if (f === -1) {
     drawAngle = Math.PI - player.aimAngle
+    // Normalize to [-π, π] so upward-left aim doesn't wrap to huge positive values
+    if (drawAngle > Math.PI) drawAngle -= 2 * Math.PI
+    if (drawAngle < -Math.PI) drawAngle += 2 * Math.PI
   }
   drawAngle = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, drawAngle))
 

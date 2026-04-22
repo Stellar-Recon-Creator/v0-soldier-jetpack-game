@@ -303,7 +303,11 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       const shoulderX = hw - 4
       const shoulderY = -hh + 16
       let drawAngle = player.aimAngle
-      if (f === -1) drawAngle = Math.PI - player.aimAngle
+      if (f === -1) {
+        drawAngle = Math.PI - player.aimAngle
+        if (drawAngle > Math.PI) drawAngle -= 2 * Math.PI
+        if (drawAngle < -Math.PI) drawAngle += 2 * Math.PI
+      }
       drawAngle = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, drawAngle))
 
       // Tip in arm space
