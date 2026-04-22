@@ -752,9 +752,29 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 14, 6, 1)
     ctx.fill()
-    // Grip
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 2)
+    ctx.lineTo(gunX + 12, gunY + 2)
+    ctx.stroke()
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 9, gunY + 1, 3, 2)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 9.5, gunY + 1.3, 2, 1.4)
+    // Grip with texture
     ctx.fillStyle = '#2a2a2a'
     ctx.fillRect(gunX + 5, gunY + 5, 4, 5)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 5, gunY + 6 + i * 1.5)
+      ctx.lineTo(gunX + 9, gunY + 6 + i * 1.5)
+      ctx.stroke()
+    }
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.8
@@ -762,13 +782,23 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.moveTo(gunX + 5, gunY + 5)
     ctx.quadraticCurveTo(gunX + 7, gunY + 9, gunX + 9, gunY + 5)
     ctx.stroke()
-    // Short barrel
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 6.5, gunY + 6, 1, 2)
+    // Short barrel with cooling vents
     ctx.fillStyle = COLORS.player.gunBarrel
     ctx.fillRect(gunX + 12, gunY + 1.5, 6, 2.5)
-    // Barrel tip
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 13, gunY + 1.8, 0.5, 2)
+    ctx.fillRect(gunX + 14.5, gunY + 1.8, 0.5, 2)
+    ctx.fillRect(gunX + 16, gunY + 1.8, 0.5, 2)
+    // Barrel tip / compensator
     ctx.fillStyle = '#444'
     roundRect(ctx, gunX + 17, gunY + 0.5, 3, 4.5, 1)
     ctx.fill()
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 17.5, gunY + 1, 0.5, 1)
+    ctx.fillRect(gunX + 17.5, gunY + 3.5, 0.5, 1)
     // Drum magazine (tommy gun style)
     ctx.fillStyle = '#2a2a2a'
     ctx.beginPath()
@@ -778,22 +808,86 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.beginPath()
     ctx.arc(gunX + 7, gunY + 11, 3, 0, Math.PI * 2)
     ctx.fill()
+    // Drum ridges
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2
+      ctx.beginPath()
+      ctx.moveTo(gunX + 7 + Math.cos(a) * 3, gunY + 11 + Math.sin(a) * 3)
+      ctx.lineTo(gunX + 7 + Math.cos(a) * 5, gunY + 11 + Math.sin(a) * 5)
+      ctx.stroke()
+    }
+    // Drum center rivet
+    ctx.fillStyle = '#444'
+    ctx.beginPath()
+    ctx.arc(gunX + 7, gunY + 11, 1, 0, Math.PI * 2)
+    ctx.fill()
+    // Charging handle
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 1, gunY - 0.5, 3, 1.5)
     // Gun highlight
     ctx.fillStyle = COLORS.player.gunLight
     ctx.fillRect(gunX + 2, gunY + 1.5, 10, 0.8)
-    // Small stock
+    // Sling mount
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 3, gunY + 2, 1, 0, Math.PI * 2)
+    ctx.fill()
+    // Small stock with wood grain
     ctx.fillStyle = '#4a3a28'
     roundRect(ctx, gunX - 5, gunY + 1, 7, 4, 2)
     ctx.fill()
+    ctx.strokeStyle = '#3a2a18'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 4, gunY + 2)
+    ctx.lineTo(gunX + 1, gunY + 2.5)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX - 4, gunY + 3.5)
+    ctx.lineTo(gunX + 1, gunY + 4)
+    ctx.stroke()
   } else if (weapon === 'lerange') {
     // Lerange - long barrel with scope
     // Receiver
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 20, 6, 1)
     ctx.fill()
-    // Grip
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 2)
+    ctx.lineTo(gunX + 18, gunY + 2)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 4)
+    ctx.lineTo(gunX + 10, gunY + 4)
+    ctx.stroke()
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 13, gunY + 1, 3, 2)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 13.3, gunY + 1.3, 2.4, 1.4)
+    // Bolt handle
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 14, gunY - 0.5, 1.5, 1.5)
+    ctx.fillStyle = '#666'
+    ctx.beginPath()
+    ctx.arc(gunX + 14.7, gunY - 1, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    // Grip with texture
     ctx.fillStyle = '#2a2a2a'
     ctx.fillRect(gunX + 8, gunY + 5, 4, 5)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 8, gunY + 6 + i * 1.5)
+      ctx.lineTo(gunX + 12, gunY + 6 + i * 1.5)
+      ctx.stroke()
+    }
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.8
@@ -801,22 +895,57 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.moveTo(gunX + 8, gunY + 5)
     ctx.quadraticCurveTo(gunX + 10, gunY + 9, gunX + 12, gunY + 5)
     ctx.stroke()
-    // Long barrel
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 9.5, gunY + 6, 1, 2)
+    // Long barrel with fluting
     ctx.fillStyle = COLORS.player.gunBarrel
     ctx.fillRect(gunX + 18, gunY + 1.5, 16, 2.5)
-    // Barrel tip
+    // Barrel fluting lines
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 19, gunY + 2.2)
+    ctx.lineTo(gunX + 33, gunY + 2.2)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 19, gunY + 3.2)
+    ctx.lineTo(gunX + 33, gunY + 3.2)
+    ctx.stroke()
+    // Barrel tip / muzzle brake
     ctx.fillStyle = '#444'
     roundRect(ctx, gunX + 33, gunY + 0.5, 4, 4.5, 1)
     ctx.fill()
-    // Magazine
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 33.5, gunY + 1.2, 0.5, 1)
+    ctx.fillRect(gunX + 33.5, gunY + 3.5, 0.5, 1)
+    // Magazine with floor plate
     ctx.fillStyle = '#2a2a2a'
     ctx.fillRect(gunX + 3, gunY + 5, 4, 6)
     ctx.fillStyle = '#222'
     ctx.fillRect(gunX + 3, gunY + 10, 4, 2)
-    // Large scope
+    ctx.fillStyle = '#444'
+    ctx.fillRect(gunX + 3.5, gunY + 10.5, 3, 0.5)
+    // Magazine release
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 7, gunY + 5.5, 1, 1.5)
+    // Large scope with adjustment turrets
     ctx.fillStyle = '#505050'
     roundRect(ctx, gunX + 5, gunY - 6, 18, 5, 2)
     ctx.fill()
+    // Scope tube highlight
+    ctx.fillStyle = '#606060'
+    ctx.fillRect(gunX + 7, gunY - 5.5, 14, 1)
+    // Windage turret (top)
+    ctx.fillStyle = '#5a5a5a'
+    ctx.fillRect(gunX + 12, gunY - 7.5, 3, 2)
+    ctx.fillStyle = '#666'
+    ctx.beginPath()
+    ctx.arc(gunX + 13.5, gunY - 7.5, 1.2, 0, Math.PI * 2)
+    ctx.fill()
+    // Elevation turret (side)
+    ctx.fillStyle = '#5a5a5a'
+    ctx.fillRect(gunX + 15, gunY - 4.5, 2, 2.5)
     // Scope lens front
     ctx.fillStyle = '#4488cc'
     ctx.globalAlpha = 0.7
@@ -829,27 +958,81 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.beginPath()
     ctx.arc(gunX + 19.5, gunY - 4, 0.7, 0, Math.PI * 2)
     ctx.fill()
-    // Rail
+    // Scope rear lens
+    ctx.fillStyle = '#4488cc'
+    ctx.globalAlpha = 0.4
+    ctx.beginPath()
+    ctx.arc(gunX + 7, gunY - 3.5, 1.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Rail with notches
     ctx.fillStyle = '#4a4a4a'
     ctx.fillRect(gunX + 2, gunY - 0.5, 16, 1)
+    ctx.fillStyle = '#3a3a3a'
+    for (let i = 0; i < 7; i++) {
+      ctx.fillRect(gunX + 3 + i * 2, gunY - 0.5, 0.5, 1)
+    }
+    // Bipod mount
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 18, gunY + 4, 2, 1)
     // Gun highlight
     ctx.fillStyle = COLORS.player.gunLight
     ctx.fillRect(gunX + 2, gunY + 1.5, 14, 0.8)
-    // Stock
+    // Stock with cheek rest and butt pad
     ctx.fillStyle = '#4a3a28'
     roundRect(ctx, gunX - 9, gunY + 0.5, 11, 5, 2)
     ctx.fill()
     ctx.fillStyle = '#5a4a38'
     ctx.fillRect(gunX - 7, gunY + 1.5, 7, 2)
+    // Cheek rest
+    ctx.fillStyle = '#5a4a38'
+    ctx.fillRect(gunX - 6, gunY - 0.5, 5, 1.5)
+    // Rubber butt pad
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 9, gunY + 1, 1.5, 4)
+    // Sling swivel
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 7, gunY + 5, 0.8, 0, Math.PI * 2)
+    ctx.fill()
   } else if (weapon === 'hypershot') {
     // Hypershot - wide big barrel, no scope
     // Receiver (wide)
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY - 2, 16, 10, 2)
     ctx.fill()
-    // Grip
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY)
+    ctx.lineTo(gunX + 14, gunY)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 4)
+    ctx.lineTo(gunX + 14, gunY + 4)
+    ctx.stroke()
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 10, gunY - 1, 4, 3)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 10.5, gunY - 0.5, 3, 2)
+    // Charging handle
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 1, gunY - 3, 4, 2)
+    ctx.fillStyle = '#666'
+    ctx.fillRect(gunX + 1.5, gunY - 3.5, 1.5, 1)
+    // Grip with texture
     ctx.fillStyle = '#2a2a2a'
     ctx.fillRect(gunX + 6, gunY + 7, 5, 6)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 6, gunY + 8 + i * 1.3)
+      ctx.lineTo(gunX + 11, gunY + 8 + i * 1.3)
+      ctx.stroke()
+    }
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.8
@@ -857,9 +1040,39 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.moveTo(gunX + 6, gunY + 7)
     ctx.quadraticCurveTo(gunX + 8.5, gunY + 12, gunX + 11, gunY + 7)
     ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 8, gunY + 8, 1, 2.5)
     // Big wide barrel
     ctx.fillStyle = '#555'
     roundRect(ctx, gunX + 14, gunY - 3, 14, 12, 3)
+    ctx.fill()
+    // Barrel heat vents
+    ctx.fillStyle = '#444'
+    ctx.fillRect(gunX + 15, gunY - 2, 1, 3)
+    ctx.fillRect(gunX + 17, gunY - 2, 1, 3)
+    ctx.fillRect(gunX + 15, gunY + 5, 1, 3)
+    ctx.fillRect(gunX + 17, gunY + 5, 1, 3)
+    // Barrel seam line
+    ctx.strokeStyle = '#3a3a3a'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 14, gunY + 3)
+    ctx.lineTo(gunX + 28, gunY + 3)
+    ctx.stroke()
+    // Barrel rivets
+    ctx.fillStyle = '#666'
+    ctx.beginPath()
+    ctx.arc(gunX + 20, gunY - 1, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(gunX + 20, gunY + 7, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(gunX + 24, gunY - 1, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(gunX + 24, gunY + 7, 0.6, 0, Math.PI * 2)
     ctx.fill()
     // Barrel glow ring (red)
     ctx.fillStyle = '#ff4444'
@@ -884,22 +1097,83 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.arc(gunX + 27, gunY + 3, 2, 0, Math.PI * 2)
     ctx.fill()
     ctx.globalAlpha = 1
+    // Inner glow ring detail
+    ctx.strokeStyle = '#ff8866'
+    ctx.lineWidth = 0.3
+    ctx.globalAlpha = 0.4
+    ctx.beginPath()
+    ctx.arc(gunX + 27, gunY + 3, 2.5, 0, Math.PI * 2)
+    ctx.stroke()
+    ctx.globalAlpha = 1
+    // Rail on top
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 2, gunY - 2.5, 12, 1)
+    ctx.fillStyle = '#3a3a3a'
+    for (let i = 0; i < 5; i++) {
+      ctx.fillRect(gunX + 3 + i * 2, gunY - 2.5, 0.5, 1)
+    }
     // Gun highlight
     ctx.fillStyle = COLORS.player.gunLight
     ctx.fillRect(gunX + 2, gunY, 12, 0.8)
-    // Stock
+    // Sling mount rear
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 5, gunY + 3, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock with rubber butt pad
     ctx.fillStyle = '#4a3a28'
     roundRect(ctx, gunX - 7, gunY + 1, 9, 5, 2)
     ctx.fill()
+    // Stock wood grain
+    ctx.strokeStyle = '#3a2a18'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 6, gunY + 2.5)
+    ctx.lineTo(gunX + 1, gunY + 3)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX - 6, gunY + 4)
+    ctx.lineTo(gunX + 1, gunY + 4.5)
+    ctx.stroke()
+    // Rubber butt pad
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 7, gunY + 1.5, 1.5, 4)
   } else if (weapon === 'spalmer') {
-    // Spalmer - receiver
+    // Spalmer - pump-action shotgun style
     // Receiver
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 15, 6, 1)
     ctx.fill()
-    // Grip
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 2)
+    ctx.lineTo(gunX + 13, gunY + 2)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 4)
+    ctx.lineTo(gunX + 8, gunY + 4)
+    ctx.stroke()
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 9, gunY + 1, 3, 2)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 9.3, gunY + 1.3, 2.4, 1.4)
+    // Loading gate
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 3, gunY + 4.5, 3, 1.5)
+    // Grip with texture
     ctx.fillStyle = '#2a2a2a'
     ctx.fillRect(gunX + 6, gunY + 5, 4, 5)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 6, gunY + 6 + i * 1.5)
+      ctx.lineTo(gunX + 10, gunY + 6 + i * 1.5)
+      ctx.stroke()
+    }
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.8
@@ -907,35 +1181,126 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.moveTo(gunX + 6, gunY + 5)
     ctx.quadraticCurveTo(gunX + 8, gunY + 9, gunX + 10, gunY + 5)
     ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 7.5, gunY + 6, 1, 2)
     // Shorter, thicker barrel
     ctx.fillStyle = COLORS.player.gunBarrel
     ctx.fillRect(gunX + 13, gunY + 0.5, 8, 4)
-    // Barrel tip
+    // Barrel rib (top rail)
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 13, gunY - 0.3, 8, 1)
+    // Barrel tip / choke
     ctx.fillStyle = '#444'
     roundRect(ctx, gunX + 20, gunY - 0.5, 4, 6, 1)
     ctx.fill()
-    // Pump grip
+    // Choke slots
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 21, gunY, 0.5, 1.5)
+    ctx.fillRect(gunX + 21, gunY + 3.5, 0.5, 1.5)
+    // Bead sight
+    ctx.fillStyle = '#ff8800'
+    ctx.beginPath()
+    ctx.arc(gunX + 23.5, gunY - 0.5, 0.5, 0, Math.PI * 2)
+    ctx.fill()
+    // Pump grip with wood grain
     ctx.fillStyle = '#4a3a28'
     roundRect(ctx, gunX + 10, gunY + 5, 6, 3, 1)
     ctx.fill()
+    ctx.strokeStyle = '#3a2a18'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 10.5, gunY + 6)
+    ctx.lineTo(gunX + 15.5, gunY + 6.3)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 10.5, gunY + 7)
+    ctx.lineTo(gunX + 15.5, gunY + 7.3)
+    ctx.stroke()
+    // Shell carrier (side saddle)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 1, gunY + 5, 4, 3)
+    ctx.fillStyle = '#cc3333'
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath()
+      ctx.arc(gunX + 2 + i * 1.2, gunY + 6.5, 0.5, 0, Math.PI * 2)
+      ctx.fill()
+    }
     // Gun highlight
     ctx.fillStyle = COLORS.player.gunLight
     ctx.fillRect(gunX + 2, gunY + 1.5, 11, 0.8)
-    // Stock
+    // Sling swivel front
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX + 12, gunY + 5, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock with wood grain
     ctx.fillStyle = '#4a3a28'
     roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
     ctx.fill()
     ctx.fillStyle = '#5a4a38'
     ctx.fillRect(gunX - 5, gunY + 1.5, 6, 2)
+    // Stock wood grain
+    ctx.strokeStyle = '#3a2a18'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 6, gunY + 2)
+    ctx.lineTo(gunX + 1, gunY + 2.5)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX - 6, gunY + 3.5)
+    ctx.lineTo(gunX + 1, gunY + 4)
+    ctx.stroke()
+    // Rubber butt pad
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 7, gunY + 1, 1.5, 4)
+    // Sling swivel rear
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 5, gunY + 5, 0.6, 0, Math.PI * 2)
+    ctx.fill()
   } else if (weapon === 'plasma') {
-    // Plasma - slightly longer and wider barrel
+    // Plasma - sci-fi energy weapon
     // Receiver (wider)
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY - 1, 18, 8, 1)
     ctx.fill()
-    // Grip
+    // Receiver tech lines
+    ctx.strokeStyle = '#4a2a8a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 1)
+    ctx.lineTo(gunX + 16, gunY + 1)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 4)
+    ctx.lineTo(gunX + 10, gunY + 4)
+    ctx.stroke()
+    // Receiver accent panel
+    ctx.fillStyle = '#5533aa'
+    ctx.globalAlpha = 0.3
+    ctx.fillRect(gunX + 12, gunY, 5, 3)
+    ctx.globalAlpha = 1
+    // Status LEDs
+    ctx.fillStyle = '#aa66ff'
+    ctx.beginPath()
+    ctx.arc(gunX + 2, gunY, 0.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#66ff66'
+    ctx.beginPath()
+    ctx.arc(gunX + 4, gunY, 0.5, 0, Math.PI * 2)
+    ctx.fill()
+    // Grip with texture
     ctx.fillStyle = '#2a2a2a'
     ctx.fillRect(gunX + 7, gunY + 6, 4, 5)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 7, gunY + 7 + i * 1.5)
+      ctx.lineTo(gunX + 11, gunY + 7 + i * 1.5)
+      ctx.stroke()
+    }
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.8
@@ -943,30 +1308,82 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.moveTo(gunX + 7, gunY + 6)
     ctx.quadraticCurveTo(gunX + 9, gunY + 10, gunX + 11, gunY + 6)
     ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 8.5, gunY + 7, 1, 2)
     // Wider longer barrel
     ctx.fillStyle = '#6644aa'
     roundRect(ctx, gunX + 16, gunY - 1, 12, 6, 2)
     ctx.fill()
+    // Barrel energy conduit lines
+    ctx.strokeStyle = '#8855cc'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 17, gunY)
+    ctx.lineTo(gunX + 27, gunY)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 17, gunY + 4)
+    ctx.lineTo(gunX + 27, gunY + 4)
+    ctx.stroke()
+    // Barrel cooling fins
+    ctx.fillStyle = '#5533aa'
+    ctx.fillRect(gunX + 18, gunY - 2, 1, 1.5)
+    ctx.fillRect(gunX + 20.5, gunY - 2, 1, 1.5)
+    ctx.fillRect(gunX + 23, gunY - 2, 1, 1.5)
+    ctx.fillRect(gunX + 18, gunY + 4.5, 1, 1.5)
+    ctx.fillRect(gunX + 20.5, gunY + 4.5, 1, 1.5)
+    ctx.fillRect(gunX + 23, gunY + 4.5, 1, 1.5)
     // Barrel glow ring
     ctx.fillStyle = '#aa66ff'
+    ctx.shadowColor = '#aa66ff'
+    ctx.shadowBlur = 4
     ctx.globalAlpha = 0.8
     roundRect(ctx, gunX + 26, gunY - 0.5, 3, 5, 1)
     ctx.fill()
+    ctx.shadowBlur = 0
     ctx.globalAlpha = 1
-    // Energy cell
+    // Energy cell with detail
     ctx.fillStyle = '#aa66ff'
     ctx.globalAlpha = 0.6
     ctx.fillRect(gunX + 3, gunY + 6, 4, 6)
     ctx.globalAlpha = 1
     ctx.fillStyle = '#cc88ff'
     ctx.fillRect(gunX + 4, gunY + 7, 2, 4)
+    // Energy cell glow pulse line
+    ctx.strokeStyle = '#ddaaff'
+    ctx.lineWidth = 0.3
+    ctx.globalAlpha = 0.7
+    ctx.beginPath()
+    ctx.moveTo(gunX + 5, gunY + 7.5)
+    ctx.lineTo(gunX + 5, gunY + 10.5)
+    ctx.stroke()
+    ctx.globalAlpha = 1
+    // Energy cell cap
+    ctx.fillStyle = '#6644aa'
+    ctx.fillRect(gunX + 3, gunY + 11, 4, 1.5)
+    // Rail on top
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 2, gunY - 1.5, 14, 1)
+    ctx.fillStyle = '#3a3a3a'
+    for (let i = 0; i < 6; i++) {
+      ctx.fillRect(gunX + 3 + i * 2, gunY - 1.5, 0.5, 1)
+    }
     // Gun highlight
     ctx.fillStyle = COLORS.player.gunLight
     ctx.fillRect(gunX + 2, gunY + 1, 12, 0.8)
-    // Stock
+    // Stock (polymer sci-fi)
     ctx.fillStyle = '#3a3a4a'
     roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
     ctx.fill()
+    // Stock accent stripe
+    ctx.fillStyle = '#5533aa'
+    ctx.globalAlpha = 0.4
+    ctx.fillRect(gunX - 5, gunY + 2, 5, 1)
+    ctx.globalAlpha = 1
+    // Stock butt pad
+    ctx.fillStyle = '#2a2a3a'
+    ctx.fillRect(gunX - 7, gunY + 1, 1.5, 4)
   } else {
     // Blastop (default) - assault rifle with scope
     // Gun body / receiver
@@ -1377,11 +1794,59 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY + 1, 18, 7, 1)
     ctx.fill()
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 3)
+    ctx.lineTo(gunX + 16, gunY + 3)
+    ctx.stroke()
+    // Receiver highlight
     ctx.fillStyle = '#3a3a3a'
     ctx.fillRect(gunX + 2, gunY + 2, 12, 2)
-    // Short barrel
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 12, gunY + 2, 4, 2.5)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 12.5, gunY + 2.3, 3, 2)
+    // Charging handle
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 1, gunY + 0.5, 4, 1.5)
+    // Grip with texture
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 7, gunY + 7, 5, 6)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 7, gunY + 8 + i * 1.3)
+      ctx.lineTo(gunX + 12, gunY + 8 + i * 1.3)
+      ctx.stroke()
+    }
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 7, gunY + 7)
+    ctx.quadraticCurveTo(gunX + 9.5, gunY + 12, gunX + 12, gunY + 7)
+    ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 9, gunY + 8.5, 1.2, 2)
+    // Short barrel with cooling vents
     ctx.fillStyle = '#4a4a4a'
     ctx.fillRect(gunX + 16, gunY + 3, 9, 3)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 17, gunY + 3.3, 0.6, 2.4)
+    ctx.fillRect(gunX + 19, gunY + 3.3, 0.6, 2.4)
+    ctx.fillRect(gunX + 21, gunY + 3.3, 0.6, 2.4)
+    // Compensator
+    ctx.fillStyle = '#444'
+    roundRect(ctx, gunX + 24, gunY + 2, 3, 5, 1)
+    ctx.fill()
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 24.5, gunY + 2.5, 0.5, 1.2)
+    ctx.fillRect(gunX + 24.5, gunY + 5.5, 0.5, 1.2)
     // Drum magazine
     ctx.fillStyle = '#2a2a2a'
     ctx.beginPath()
@@ -1391,31 +1856,140 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.beginPath()
     ctx.arc(gunX + 9, gunY + 15, 4, 0, Math.PI * 2)
     ctx.fill()
-    // Stock
+    // Drum ridges
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2
+      ctx.beginPath()
+      ctx.moveTo(gunX + 9 + Math.cos(a) * 4, gunY + 15 + Math.sin(a) * 4)
+      ctx.lineTo(gunX + 9 + Math.cos(a) * 7, gunY + 15 + Math.sin(a) * 7)
+      ctx.stroke()
+    }
+    // Drum center rivet
+    ctx.fillStyle = '#444'
+    ctx.beginPath()
+    ctx.arc(gunX + 9, gunY + 15, 1.5, 0, Math.PI * 2)
+    ctx.fill()
+    // Sling mount
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 5, gunY + 4, 1, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock with wood grain
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 8, gunY + 2, 10, 6, 2)
     ctx.fill()
+    ctx.strokeStyle = '#4a3a2a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 6, gunY + 4)
+    ctx.lineTo(gunX + 1, gunY + 4.5)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX - 6, gunY + 6)
+    ctx.lineTo(gunX + 1, gunY + 6.5)
+    ctx.stroke()
   } else if (weapon === 'lerange') {
     // Long receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY, 28, 9, 2)
     ctx.fill()
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 3)
+    ctx.lineTo(gunX + 26, gunY + 3)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 6)
+    ctx.lineTo(gunX + 14, gunY + 6)
+    ctx.stroke()
     ctx.fillStyle = '#3a3a3a'
     ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
-    // Long barrel
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 18, gunY + 1.5, 4, 2.5)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 18.5, gunY + 2, 3, 1.8)
+    // Bolt handle
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 19, gunY - 1, 2, 1.5)
+    ctx.fillStyle = '#666'
+    ctx.beginPath()
+    ctx.arc(gunX + 20, gunY - 1.5, 1, 0, Math.PI * 2)
+    ctx.fill()
+    // Grip with texture
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 12, gunY + 8, 5, 7)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 12, gunY + 9 + i * 1.5)
+      ctx.lineTo(gunX + 17, gunY + 9 + i * 1.5)
+      ctx.stroke()
+    }
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 12, gunY + 8)
+    ctx.quadraticCurveTo(gunX + 14.5, gunY + 14, gunX + 17, gunY + 8)
+    ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 14, gunY + 9.5, 1.2, 2.5)
+    // Long barrel with fluting
     ctx.fillStyle = '#4a4a4a'
     ctx.fillRect(gunX + 26, gunY + 2, 24, 4)
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 27, gunY + 3.2)
+    ctx.lineTo(gunX + 49, gunY + 3.2)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 27, gunY + 4.8)
+    ctx.lineTo(gunX + 49, gunY + 4.8)
+    ctx.stroke()
+    // Muzzle brake
     ctx.fillStyle = '#333'
     roundRect(ctx, gunX + 48, gunY + 1, 5, 6, 1)
     ctx.fill()
-    // Magazine
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 49, gunY + 1.8, 0.6, 1.3)
+    ctx.fillRect(gunX + 49, gunY + 5.2, 0.6, 1.3)
+    // Magazine with floor plate
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX + 4, gunY + 8, 6, 10, 1)
     ctx.fill()
-    // Large scope
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX + 4, gunY + 16, 6, 2)
+    ctx.fillStyle = '#444'
+    ctx.fillRect(gunX + 5, gunY + 16.5, 4, 0.6)
+    // Magazine release
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 10, gunY + 9, 1.5, 2)
+    // Large scope with turrets
     ctx.fillStyle = '#555'
     roundRect(ctx, gunX + 7, gunY - 8, 22, 6, 2)
     ctx.fill()
+    // Scope tube highlight
+    ctx.fillStyle = '#666'
+    ctx.fillRect(gunX + 10, gunY - 7, 16, 1.2)
+    // Windage turret
+    ctx.fillStyle = '#5a5a5a'
+    ctx.fillRect(gunX + 16, gunY - 10, 4, 2.5)
+    ctx.fillStyle = '#666'
+    ctx.beginPath()
+    ctx.arc(gunX + 18, gunY - 10, 1.5, 0, Math.PI * 2)
+    ctx.fill()
+    // Elevation turret
+    ctx.fillStyle = '#5a5a5a'
+    ctx.fillRect(gunX + 22, gunY - 6, 2.5, 3)
+    // Scope lens front
     ctx.fillStyle = '#66aaff'
     ctx.shadowColor = '#66aaff'
     ctx.shadowBlur = 3
@@ -1423,20 +1997,124 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.arc(gunX + 27, gunY - 5, 2.5, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
-    // Stock
+    // Scope lens glint
+    ctx.fillStyle = '#aaddff'
+    ctx.beginPath()
+    ctx.arc(gunX + 26.3, gunY - 5.8, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    // Scope rear lens
+    ctx.fillStyle = '#4488cc'
+    ctx.globalAlpha = 0.4
+    ctx.beginPath()
+    ctx.arc(gunX + 9, gunY - 5, 2, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Rail with notches
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 3, gunY - 1, 22, 1.2)
+    ctx.fillStyle = '#3a3a3a'
+    for (let i = 0; i < 9; i++) {
+      ctx.fillRect(gunX + 4 + i * 2.3, gunY - 1, 0.6, 1.2)
+    }
+    // Bipod mount
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 26, gunY + 6, 3, 1.5)
+    // Stock with cheek rest and butt pad
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 14, gunY, 16, 8, 2)
+    ctx.fill()
+    ctx.fillStyle = '#6a5a4a'
+    ctx.fillRect(gunX - 10, gunY + 2, 10, 3)
+    // Cheek rest
+    ctx.fillStyle = '#6a5a4a'
+    ctx.fillRect(gunX - 9, gunY - 1, 7, 2)
+    // Rubber butt pad
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 14, gunY + 0.5, 2, 7)
+    // Sling swivel
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 10, gunY + 8, 1, 0, Math.PI * 2)
     ctx.fill()
   } else if (weapon === 'hypershot') {
     // Wide receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY - 2, 22, 14, 3)
     ctx.fill()
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 3, gunY + 1)
+    ctx.lineTo(gunX + 19, gunY + 1)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 3, gunY + 6)
+    ctx.lineTo(gunX + 19, gunY + 6)
+    ctx.stroke()
     ctx.fillStyle = '#3a3a3a'
     ctx.fillRect(gunX + 2, gunY, 16, 2)
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 14, gunY - 0.5, 5, 3)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 14.5, gunY, 4, 2)
+    // Charging handle
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 1, gunY - 3, 5, 2)
+    ctx.fillStyle = '#666'
+    ctx.fillRect(gunX + 1.5, gunY - 3.5, 2, 1)
+    // Grip with texture
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 8, gunY + 11, 6, 8)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 8, gunY + 12 + i * 1.4)
+      ctx.lineTo(gunX + 14, gunY + 12 + i * 1.4)
+      ctx.stroke()
+    }
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 8, gunY + 11)
+    ctx.quadraticCurveTo(gunX + 11, gunY + 17, gunX + 14, gunY + 11)
+    ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 10.5, gunY + 12.5, 1.2, 3)
     // Wide barrel
     ctx.fillStyle = '#555'
     roundRect(ctx, gunX + 20, gunY - 4, 22, 16, 4)
+    ctx.fill()
+    // Barrel heat vents
+    ctx.fillStyle = '#444'
+    ctx.fillRect(gunX + 22, gunY - 3, 1.2, 3.5)
+    ctx.fillRect(gunX + 25, gunY - 3, 1.2, 3.5)
+    ctx.fillRect(gunX + 22, gunY + 7.5, 1.2, 3.5)
+    ctx.fillRect(gunX + 25, gunY + 7.5, 1.2, 3.5)
+    // Barrel seam line
+    ctx.strokeStyle = '#3a3a3a'
+    ctx.lineWidth = 0.5
+    ctx.beginPath()
+    ctx.moveTo(gunX + 20, gunY + 4)
+    ctx.lineTo(gunX + 42, gunY + 4)
+    ctx.stroke()
+    // Barrel rivets
+    ctx.fillStyle = '#666'
+    ctx.beginPath()
+    ctx.arc(gunX + 29, gunY - 2, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(gunX + 29, gunY + 10, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(gunX + 34, gunY - 2, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(gunX + 34, gunY + 10, 0.8, 0, Math.PI * 2)
     ctx.fill()
     // Barrel glow ring (red)
     ctx.fillStyle = '#ff4444'
@@ -1461,42 +2139,238 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.arc(gunX + 40, gunY + 4, 2, 0, Math.PI * 2)
     ctx.fill()
     ctx.globalAlpha = 1
-    // Stock
+    // Inner glow ring
+    ctx.strokeStyle = '#ff8866'
+    ctx.lineWidth = 0.4
+    ctx.globalAlpha = 0.4
+    ctx.beginPath()
+    ctx.arc(gunX + 40, gunY + 4, 3.5, 0, Math.PI * 2)
+    ctx.stroke()
+    ctx.globalAlpha = 1
+    // Rail on top
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 2, gunY - 3, 16, 1.5)
+    ctx.fillStyle = '#3a3a3a'
+    for (let i = 0; i < 6; i++) {
+      ctx.fillRect(gunX + 3 + i * 2.5, gunY - 3, 0.6, 1.5)
+    }
+    // Sling mount
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 9, gunY + 4, 1.2, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock with wood grain and butt pad
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 14, gunY + 1, 16, 8, 2)
     ctx.fill()
+    ctx.strokeStyle = '#4a3a2a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 12, gunY + 3.5)
+    ctx.lineTo(gunX + 1, gunY + 4)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX - 12, gunY + 6)
+    ctx.lineTo(gunX + 1, gunY + 6.5)
+    ctx.stroke()
+    // Rubber butt pad
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 14, gunY + 1.5, 2, 7)
   } else if (weapon === 'spalmer') {
     // Receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY, 22, 9, 2)
     ctx.fill()
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 3)
+    ctx.lineTo(gunX + 20, gunY + 3)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 6)
+    ctx.lineTo(gunX + 12, gunY + 6)
+    ctx.stroke()
     ctx.fillStyle = '#3a3a3a'
     ctx.fillRect(gunX + 2, gunY + 1, 16, 2)
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 14, gunY + 1.5, 4, 2.5)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 14.5, gunY + 2, 3, 1.8)
+    // Loading gate
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 4, gunY + 6.5, 4, 2)
+    // Grip with texture
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 8, gunY + 8, 5, 7)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 8, gunY + 9 + i * 1.5)
+      ctx.lineTo(gunX + 13, gunY + 9 + i * 1.5)
+      ctx.stroke()
+    }
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 8, gunY + 8)
+    ctx.quadraticCurveTo(gunX + 10.5, gunY + 14, gunX + 13, gunY + 8)
+    ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 10, gunY + 9.5, 1.2, 2.5)
     // Shorter thick barrel
     ctx.fillStyle = '#4a4a4a'
     ctx.fillRect(gunX + 20, gunY + 1, 14, 6)
+    // Barrel rib
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 20, gunY, 14, 1.2)
+    // Choke / barrel tip
     ctx.fillStyle = '#333'
     roundRect(ctx, gunX + 32, gunY, 5, 8, 1)
     ctx.fill()
-    // Pump grip
+    // Choke slots
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 33, gunY + 1, 0.6, 1.8)
+    ctx.fillRect(gunX + 33, gunY + 5.5, 0.6, 1.8)
+    // Bead sight
+    ctx.fillStyle = '#ff8800'
+    ctx.beginPath()
+    ctx.arc(gunX + 36, gunY, 0.7, 0, Math.PI * 2)
+    ctx.fill()
+    // Shell carrier (side saddle)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 1, gunY + 7, 6, 3.5)
+    ctx.fillStyle = '#cc3333'
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.arc(gunX + 2 + i * 1.4, gunY + 8.5, 0.7, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    // Pump grip with wood grain
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX + 14, gunY + 8, 9, 4, 1)
     ctx.fill()
-    // Stock
+    ctx.strokeStyle = '#4a3a2a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 15, gunY + 9.3)
+    ctx.lineTo(gunX + 22, gunY + 9.5)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 15, gunY + 10.7)
+    ctx.lineTo(gunX + 22, gunY + 10.9)
+    ctx.stroke()
+    // Sling swivel front
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX + 18, gunY + 7.5, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock with wood grain
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 14, gunY, 16, 8, 2)
+    ctx.fill()
+    ctx.fillStyle = '#6a5a4a'
+    ctx.fillRect(gunX - 10, gunY + 2, 10, 3)
+    // Stock wood grain
+    ctx.strokeStyle = '#4a3a2a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 12, gunY + 3)
+    ctx.lineTo(gunX + 1, gunY + 3.5)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX - 12, gunY + 5.5)
+    ctx.lineTo(gunX + 1, gunY + 6)
+    ctx.stroke()
+    // Rubber butt pad
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 14, gunY + 0.5, 2, 7)
+    // Sling swivel rear
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 10, gunY + 8, 0.8, 0, Math.PI * 2)
     ctx.fill()
   } else if (weapon === 'plasma') {
     // Wider receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY - 1, 26, 11, 2)
     ctx.fill()
+    // Receiver tech lines
+    ctx.strokeStyle = '#4a2a8a'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 3, gunY + 2)
+    ctx.lineTo(gunX + 23, gunY + 2)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 3, gunY + 6)
+    ctx.lineTo(gunX + 15, gunY + 6)
+    ctx.stroke()
     ctx.fillStyle = '#3a3a3a'
     ctx.fillRect(gunX + 2, gunY + 1, 20, 2)
+    // Receiver accent panel
+    ctx.fillStyle = '#5533aa'
+    ctx.globalAlpha = 0.3
+    ctx.fillRect(gunX + 17, gunY, 7, 4)
+    ctx.globalAlpha = 1
+    // Status LEDs
+    ctx.fillStyle = '#aa66ff'
+    ctx.beginPath()
+    ctx.arc(gunX + 3, gunY, 0.7, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#66ff66'
+    ctx.beginPath()
+    ctx.arc(gunX + 5.5, gunY, 0.7, 0, Math.PI * 2)
+    ctx.fill()
+    // Grip with texture
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 10, gunY + 9, 5, 7)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 10, gunY + 10 + i * 1.5)
+      ctx.lineTo(gunX + 15, gunY + 10 + i * 1.5)
+      ctx.stroke()
+    }
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 10, gunY + 9)
+    ctx.quadraticCurveTo(gunX + 12.5, gunY + 15, gunX + 15, gunY + 9)
+    ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 12, gunY + 10.5, 1.2, 2.5)
     // Wider longer barrel with purple
     ctx.fillStyle = '#6644aa'
     roundRect(ctx, gunX + 24, gunY - 1, 20, 9, 3)
     ctx.fill()
+    // Barrel energy conduit lines
+    ctx.strokeStyle = '#8855cc'
+    ctx.lineWidth = 0.5
+    ctx.beginPath()
+    ctx.moveTo(gunX + 25, gunY)
+    ctx.lineTo(gunX + 43, gunY)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 25, gunY + 6.5)
+    ctx.lineTo(gunX + 43, gunY + 6.5)
+    ctx.stroke()
+    // Barrel cooling fins
+    ctx.fillStyle = '#5533aa'
+    ctx.fillRect(gunX + 27, gunY - 2.5, 1.5, 2)
+    ctx.fillRect(gunX + 31, gunY - 2.5, 1.5, 2)
+    ctx.fillRect(gunX + 35, gunY - 2.5, 1.5, 2)
+    ctx.fillRect(gunX + 27, gunY + 7.5, 1.5, 2)
+    ctx.fillRect(gunX + 31, gunY + 7.5, 1.5, 2)
+    ctx.fillRect(gunX + 35, gunY + 7.5, 1.5, 2)
     // Barrel glow
     ctx.fillStyle = '#aa66ff'
     ctx.shadowColor = '#aa66ff'
@@ -1504,16 +2378,46 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     roundRect(ctx, gunX + 40, gunY, 5, 7, 2)
     ctx.fill()
     ctx.shadowBlur = 0
-    // Energy cell
+    // Energy cell with detail
     ctx.fillStyle = '#aa66ff'
     ctx.globalAlpha = 0.7
     roundRect(ctx, gunX + 4, gunY + 10, 7, 9, 1)
     ctx.fill()
     ctx.globalAlpha = 1
-    // Stock
+    // Energy cell inner glow
+    ctx.fillStyle = '#cc88ff'
+    ctx.fillRect(gunX + 5.5, gunY + 11.5, 4, 6)
+    // Energy cell pulse line
+    ctx.strokeStyle = '#ddaaff'
+    ctx.lineWidth = 0.4
+    ctx.globalAlpha = 0.7
+    ctx.beginPath()
+    ctx.moveTo(gunX + 7.5, gunY + 12)
+    ctx.lineTo(gunX + 7.5, gunY + 17)
+    ctx.stroke()
+    ctx.globalAlpha = 1
+    // Energy cell cap
+    ctx.fillStyle = '#6644aa'
+    ctx.fillRect(gunX + 4, gunY + 18, 7, 2)
+    // Rail on top
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 3, gunY - 2, 20, 1.2)
+    ctx.fillStyle = '#3a3a3a'
+    for (let i = 0; i < 8; i++) {
+      ctx.fillRect(gunX + 4 + i * 2.3, gunY - 2, 0.6, 1.2)
+    }
+    // Stock (polymer sci-fi)
     ctx.fillStyle = '#3a3a4a'
     roundRect(ctx, gunX - 14, gunY + 1, 16, 8, 2)
     ctx.fill()
+    // Stock accent stripe
+    ctx.fillStyle = '#5533aa'
+    ctx.globalAlpha = 0.4
+    ctx.fillRect(gunX - 10, gunY + 3.5, 8, 1.5)
+    ctx.globalAlpha = 1
+    // Stock butt pad
+    ctx.fillStyle = '#2a2a3a'
+    ctx.fillRect(gunX - 14, gunY + 1.5, 2, 7)
   } else {
     // Rifle (default)
     ctx.fillStyle = '#2a2a2a'
