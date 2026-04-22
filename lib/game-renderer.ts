@@ -568,100 +568,134 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fill()
   ctx.shadowBlur = 0
 
-  // ─ LEGS (improved walking animation with hip rotation and foot lift) ─
+  // ─ LEGS (realistic walk cycle - no crossing, proper stride) ─
   const isMoving = player.vx !== 0
-  const walkT = player.animFrame * 0.22
+  const walkT = player.animFrame * 0.18
   const walking = isMoving && player.onGround
-  // More natural leg phases using sine with asymmetry (faster forward, slower back)
-  const leftRaw = walking ? Math.sin(walkT) : 0
-  const rightRaw = walking ? Math.sin(walkT + Math.PI) : 0
-  // Asymmetric: forward swing is faster/sharper, back swing is slower
-  const leftPhase = walking ? (leftRaw > 0 ? leftRaw : leftRaw * 0.7) : 0
-  const rightPhase = walking ? (rightRaw > 0 ? rightRaw : rightRaw * 0.7) : 0
-  const legSpreadAir = player.onGround ? 0 : 3
-  // Body bob - slight vertical bounce when walking
+  // Body bob - slight vertical bounce when walking (peaks at mid-stance)
   const bodyBob = walking ? Math.abs(Math.sin(walkT * 2)) * 1.5 : 0
+  const legSpreadAir = player.onGround ? 0 : 3
 
-  // Draw one leg with improved articulation
-  const drawLeg = (phase: number, xOff: number) => {
-    // Hip drives the thigh forward/back
-    const hipSwing = phase * 9
-    // Knee bends more when leg is behind (negative phase) for a natural push-off
-    const kneeFlexion = phase < 0 ? Math.abs(phase) * 10 : Math.abs(phase) * 4
-    // Foot lifts off ground during swing phase (when moving forward)
-    const footLift = phase > 0.3 ? (phase - 0.3) * 8 : 0
+  // Each leg has a fixed hip anchor that never moves horizontally.
+  // Only the thigh angle and knee bend change, keeping legs on their own side.
+  const leftHipX = -4   // left leg hip anchor
+  const rightHipX = 1   // right leg hip anchor
+  const hipY = hh - 15 - bodyBob  // hip joint Y
 
-    const thighX = xOff - legSpreadAir * Math.sign(xOff) + hipSwing
-    const thighY = hh - 15 - bodyBob
+  const thighLen = 8   // thigh segment length
+  const shinLen = 7    // shin segment length
+  const legW = 6       // leg segment width
 
-    // Thigh - slight rotation effect via offset
+  // Walk cycle: thigh swings forward/back from hip. Phase is [-1, 1].
+  // Left and right are 180° out of phase.
+  const leftPhase = walking ? Math.sin(walkT) : 0
+  const rightPhase = walking ? Math.sin(walkT + Math.PI) : 0
+
+  const drawLeg = (phase: number, hipX: number) => {
+    // Thigh angle: swings forward (positive) and back (negative)
+    // Max swing angle ~25 degrees to keep legs from crossing center
+    const thighAngle = phase * 0.4  // radians, ~23 degrees max
+
+    // Knee bend: bends most during swing-through (phase near 0)
+    // and at push-off (phase < 0). Straighter at full extension.
+    const absPhase = Math.abs(phase)
+    const kneeBend = walking
+      ? (1 - absPhase) * 0.6 + (phase < -0.2 ? Math.abs(phase + 0.2) * 0.4 : 0)
+      : 0
+
+    // Foot lift: foot rises during forward swing (positive phase)
+    const footLift = phase > 0.2 ? (phase - 0.2) * 6 : 0
+
+    // Thigh end point (from hip, angled)
+    const thighEndX = hipX + Math.sin(thighAngle) * thighLen
+    const thighEndY = hipY + Math.cos(thighAngle) * thighLen
+
+    // Shin end point (from knee, angled further by knee bend)
+    const shinAngle = thighAngle + kneeBend  // knee bends backward
+    const shinEndX = thighEndX + Math.sin(shinAngle) * shinLen
+    const shinEndY = thighEndY + Math.cos(shinAngle) * shinLen
+
+    // Draw thigh as a thick line/rect rotated
+    ctx.save()
+    ctx.translate(hipX + legW / 2, hipY)
+    ctx.rotate(thighAngle)
+    // Thigh
     ctx.fillStyle = COLORS.player.pants
-    ctx.fillRect(thighX - 1, thighY, 7, 8)
+    ctx.fillRect(-legW / 2, 0, legW, thighLen)
     ctx.fillStyle = COLORS.player.pantsLight
-    ctx.fillRect(thighX, thighY + 1, 2, 6)
+    ctx.fillRect(-legW / 2 + 1, 1, 2, thighLen - 2)
+    ctx.restore()
 
-    // Knee pad
+    // Knee pad at thigh-shin joint
     ctx.fillStyle = COLORS.player.pantsKnee
     ctx.beginPath()
-    ctx.arc(thighX + 3, thighY + 8, 3, 0, Math.PI * 2)
+    ctx.arc(thighEndX + legW / 2, thighEndY, 3, 0, Math.PI * 2)
     ctx.fill()
 
-    // Shin - offset by knee bend, creating a more natural angle
-    const shinX = thighX - kneeFlexion * 0.2
-    const shinY = thighY + 7 - footLift
+    // Draw shin rotated from knee joint
+    ctx.save()
+    ctx.translate(thighEndX + legW / 2, thighEndY)
+    ctx.rotate(shinAngle)
     ctx.fillStyle = COLORS.player.pants
-    ctx.fillRect(shinX - 1, shinY, 7, 7)
+    ctx.fillRect(-legW / 2, 0, legW, shinLen)
     ctx.fillStyle = COLORS.player.pantsDark
-    ctx.fillRect(shinX + 4, shinY + 1, 1, 5)
+    ctx.fillRect(legW / 2 - 2, 1, 1, shinLen - 2)
+    ctx.restore()
 
-    // Boot - lifts with foot
-    const bootY = shinY + 6 - footLift * 0.3
+    // Boot at shin end
+    const bootX = shinEndX - 1
+    const bootY = shinEndY - footLift * 0.3
     ctx.fillStyle = COLORS.player.boots
-    roundRect(ctx, shinX - 2, bootY, 9, 5, 2)
+    roundRect(ctx, bootX, bootY, 9, 5, 2)
     ctx.fill()
     // Boot highlight
     ctx.fillStyle = COLORS.player.bootsHighlight
-    ctx.fillRect(shinX, bootY + 1, 4, 1.5)
+    ctx.fillRect(bootX + 2, bootY + 1, 4, 1.5)
     // Boot ankle padding
     ctx.fillStyle = COLORS.player.boots
-    ctx.fillRect(shinX - 1, bootY - 1, 7, 2)
+    ctx.fillRect(bootX + 1, bootY - 1, 7, 2)
     // Boot stitching
     ctx.strokeStyle = 'rgba(0,0,0,0.15)'
     ctx.lineWidth = 0.3
     ctx.beginPath()
-    ctx.moveTo(shinX - 1, bootY + 2.5)
-    ctx.lineTo(shinX + 7, bootY + 2.5)
+    ctx.moveTo(bootX, bootY + 2.5)
+    ctx.lineTo(bootX + 8, bootY + 2.5)
     ctx.stroke()
     // Sole
     ctx.fillStyle = COLORS.player.bootsSole
-    ctx.fillRect(shinX - 2, bootY + 4, 9, 2)
+    ctx.fillRect(bootX, bootY + 4, 9, 2)
     // Sole tread
     ctx.fillStyle = 'rgba(0,0,0,0.2)'
-    ctx.fillRect(shinX - 1, bootY + 5, 1, 1)
-    ctx.fillRect(shinX + 2, bootY + 5, 1, 1)
-    ctx.fillRect(shinX + 5, bootY + 5, 1, 1)
+    ctx.fillRect(bootX + 1, bootY + 5, 1, 1)
+    ctx.fillRect(bootX + 4, bootY + 5, 1, 1)
+    ctx.fillRect(bootX + 7, bootY + 5, 1, 1)
     // Laces
     ctx.strokeStyle = COLORS.player.bootsLace
     ctx.lineWidth = 0.5
     for (let ly = bootY + 1; ly < bootY + 4; ly += 2) {
       ctx.beginPath()
-      ctx.moveTo(shinX, ly)
-      ctx.lineTo(shinX + 4, ly)
+      ctx.moveTo(bootX + 2, ly)
+      ctx.lineTo(bootX + 6, ly)
       ctx.stroke()
     }
     // Speed hooks (lace eyelets)
     ctx.fillStyle = '#888'
     ctx.beginPath()
-    ctx.arc(shinX, bootY + 1, 0.3, 0, Math.PI * 2)
+    ctx.arc(bootX + 2, bootY + 1, 0.3, 0, Math.PI * 2)
     ctx.fill()
     ctx.beginPath()
-    ctx.arc(shinX + 4, bootY + 1, 0.3, 0, Math.PI * 2)
+    ctx.arc(bootX + 6, bootY + 1, 0.3, 0, Math.PI * 2)
     ctx.fill()
   }
 
-  // Draw back leg first, then front
-  drawLeg(rightPhase, 1)
-  drawLeg(leftPhase, -5)
+  // Draw back leg first (whichever is behind), then front
+  if (leftPhase < rightPhase) {
+    drawLeg(leftPhase, leftHipX - legSpreadAir)
+    drawLeg(rightPhase, rightHipX + legSpreadAir)
+  } else {
+    drawLeg(rightPhase, rightHipX + legSpreadAir)
+    drawLeg(leftPhase, leftHipX - legSpreadAir)
+  }
 
   // ─ TORSO ─
   // Tactical vest / body armor
