@@ -6,10 +6,10 @@ echo "=== Pushing changes to GitHub ==="
 rm -f .git/config.lock .git/index.lock .git/objects/*/tmp_obj_*
 
 echo "Staging changes..."
-git add lib/game-renderer.ts push_to_github.command
+git add lib/game-renderer.ts components/game-canvas.tsx push_to_github.command
 
 echo "Committing..."
-git commit -m "revert: remove face detail changes, restore original face rendering"
+git commit -m "display: add HiDPI/Retina support with devicePixelRatio scaling for sharper rendering"
 
 echo "Pushing to GitHub..."
 git push origin main

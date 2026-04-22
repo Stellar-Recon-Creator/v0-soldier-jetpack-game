@@ -95,7 +95,8 @@ export default function GameCanvas() {
     const diffMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 1.3 : 1.65
     const startingAmmo = diff === 'easy' ? 200 : diff === 'medium' ? 250 : 300
     const { platforms, enemies, levelLength } = generateLevel(lvl, diffMultiplier)
-    const stars = generateStars(200, canvas.width, canvas.height)
+    const initDpr = window.devicePixelRatio || 1
+    const stars = generateStars(200, canvas.width / initDpr, canvas.height / initDpr)
 
     const player = createPlayer()
     const healthMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 0.75 : 0.5
@@ -142,8 +143,9 @@ export default function GameCanvas() {
     const dt = Math.min((timestamp - lastTimeRef.current) / 1000, 0.05)
     lastTimeRef.current = timestamp
 
-    // Update
-    const newState = updateGame(state, keysRef.current, dt, canvas.width, canvas.height)
+    // Update (use logical dimensions, not physical pixels)
+    const dprUpdate = window.devicePixelRatio || 1
+    const newState = updateGame(state, keysRef.current, dt, canvas.width / dprUpdate, canvas.height / dprUpdate)
     stateRef.current = newState
 
     // Play sounds based on events
@@ -186,26 +188,29 @@ export default function GameCanvas() {
     }
 
     // ─── Render ───
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    const dpr = window.devicePixelRatio || 1
+    const cw = canvas.width / dpr
+    const ch = canvas.height / dpr
+    ctx.clearRect(0, 0, cw, ch)
 
     // Background
-    drawBackground(ctx, newState, canvas.width, canvas.height)
+    drawBackground(ctx, newState, cw, ch)
     drawStars(ctx, newState.stars, newState.cameraX)
-    drawParallaxMountains(ctx, newState.cameraX, canvas.width, canvas.height)
+    drawParallaxMountains(ctx, newState.cameraX, cw, ch)
 
     // Continuous ground
-    drawGround(ctx, newState.cameraX, newState.cameraY, canvas.width, canvas.height, GROUND_Y)
+    drawGround(ctx, newState.cameraX, newState.cameraY, cw, ch, GROUND_Y)
 
     // Platforms
     for (const plat of newState.platforms) {
-      if (plat.x - newState.cameraX > canvas.width + 50 || plat.x + plat.width - newState.cameraX < -50) continue
+      if (plat.x - newState.cameraX > cw + 50 || plat.x + plat.width - newState.cameraX < -50) continue
       drawPlatform(ctx, plat, newState.cameraX, newState.cameraY)
     }
 
     // Enemies
     for (const enemy of newState.enemies) {
       if (!enemy.active) continue
-      if (enemy.x - newState.cameraX > canvas.width + 50 || enemy.x + enemy.width - newState.cameraX < -50) continue
+      if (enemy.x - newState.cameraX > cw + 50 || enemy.x + enemy.width - newState.cameraX < -50) continue
       drawEnemy(ctx, enemy, newState.cameraX, newState.cameraY)
     }
 
@@ -227,22 +232,22 @@ export default function GameCanvas() {
     }
 
     // HUD
-    drawHUD(ctx, newState.player, canvas.width, canvas.height)
+    drawHUD(ctx, newState.player, cw, ch)
 
     // Progress bar at bottom
     const progress = Math.max(0, Math.min(1, newState.player.x / newState.levelLength))
     ctx.fillStyle = 'rgba(0,0,0,0.4)'
-    ctx.fillRect(10, canvas.height - 16, canvas.width - 20, 8)
-    const progGrad = ctx.createLinearGradient(10, 0, 10 + (canvas.width - 20) * progress, 0)
+    ctx.fillRect(10, ch - 16, cw - 20, 8)
+    const progGrad = ctx.createLinearGradient(10, 0, 10 + (cw - 20) * progress, 0)
     progGrad.addColorStop(0, '#2a7a2a')
     progGrad.addColorStop(1, '#44cc44')
     ctx.fillStyle = progGrad
-    ctx.fillRect(10, canvas.height - 16, (canvas.width - 20) * progress, 8)
+    ctx.fillRect(10, ch - 16, (cw - 20) * progress, 8)
     // Boss icon at end
     ctx.fillStyle = '#ff3344'
     ctx.font = 'bold 10px Geist, sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText('BOSS', canvas.width - 30, canvas.height - 8)
+    ctx.fillText('BOSS', cw - 30, ch - 8)
 
     animFrameRef.current = requestAnimationFrame(gameLoop)
   }, [screen])
@@ -312,13 +317,22 @@ export default function GameCanvas() {
     return () => cancelAnimationFrame(animFrameRef.current)
   }, [gameLoop])
 
-  // ─── Canvas Resize ───
+  // ─── Canvas Resize (HiDPI support) ───
   useEffect(() => {
     const handleResize = () => {
       const canvas = canvasRef.current
       if (!canvas) return
-      canvas.width = Math.min(1200, window.innerWidth)
-      canvas.height = Math.min(650, window.innerHeight - 20)
+      const dpr = window.devicePixelRatio || 1
+      const w = Math.min(1200, window.innerWidth)
+      const h = Math.min(650, window.innerHeight - 20)
+      canvas.width = w * dpr
+      canvas.height = h * dpr
+      canvas.style.width = w + 'px'
+      canvas.style.height = h + 'px'
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      }
     }
     handleResize()
     window.addEventListener('resize', handleResize)
@@ -330,7 +344,6 @@ export default function GameCanvas() {
       <canvas
         ref={canvasRef}
         className="border border-border rounded-lg shadow-2xl"
-        style={{ imageRendering: 'pixelated' }}
       />
 
       {/* Home Screen */}
