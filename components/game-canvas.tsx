@@ -371,10 +371,10 @@ export default function GameCanvas() {
             <h1
               className="text-7xl font-black tracking-wider font-sans uppercase"
               style={{
-                color: '#8cd4ff',
-                textShadow: '0 0 10px rgba(140,212,255,0.8), 0 0 20px rgba(140,212,255,0.6), 0 0 30px rgba(0,146,255,0.5), 0 4px 8px rgba(0,0,0,0.6)',
+                color: '#8a2be2',
+                textShadow: '0 0 10px rgba(138,43,226,0.8), 0 0 20px rgba(138,43,226,0.6), 0 0 30px rgba(100,20,180,0.5), 0 4px 8px rgba(0,0,0,0.6)',
                 letterSpacing: '0.1em',
-                WebkitTextStroke: '2px #000d6f',
+                WebkitTextStroke: '2px #5a1a9a',
               }}
             >
               STELLAR RECON
@@ -563,7 +563,7 @@ export default function GameCanvas() {
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
                     background: '#0092ff',
-                    color: '#8cd4ff',
+                    color: '#ffffff',
                     boxShadow: '0 4px 20px rgba(0,146,255,0.3), 0 0 40px rgba(0,146,255,0.15)',
                   }}
                 >
@@ -607,7 +607,7 @@ export default function GameCanvas() {
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
                     background: '#7200ea',
-                    color: '#0b517c',
+                    color: '#ffffff',
                     boxShadow: '0 4px 20px rgba(114,0,234,0.3), 0 0 40px rgba(114,0,234,0.15)',
                   }}
                 >
@@ -651,7 +651,7 @@ export default function GameCanvas() {
                   className="w-[229px] py-[35px] text-xl font-bold font-sans rounded-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
                     background: '#0b517c',
-                    color: '#000d6f',
+                    color: '#ffffff',
                     boxShadow: '0 4px 20px rgba(11,81,124,0.3), 0 0 40px rgba(11,81,124,0.15)',
                   }}
                 >

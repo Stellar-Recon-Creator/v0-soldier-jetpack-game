@@ -9,9 +9,7 @@ echo "Staging changes..."
 git add components/game-canvas.tsx push_to_github.command
 
 echo "Committing..."
-git commit -m "ui: full color scheme overhaul to blue/teal/purple palette
-
-New palette: #000d6f, #8cd4ff, #0092ff, #7200ea, #0b517c. All button text now white."
+git commit -m "ui: restore STELLAR RECON title, fix gear button text to white"
 
 echo "Pushing to GitHub..."
 git push origin main
