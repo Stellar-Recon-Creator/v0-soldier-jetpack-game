@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add lib/game-renderer.ts push_to_github.command
 
 echo "Committing..."
-git commit -m "weapons: add detailed rendering for hypershot, spalmer, plasma + zoomed versions for all 5 weapons"
+git commit -m "detail: enhance blastop weapon + character body (jetpack, vest, helmet, face, boots) in both views"
 
 echo "Pushing to GitHub..."
 git push origin main

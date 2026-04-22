@@ -478,17 +478,53 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = COLORS.player.jetpack
   roundRect(ctx, -hw - 7, -hh + 9, 8, 21, 2)
   ctx.fill()
+  // Housing panel lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.2)'
+  ctx.lineWidth = 0.4
+  ctx.beginPath()
+  ctx.moveTo(-hw - 6, -hh + 14)
+  ctx.lineTo(-hw - 1, -hh + 14)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(-hw - 6, -hh + 20)
+  ctx.lineTo(-hw - 1, -hh + 20)
+  ctx.stroke()
+  // Housing rivets
+  ctx.fillStyle = '#888'
+  ctx.beginPath()
+  ctx.arc(-hw - 6, -hh + 10, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(-hw - 1, -hh + 10, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(-hw - 6, -hh + 28, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(-hw - 1, -hh + 28, 0.5, 0, Math.PI * 2)
+  ctx.fill()
   // Fuel tanks
   ctx.fillStyle = COLORS.player.jetpackTank
   roundRect(ctx, -hw - 10, -hh + 10, 4, 17, 2)
   ctx.fill()
   ctx.fillStyle = '#7a5a4a'
   ctx.fillRect(-hw - 9, -hh + 11, 2, 15)
+  // Fuel level indicator stripe
+  ctx.fillStyle = player.jetpackFuel > 50 ? '#44aa44' : player.jetpackFuel > 20 ? '#aaaa44' : '#aa4444'
+  ctx.globalAlpha = 0.5
+  const fuelH = (player.jetpackFuel / 100) * 13
+  ctx.fillRect(-hw - 9.5, -hh + 25 - fuelH, 1, fuelH)
+  ctx.globalAlpha = 1
   // Tank caps
   ctx.fillStyle = '#999'
   roundRect(ctx, -hw - 10, -hh + 9, 4, 2, 1)
   ctx.fill()
   roundRect(ctx, -hw - 10, -hh + 27, 4, 2, 1)
+  ctx.fill()
+  // Tank cap screw detail
+  ctx.fillStyle = '#777'
+  ctx.beginPath()
+  ctx.arc(-hw - 8, -hh + 10, 0.5, 0, Math.PI * 2)
   ctx.fill()
   // Connecting pipes
   ctx.strokeStyle = '#777'
@@ -501,18 +537,34 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.moveTo(-hw - 3, -hh + 22)
   ctx.lineTo(-hw + 2, -hh + 21)
   ctx.stroke()
+  // Pipe clamp rings
+  ctx.fillStyle = '#888'
+  ctx.fillRect(-hw - 4, -hh + 13.5, 1, 1.5)
+  ctx.fillRect(-hw - 4, -hh + 21.5, 1, 1.5)
   // Nozzle
   ctx.fillStyle = '#3a3a3a'
   roundRect(ctx, -hw - 7, -hh + 29, 8, 5, 2)
   ctx.fill()
   ctx.fillStyle = '#555'
   ctx.fillRect(-hw - 5, -hh + 30, 4, 3)
+  // Nozzle heat vents
+  ctx.fillStyle = '#2a2a2a'
+  ctx.fillRect(-hw - 6, -hh + 31, 0.5, 2)
+  ctx.fillRect(-hw - 2, -hh + 31, 0.5, 2)
   // LED indicator
   ctx.fillStyle = player.jetpackFuel > 10 ? '#44ff44' : '#ff4444'
   ctx.shadowColor = player.jetpackFuel > 10 ? '#44ff44' : '#ff4444'
   ctx.shadowBlur = 4
   ctx.beginPath()
   ctx.arc(-hw - 3, -hh + 12, 1.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  // Secondary status LED
+  ctx.fillStyle = '#4488ff'
+  ctx.shadowColor = '#4488ff'
+  ctx.shadowBlur = 2
+  ctx.beginPath()
+  ctx.arc(-hw - 3, -hh + 26, 0.8, 0, Math.PI * 2)
   ctx.fill()
   ctx.shadowBlur = 0
 
@@ -570,9 +622,24 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     // Boot highlight
     ctx.fillStyle = COLORS.player.bootsHighlight
     ctx.fillRect(shinX, bootY + 1, 4, 1.5)
+    // Boot ankle padding
+    ctx.fillStyle = COLORS.player.boots
+    ctx.fillRect(shinX - 1, bootY - 1, 7, 2)
+    // Boot stitching
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(shinX - 1, bootY + 2.5)
+    ctx.lineTo(shinX + 7, bootY + 2.5)
+    ctx.stroke()
     // Sole
     ctx.fillStyle = COLORS.player.bootsSole
     ctx.fillRect(shinX - 2, bootY + 4, 9, 2)
+    // Sole tread
+    ctx.fillStyle = 'rgba(0,0,0,0.2)'
+    ctx.fillRect(shinX - 1, bootY + 5, 1, 1)
+    ctx.fillRect(shinX + 2, bootY + 5, 1, 1)
+    ctx.fillRect(shinX + 5, bootY + 5, 1, 1)
     // Laces
     ctx.strokeStyle = COLORS.player.bootsLace
     ctx.lineWidth = 0.5
@@ -582,6 +649,14 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
       ctx.lineTo(shinX + 4, ly)
       ctx.stroke()
     }
+    // Speed hooks (lace eyelets)
+    ctx.fillStyle = '#888'
+    ctx.beginPath()
+    ctx.arc(shinX, bootY + 1, 0.3, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(shinX + 4, bootY + 1, 0.3, 0, Math.PI * 2)
+    ctx.fill()
   }
 
   // Draw back leg first, then front
@@ -600,6 +675,25 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.moveTo(-hw + 4, -hh + 15)
   ctx.lineTo(hw - 4, -hh + 15)
   ctx.stroke()
+  // Vest stitching detail
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)'
+  ctx.lineWidth = 0.3
+  ctx.beginPath()
+  ctx.moveTo(-hw + 4, -hh + 20)
+  ctx.lineTo(hw - 4, -hh + 20)
+  ctx.stroke()
+  // Vest collar
+  ctx.fillStyle = COLORS.player.vestPouch
+  ctx.fillRect(-hw + 4, -hh + 9, player.width - 8, 2)
+  // MOLLE webbing on vest
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)'
+  ctx.lineWidth = 0.3
+  for (let my = -hh + 13; my < -hh + 27; my += 3) {
+    ctx.beginPath()
+    ctx.moveTo(-hw + 5, my)
+    ctx.lineTo(hw - 5, my)
+    ctx.stroke()
+  }
   // Shirt underneath (visible at sides)
   ctx.fillStyle = COLORS.player.shirt
   ctx.fillRect(-hw + 2, -hh + 10, 3, 18)
@@ -618,20 +712,50 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fill()
   roundRect(ctx, hw - 10, -hh + 17, 6, 5, 1)
   ctx.fill()
+  // Pouch flap lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)'
+  ctx.lineWidth = 0.3
+  ctx.beginPath()
+  ctx.moveTo(-hw + 5, -hh + 18)
+  ctx.lineTo(-hw + 11, -hh + 18)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(hw - 10, -hh + 18)
+  ctx.lineTo(hw - 4, -hh + 18)
+  ctx.stroke()
   // Pouch button
   ctx.fillStyle = '#666'
   ctx.beginPath()
-  ctx.arc(-hw + 8, -hh + 18, 0.8, 0, Math.PI * 2)
+  ctx.arc(-hw + 8, -hh + 17.5, 0.8, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(hw - 7, -hh + 17.5, 0.8, 0, Math.PI * 2)
   ctx.fill()
   // Name tape area
   ctx.fillStyle = '#5a5a40'
   ctx.fillRect(-2, -hh + 12, 10, 3)
   ctx.fillStyle = '#888'
   ctx.font = '2px sans-serif'
+  // Velcro patch area (flag/unit)
+  ctx.fillStyle = '#5a6a4a'
+  ctx.globalAlpha = 0.3
+  ctx.fillRect(hw - 9, -hh + 10, 5, 4)
+  ctx.globalAlpha = 1
 
   // Belt
   ctx.fillStyle = COLORS.player.belt
   ctx.fillRect(-hw + 2, -hh + 28, player.width - 4, 4)
+  // Belt stitch lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)'
+  ctx.lineWidth = 0.3
+  ctx.beginPath()
+  ctx.moveTo(-hw + 3, -hh + 28.5)
+  ctx.lineTo(hw - 3, -hh + 28.5)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(-hw + 3, -hh + 31)
+  ctx.lineTo(hw - 3, -hh + 31)
+  ctx.stroke()
   // Belt buckle
   ctx.fillStyle = COLORS.player.beltBuckle
   roundRect(ctx, -2, -hh + 27, 6, 6, 1)
@@ -639,22 +763,50 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   // Buckle center
   ctx.fillStyle = '#ddc044'
   ctx.fillRect(0, -hh + 29, 2, 2)
+  // Buckle prong
+  ctx.fillStyle = '#ccb034'
+  ctx.fillRect(0.5, -hh + 27.5, 1, 1.5)
   // Belt pouches
   ctx.fillStyle = COLORS.player.pouch
   roundRect(ctx, -hw + 3, -hh + 27, 5, 5, 1)
   ctx.fill()
   roundRect(ctx, hw - 7, -hh + 27, 5, 5, 1)
   ctx.fill()
+  // Pouch snap buttons
+  ctx.fillStyle = '#777'
+  ctx.beginPath()
+  ctx.arc(-hw + 5.5, -hh + 27.5, 0.4, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(hw - 4.5, -hh + 27.5, 0.4, 0, Math.PI * 2)
+  ctx.fill()
   // Canteen on belt
   ctx.fillStyle = '#5a6a4a'
   roundRect(ctx, hw - 9, -hh + 26, 4, 7, 2)
   ctx.fill()
+  // Canteen cap
+  ctx.fillStyle = '#666'
+  ctx.fillRect(hw - 8.5, -hh + 25.5, 3, 1.5)
+  // Canteen strap
+  ctx.strokeStyle = '#4a5a3a'
+  ctx.lineWidth = 0.5
+  ctx.beginPath()
+  ctx.moveTo(hw - 8, -hh + 28)
+  ctx.lineTo(hw - 8, -hh + 32)
+  ctx.stroke()
 
   // ─ BACK ARM (behind body) ─
   ctx.fillStyle = COLORS.player.shirt
   ctx.fillRect(-hw, -hh + 11, 5, 15)
+  // Sleeve rolled-up cuff
+  ctx.fillStyle = COLORS.player.shirtDark
+  ctx.fillRect(-hw, -hh + 22, 5, 2)
+  // Glove
   ctx.fillStyle = COLORS.player.glove
   ctx.fillRect(-hw, -hh + 24, 5, 4)
+  // Glove knuckle padding
+  ctx.fillStyle = 'rgba(0,0,0,0.1)'
+  ctx.fillRect(-hw, -hh + 25, 5, 1)
 
   // ─ FRONT ARM + GUN (rotated to aim angle) ─
   const recoil = player.shootCooldown > 0.1 ? -2 : 0
@@ -733,12 +885,24 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   // Upper arm
   ctx.fillStyle = COLORS.player.shirt
   ctx.fillRect(-2, -3, 10, 6)
+  // Shoulder patch hint
+  ctx.fillStyle = 'rgba(0,0,0,0.08)'
+  ctx.fillRect(-1, -2, 4, 4)
   // Forearm
   ctx.fillStyle = COLORS.player.shirtDark
   ctx.fillRect(6, -2.5, 6, 5)
+  // Sleeve rolled-up cuff
+  ctx.fillStyle = COLORS.player.shirt
+  ctx.fillRect(6, -2, 1.5, 4)
   // Glove/hand
   ctx.fillStyle = COLORS.player.glove
   ctx.fillRect(10, -2, 7 + recoil, 5)
+  // Glove knuckle padding
+  ctx.fillStyle = 'rgba(0,0,0,0.1)'
+  ctx.fillRect(12, -1, 4 + recoil, 1)
+  // Glove wrist strap
+  ctx.fillStyle = 'rgba(0,0,0,0.15)'
+  ctx.fillRect(10, -1.5, 2, 4)
 
   // Gun - varies by weapon type
   const gunX = 15 + recoil
@@ -1390,9 +1554,39 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = COLORS.player.gunDark
     roundRect(ctx, gunX, gunY, 18, 7, 1)
     ctx.fill()
-    // Grip
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 2)
+    ctx.lineTo(gunX + 16, gunY + 2)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 4.5)
+    ctx.lineTo(gunX + 10, gunY + 4.5)
+    ctx.stroke()
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 11, gunY + 1, 3.5, 2.5)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 11.3, gunY + 1.3, 2.9, 2)
+    // Forward assist
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 15, gunY + 0.5, 1, 1.5)
+    // Charging handle
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 1, gunY - 0.5, 3, 1.5)
+    // Grip with texture
     ctx.fillStyle = '#2a2a2a'
     ctx.fillRect(gunX + 7, gunY + 6, 4, 5)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 7, gunY + 7 + i * 1.5)
+      ctx.lineTo(gunX + 11, gunY + 7 + i * 1.5)
+      ctx.stroke()
+    }
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.8
@@ -1400,22 +1594,45 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.moveTo(gunX + 7, gunY + 6)
     ctx.quadraticCurveTo(gunX + 9, gunY + 10, gunX + 11, gunY + 6)
     ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 8.5, gunY + 7, 1, 2)
     // Barrel
     ctx.fillStyle = COLORS.player.gunBarrel
     ctx.fillRect(gunX + 16, gunY + 1.5, 9, 3)
+    // Barrel gas tube (top)
+    ctx.fillStyle = '#4a4a4a'
+    ctx.fillRect(gunX + 16, gunY + 0.5, 8, 1)
     // Barrel tip / flash suppressor
     ctx.fillStyle = '#444'
     roundRect(ctx, gunX + 24, gunY + 0.5, 4, 5, 1)
     ctx.fill()
-    // Magazine
+    // Flash suppressor slots
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 25, gunY + 1, 0.5, 1.2)
+    ctx.fillRect(gunX + 25, gunY + 4, 0.5, 1.2)
+    ctx.fillRect(gunX + 26.5, gunY + 1, 0.5, 1.2)
+    ctx.fillRect(gunX + 26.5, gunY + 4, 0.5, 1.2)
+    // Magazine with floor plate
     ctx.fillStyle = '#2a2a2a'
     ctx.fillRect(gunX + 3, gunY + 6, 4, 7)
     ctx.fillStyle = '#222'
     ctx.fillRect(gunX + 3, gunY + 11, 4, 2)
-    // Scope
+    ctx.fillStyle = '#444'
+    ctx.fillRect(gunX + 3.5, gunY + 11.5, 3, 0.5)
+    // Magazine release button
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 7, gunY + 6.5, 0.8, 1.5)
+    // Scope with turret
     ctx.fillStyle = '#505050'
     roundRect(ctx, gunX + 6, gunY - 4, 10, 3.5, 1.5)
     ctx.fill()
+    // Scope tube highlight
+    ctx.fillStyle = '#606060'
+    ctx.fillRect(gunX + 8, gunY - 3.5, 6, 0.8)
+    // Scope turret (top)
+    ctx.fillStyle = '#5a5a5a'
+    ctx.fillRect(gunX + 9, gunY - 5, 2, 1.5)
     // Scope lens
     ctx.fillStyle = '#4488cc'
     ctx.globalAlpha = 0.7
@@ -1428,21 +1645,61 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.beginPath()
     ctx.arc(gunX + 14.5, gunY - 2.8, 0.6, 0, Math.PI * 2)
     ctx.fill()
-    // Rail on top
+    // Scope rear lens
+    ctx.fillStyle = '#4488cc'
+    ctx.globalAlpha = 0.4
+    ctx.beginPath()
+    ctx.arc(gunX + 7.5, gunY - 2.2, 1.2, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Rail on top with notches
     ctx.fillStyle = '#4a4a4a'
     ctx.fillRect(gunX + 2, gunY - 0.5, 14, 1)
+    ctx.fillStyle = '#3a3a3a'
+    for (let i = 0; i < 6; i++) {
+      ctx.fillRect(gunX + 3 + i * 2, gunY - 0.5, 0.5, 1)
+    }
     // Gun highlight
     ctx.fillStyle = COLORS.player.gunLight
     ctx.fillRect(gunX + 2, gunY + 1.5, 12, 0.8)
-    // Stock
+    // Sling mount
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 5, gunY + 3, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock with wood grain
     ctx.fillStyle = '#4a3a28'
     roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
     ctx.fill()
     ctx.fillStyle = '#5a4a38'
     ctx.fillRect(gunX - 5, gunY + 1.5, 6, 2)
-    // Forward grip
+    // Stock wood grain
+    ctx.strokeStyle = '#3a2a18'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 6, gunY + 2)
+    ctx.lineTo(gunX + 1, gunY + 2.5)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX - 6, gunY + 3.8)
+    ctx.lineTo(gunX + 1, gunY + 4.3)
+    ctx.stroke()
+    // Rubber butt pad
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 7, gunY + 1, 1.5, 4)
+    // Forward grip with texture
     ctx.fillStyle = '#3a3a3a'
     ctx.fillRect(gunX + 13, gunY + 6, 3, 4)
+    ctx.strokeStyle = '#2a2a2a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 13, gunY + 7)
+    ctx.lineTo(gunX + 16, gunY + 7)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 13, gunY + 8.5)
+    ctx.lineTo(gunX + 16, gunY + 8.5)
+    ctx.stroke()
   }
 
   // Muzzle flash (adjusted position based on weapon)
@@ -1481,6 +1738,15 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   // Neck shadow
   ctx.fillStyle = COLORS.player.skinShadow
   ctx.fillRect(-2, -hh + 9, 6, 2)
+  // Neck muscle/tendon hint
+  ctx.strokeStyle = COLORS.player.skinShadow
+  ctx.lineWidth = 0.3
+  ctx.globalAlpha = 0.3
+  ctx.beginPath()
+  ctx.moveTo(0, -hh + 7)
+  ctx.lineTo(1, -hh + 10)
+  ctx.stroke()
+  ctx.globalAlpha = 1
 
   // ─ HEAD ─
   // Helmet
@@ -1497,9 +1763,26 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   // Helmet rim
   ctx.fillStyle = COLORS.player.helmetBand
   ctx.fillRect(-8, -hh + 2, 18, 3)
+  // Helmet band texture
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)'
+  ctx.lineWidth = 0.3
+  for (let hx = -7; hx < 9; hx += 2) {
+    ctx.beginPath()
+    ctx.moveTo(hx, -hh + 2.5)
+    ctx.lineTo(hx, -hh + 4.5)
+    ctx.stroke()
+  }
   // Goggle strap
   ctx.fillStyle = COLORS.player.helmetStrap
   ctx.fillRect(-8, -hh, 18, 2)
+  // Helmet NVG mount bracket
+  ctx.fillStyle = COLORS.player.helmetDark
+  ctx.fillRect(-2, -hh - 7.5, 6, 2)
+  ctx.fillStyle = '#555'
+  ctx.fillRect(-0.5, -hh - 8, 3, 1.5)
+  // Helmet side rail
+  ctx.fillStyle = '#666'
+  ctx.fillRect(-8, -hh - 1, 2, 4)
   // Helmet chin strap
   ctx.strokeStyle = COLORS.player.helmetStrap
   ctx.lineWidth = 1.5
@@ -1507,6 +1790,9 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.moveTo(8, -hh + 4)
   ctx.quadraticCurveTo(10, -hh + 8, 8, -hh + 10)
   ctx.stroke()
+  // Chin strap buckle
+  ctx.fillStyle = '#777'
+  ctx.fillRect(8, -hh + 7, 2, 2)
 
   // Face area
   ctx.fillStyle = COLORS.player.skin
@@ -1522,6 +1808,11 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = COLORS.player.skinShadow
   roundRect(ctx, -2, -hh + 8, 9, 4, 2)
   ctx.fill()
+  // Stubble hint
+  ctx.fillStyle = COLORS.player.skinShadow
+  ctx.globalAlpha = 0.15
+  ctx.fillRect(-1, -hh + 8, 8, 3)
+  ctx.globalAlpha = 1
 
   // Eye
   ctx.fillStyle = '#ffffff'
@@ -1532,6 +1823,12 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.beginPath()
   ctx.arc(5.5, -hh + 4.8, 1.8, 0, Math.PI * 2)
   ctx.fill()
+  // Iris detail ring
+  ctx.strokeStyle = '#2a5a2a'
+  ctx.lineWidth = 0.3
+  ctx.beginPath()
+  ctx.arc(5.5, -hh + 4.8, 1.2, 0, Math.PI * 2)
+  ctx.stroke()
   // Pupil
   ctx.fillStyle = '#111'
   ctx.beginPath()
@@ -1542,6 +1839,13 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.beginPath()
   ctx.arc(6.2, -hh + 4.2, 0.5, 0, Math.PI * 2)
   ctx.fill()
+  // Lower eyelid line
+  ctx.strokeStyle = COLORS.player.skinShadow
+  ctx.lineWidth = 0.4
+  ctx.beginPath()
+  ctx.moveTo(2.5, -hh + 6)
+  ctx.quadraticCurveTo(5, -hh + 6.8, 7.5, -hh + 6)
+  ctx.stroke()
   // Eyebrow
   ctx.strokeStyle = COLORS.player.hair
   ctx.lineWidth = 2
@@ -1557,6 +1861,11 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.lineTo(6, -hh + 7)
   ctx.closePath()
   ctx.fill()
+  // Nose bridge highlight
+  ctx.fillStyle = COLORS.player.skin
+  ctx.globalAlpha = 0.5
+  ctx.fillRect(6.5, -hh + 5, 1, 1.5)
+  ctx.globalAlpha = 1
   // Mouth
   ctx.strokeStyle = '#a07050'
   ctx.lineWidth = 1
@@ -1564,6 +1873,11 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.moveTo(2, -hh + 9.5)
   ctx.quadraticCurveTo(4.5, -hh + 10.5, 7, -hh + 9.5)
   ctx.stroke()
+  // Lower lip highlight
+  ctx.fillStyle = COLORS.player.skin
+  ctx.globalAlpha = 0.3
+  ctx.fillRect(3, -hh + 10, 3, 0.8)
+  ctx.globalAlpha = 1
 
   // Ear
   ctx.fillStyle = COLORS.player.skin
@@ -1573,6 +1887,11 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = COLORS.player.skinShadow
   ctx.beginPath()
   ctx.ellipse(-5, -hh + 5, 1.2, 2, 0, 0, Math.PI * 2)
+  ctx.fill()
+  // Ear lobe
+  ctx.fillStyle = COLORS.player.skin
+  ctx.beginPath()
+  ctx.arc(-5, -hh + 7.5, 1, 0, Math.PI * 2)
   ctx.fill()
 
   // ─ DOG TAGS ─
@@ -1588,6 +1907,17 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = '#bbb'
   roundRect(ctx, 0, -hh + 16, 3, 2.5, 0.5)
   ctx.fill()
+  // Dog tag text lines
+  ctx.strokeStyle = '#999'
+  ctx.lineWidth = 0.2
+  ctx.beginPath()
+  ctx.moveTo(0, -hh + 16)
+  ctx.lineTo(2.5, -hh + 16)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(0, -hh + 17)
+  ctx.lineTo(2, -hh + 17)
+  ctx.stroke()
 
   ctx.restore()
   ctx.globalAlpha = 1
@@ -1610,17 +1940,71 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillStyle = COLORS.player.jetpack
   roundRect(ctx, -hw - 7, -hh + 9, 8, 21, 2)
   ctx.fill()
+  // Housing panel lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.2)'
+  ctx.lineWidth = 0.4
+  ctx.beginPath()
+  ctx.moveTo(-hw - 6, -hh + 14)
+  ctx.lineTo(-hw - 1, -hh + 14)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(-hw - 6, -hh + 20)
+  ctx.lineTo(-hw - 1, -hh + 20)
+  ctx.stroke()
+  // Housing rivets
+  ctx.fillStyle = '#888'
+  ctx.beginPath()
+  ctx.arc(-hw - 6, -hh + 10, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(-hw - 1, -hh + 10, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(-hw - 6, -hh + 28, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(-hw - 1, -hh + 28, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  // Fuel tank
   ctx.fillStyle = COLORS.player.jetpackTank
   roundRect(ctx, -hw - 10, -hh + 10, 4, 17, 2)
   ctx.fill()
   ctx.fillStyle = '#7a5a4a'
   ctx.fillRect(-hw - 9, -hh + 11, 2, 15)
+  // Tank cap
   ctx.fillStyle = '#999'
   roundRect(ctx, -hw - 10, -hh + 9, 4, 2, 1)
   ctx.fill()
+  ctx.fillStyle = '#777'
+  ctx.beginPath()
+  ctx.arc(-hw - 8, -hh + 10, 0.5, 0, Math.PI * 2)
+  ctx.fill()
+  // Connecting pipes
+  ctx.strokeStyle = '#777'
+  ctx.lineWidth = 1.5
+  ctx.beginPath()
+  ctx.moveTo(-hw - 3, -hh + 14)
+  ctx.lineTo(-hw + 2, -hh + 13)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(-hw - 3, -hh + 22)
+  ctx.lineTo(-hw + 2, -hh + 21)
+  ctx.stroke()
+  // Pipe clamps
+  ctx.fillStyle = '#888'
+  ctx.fillRect(-hw - 4, -hh + 13.5, 1, 1.5)
+  ctx.fillRect(-hw - 4, -hh + 21.5, 1, 1.5)
+  // Nozzle
   ctx.fillStyle = '#3a3a3a'
   roundRect(ctx, -hw - 7, -hh + 29, 8, 5, 2)
   ctx.fill()
+  ctx.fillStyle = '#555'
+  ctx.fillRect(-hw - 5, -hh + 30, 4, 3)
+  // Nozzle heat vents
+  ctx.fillStyle = '#2a2a2a'
+  ctx.fillRect(-hw - 6, -hh + 31, 0.5, 2)
+  ctx.fillRect(-hw - 2, -hh + 31, 0.5, 2)
+  // LED indicator
   ctx.fillStyle = '#44ff44'
   ctx.shadowColor = '#44ff44'
   ctx.shadowBlur = 4
@@ -1628,24 +2012,75 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.arc(-hw - 3, -hh + 12, 1.5, 0, Math.PI * 2)
   ctx.fill()
   ctx.shadowBlur = 0
+  // Secondary LED
+  ctx.fillStyle = '#4488ff'
+  ctx.shadowColor = '#4488ff'
+  ctx.shadowBlur = 2
+  ctx.beginPath()
+  ctx.arc(-hw - 3, -hh + 26, 0.8, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
 
   // ─ LEGS ─
   const drawLeg = (xOff: number) => {
+    // Thigh
     ctx.fillStyle = COLORS.player.pants
     ctx.fillRect(xOff - 1, hh - 15, 7, 8)
     ctx.fillStyle = COLORS.player.pantsLight
     ctx.fillRect(xOff, hh - 14, 2, 6)
+    // Cargo pocket
+    ctx.fillStyle = COLORS.player.pantsKnee
+    ctx.globalAlpha = 0.3
+    ctx.fillRect(xOff + 3, hh - 13, 3, 4)
+    ctx.globalAlpha = 1
+    // Knee pad
     ctx.fillStyle = COLORS.player.pantsKnee
     ctx.beginPath()
     ctx.arc(xOff + 3, hh - 7, 3, 0, Math.PI * 2)
     ctx.fill()
+    // Knee pad strap
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(xOff - 1, hh - 7)
+    ctx.lineTo(xOff + 7, hh - 7)
+    ctx.stroke()
+    // Shin
     ctx.fillStyle = COLORS.player.pants
     ctx.fillRect(xOff - 1, hh - 8, 7, 7)
+    // Boot
     ctx.fillStyle = COLORS.player.boots
     roundRect(ctx, xOff - 2, hh - 2, 9, 5, 2)
     ctx.fill()
+    // Boot highlight
+    ctx.fillStyle = COLORS.player.bootsHighlight || '#5a5a4a'
+    ctx.fillRect(xOff, hh - 1, 4, 1.5)
+    // Boot stitching
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(xOff - 1, hh)
+    ctx.lineTo(xOff + 7, hh)
+    ctx.stroke()
+    // Sole
     ctx.fillStyle = COLORS.player.bootsSole
     ctx.fillRect(xOff - 2, hh + 2, 9, 2)
+    // Sole tread
+    ctx.fillStyle = 'rgba(0,0,0,0.2)'
+    ctx.fillRect(xOff - 1, hh + 3, 1, 1)
+    ctx.fillRect(xOff + 2, hh + 3, 1, 1)
+    ctx.fillRect(xOff + 5, hh + 3, 1, 1)
+    // Laces
+    ctx.strokeStyle = COLORS.player.bootsLace || '#555'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(xOff, hh - 1)
+    ctx.lineTo(xOff + 4, hh - 1)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(xOff, hh + 0.5)
+    ctx.lineTo(xOff + 4, hh + 0.5)
+    ctx.stroke()
   }
   drawLeg(1)
   drawLeg(-5)
@@ -1654,20 +2089,88 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillStyle = COLORS.player.vest
   roundRect(ctx, -hw + 2, -hh + 9, 20, 21, 3)
   ctx.fill()
+  // Vest padding line
+  ctx.strokeStyle = COLORS.player.vestPouch
+  ctx.lineWidth = 0.8
+  ctx.beginPath()
+  ctx.moveTo(-hw + 4, -hh + 15)
+  ctx.lineTo(hw - 4, -hh + 15)
+  ctx.stroke()
+  // Vest collar
+  ctx.fillStyle = COLORS.player.vestPouch
+  ctx.fillRect(-hw + 4, -hh + 9, 16, 2)
+  // MOLLE webbing
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)'
+  ctx.lineWidth = 0.3
+  for (let my = -hh + 13; my < -hh + 27; my += 3) {
+    ctx.beginPath()
+    ctx.moveTo(-hw + 5, my)
+    ctx.lineTo(hw - 5, my)
+    ctx.stroke()
+  }
+  // Shirt underneath
   ctx.fillStyle = COLORS.player.shirt
   ctx.fillRect(-hw + 2, -hh + 10, 3, 18)
   ctx.fillRect(hw - 5, -hh + 10, 3, 18)
+  // Chest pouches
   ctx.fillStyle = COLORS.player.vestPouch
   roundRect(ctx, -hw + 5, -hh + 17, 6, 5, 1)
   ctx.fill()
   roundRect(ctx, hw - 10, -hh + 17, 6, 5, 1)
   ctx.fill()
+  // Pouch flap lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)'
+  ctx.lineWidth = 0.3
+  ctx.beginPath()
+  ctx.moveTo(-hw + 5, -hh + 18)
+  ctx.lineTo(-hw + 11, -hh + 18)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(hw - 10, -hh + 18)
+  ctx.lineTo(hw - 4, -hh + 18)
+  ctx.stroke()
+  // Pouch buttons
+  ctx.fillStyle = '#666'
+  ctx.beginPath()
+  ctx.arc(-hw + 8, -hh + 17.5, 0.8, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.arc(hw - 7, -hh + 17.5, 0.8, 0, Math.PI * 2)
+  ctx.fill()
+  // Name tape
+  ctx.fillStyle = '#5a5a40'
+  ctx.fillRect(-2, -hh + 12, 10, 3)
+  // Velcro patch
+  ctx.fillStyle = '#5a6a4a'
+  ctx.globalAlpha = 0.3
+  ctx.fillRect(hw - 9, -hh + 10, 5, 4)
+  ctx.globalAlpha = 1
 
   // Belt
   ctx.fillStyle = COLORS.player.belt
   ctx.fillRect(-hw + 2, -hh + 28, 20, 4)
+  // Belt stitch lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)'
+  ctx.lineWidth = 0.3
+  ctx.beginPath()
+  ctx.moveTo(-hw + 3, -hh + 28.5)
+  ctx.lineTo(hw - 3, -hh + 28.5)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(-hw + 3, -hh + 31)
+  ctx.lineTo(hw - 3, -hh + 31)
+  ctx.stroke()
   ctx.fillStyle = COLORS.player.beltBuckle
   roundRect(ctx, -2, -hh + 28, 6, 4, 1)
+  ctx.fill()
+  // Buckle center
+  ctx.fillStyle = '#ddc044'
+  ctx.fillRect(0, -hh + 29, 2, 2)
+  // Belt pouches
+  ctx.fillStyle = COLORS.player.pouch || '#5a5a3a'
+  roundRect(ctx, -hw + 3, -hh + 27, 5, 5, 1)
+  ctx.fill()
+  roundRect(ctx, hw - 7, -hh + 27, 5, 5, 1)
   ctx.fill()
 
   // ─ NECK ─ (draw before arm so arm is on top)
@@ -1691,6 +2194,24 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   // Helmet band
   ctx.fillStyle = '#5a6a5a'
   ctx.fillRect(-10, -hh + 2, 22, 3)
+  // Helmet band texture
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)'
+  ctx.lineWidth = 0.3
+  for (let hx = -9; hx < 11; hx += 2) {
+    ctx.beginPath()
+    ctx.moveTo(hx, -hh + 2.5)
+    ctx.lineTo(hx, -hh + 4.5)
+    ctx.stroke()
+  }
+  // NVG mount bracket
+  ctx.fillStyle = '#2a4a2a'
+  ctx.fillRect(-3, -hh - 9.5, 8, 2)
+  ctx.fillStyle = '#555'
+  ctx.fillRect(-1, -hh - 10, 4, 2)
+  // Helmet side rails
+  ctx.fillStyle = '#666'
+  ctx.fillRect(-10, -hh - 1, 2, 5)
+  ctx.fillRect(10, -hh - 1, 2, 5)
   // Chin strap
   ctx.strokeStyle = '#5a5a4a'
   ctx.lineWidth = 2
@@ -1698,11 +2219,25 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.moveTo(10, -hh + 5)
   ctx.quadraticCurveTo(13, -hh + 10, 10, -hh + 13)
   ctx.stroke()
+  // Chin strap buckle
+  ctx.fillStyle = '#777'
+  ctx.fillRect(10, -hh + 9, 2.5, 2.5)
 
   // Face - wider to show both eyes
   ctx.fillStyle = COLORS.player.skin
   roundRect(ctx, -7, -hh + 0, 18, 14, 4)
   ctx.fill()
+  // Jaw shadow
+  ctx.fillStyle = COLORS.player.skinShadow
+  ctx.globalAlpha = 0.2
+  roundRect(ctx, -5, -hh + 9, 14, 5, 3)
+  ctx.fill()
+  ctx.globalAlpha = 1
+  // Stubble hint
+  ctx.fillStyle = COLORS.player.skinShadow
+  ctx.globalAlpha = 0.12
+  ctx.fillRect(-4, -hh + 8, 12, 4)
+  ctx.globalAlpha = 1
 
   // Left Eye
   ctx.fillStyle = '#ffffff'
@@ -1712,9 +2247,20 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.beginPath()
   ctx.arc(-2.5, -hh + 4, 1.5, 0, Math.PI * 2)
   ctx.fill()
+  // Left iris detail
+  ctx.strokeStyle = '#2a5a2a'
+  ctx.lineWidth = 0.3
+  ctx.beginPath()
+  ctx.arc(-2.5, -hh + 4, 1, 0, Math.PI * 2)
+  ctx.stroke()
   ctx.fillStyle = '#111'
   ctx.beginPath()
   ctx.arc(-2.5, -hh + 4, 0.7, 0, Math.PI * 2)
+  ctx.fill()
+  // Left eye highlight
+  ctx.fillStyle = '#fff'
+  ctx.beginPath()
+  ctx.arc(-2, -hh + 3.5, 0.4, 0, Math.PI * 2)
   ctx.fill()
 
   // Right Eye
@@ -1725,11 +2271,34 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.beginPath()
   ctx.arc(6.5, -hh + 4, 1.5, 0, Math.PI * 2)
   ctx.fill()
+  // Right iris detail
+  ctx.strokeStyle = '#2a5a2a'
+  ctx.lineWidth = 0.3
+  ctx.beginPath()
+  ctx.arc(6.5, -hh + 4, 1, 0, Math.PI * 2)
+  ctx.stroke()
   ctx.fillStyle = '#111'
   ctx.beginPath()
   ctx.arc(6.5, -hh + 4, 0.7, 0, Math.PI * 2)
   ctx.fill()
-  
+  // Right eye highlight
+  ctx.fillStyle = '#fff'
+  ctx.beginPath()
+  ctx.arc(7, -hh + 3.5, 0.4, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Lower eyelid lines
+  ctx.strokeStyle = COLORS.player.skinShadow
+  ctx.lineWidth = 0.4
+  ctx.beginPath()
+  ctx.moveTo(-5, -hh + 5.5)
+  ctx.quadraticCurveTo(-2.5, -hh + 6.5, 0, -hh + 5.5)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(4, -hh + 5.5)
+  ctx.quadraticCurveTo(6.5, -hh + 6.5, 9, -hh + 5.5)
+  ctx.stroke()
+
   // Eyebrows
   ctx.strokeStyle = COLORS.player.hair
   ctx.lineWidth = 1.5
@@ -1741,23 +2310,47 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.moveTo(3, -hh + 0)
   ctx.lineTo(8, -hh + 0.5)
   ctx.stroke()
-  
+
   // Nose
   ctx.fillStyle = COLORS.player.skinShadow
-  ctx.fillRect(1, -hh + 5, 2, 3)
-  
-  // Mouth - pink
+  ctx.beginPath()
+  ctx.moveTo(1, -hh + 5)
+  ctx.lineTo(3, -hh + 8)
+  ctx.lineTo(0, -hh + 8)
+  ctx.closePath()
+  ctx.fill()
+  // Nose bridge highlight
+  ctx.fillStyle = COLORS.player.skin
+  ctx.globalAlpha = 0.5
+  ctx.fillRect(1.2, -hh + 5, 0.8, 2)
+  ctx.globalAlpha = 1
+
+  // Mouth
   ctx.fillStyle = '#e88099'
   roundRect(ctx, -1, -hh + 10, 6, 2, 1)
   ctx.fill()
+  // Lower lip highlight
+  ctx.fillStyle = COLORS.player.skin
+  ctx.globalAlpha = 0.3
+  ctx.fillRect(0, -hh + 11, 4, 0.8)
+  ctx.globalAlpha = 1
 
   // Ears
   ctx.fillStyle = COLORS.player.skin
   ctx.beginPath()
   ctx.ellipse(-8, -hh + 5, 2, 3, 0, 0, Math.PI * 2)
   ctx.fill()
+  ctx.fillStyle = COLORS.player.skinShadow
+  ctx.beginPath()
+  ctx.ellipse(-8, -hh + 5, 1, 1.5, 0, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.skin
   ctx.beginPath()
   ctx.ellipse(12, -hh + 5, 2, 3, 0, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = COLORS.player.skinShadow
+  ctx.beginPath()
+  ctx.ellipse(12, -hh + 5, 1, 1.5, 0, 0, Math.PI * 2)
   ctx.fill()
 
   // Dog tags
@@ -1770,6 +2363,20 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillStyle = '#ccc'
   roundRect(ctx, -1, -hh + 15, 4, 3, 1)
   ctx.fill()
+  ctx.fillStyle = '#bbb'
+  roundRect(ctx, 0, -hh + 16, 3, 2.5, 0.5)
+  ctx.fill()
+  // Dog tag text lines
+  ctx.strokeStyle = '#999'
+  ctx.lineWidth = 0.2
+  ctx.beginPath()
+  ctx.moveTo(0, -hh + 16)
+  ctx.lineTo(2.5, -hh + 16)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(0, -hh + 17)
+  ctx.lineTo(2, -hh + 17)
+  ctx.stroke()
 
   // ─ ARM + GUN ─ (drawn last so it's in front)
   ctx.save()
@@ -1777,13 +2384,28 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   const shoulderY = -hh + 14
   ctx.translate(shoulderX, shoulderY)
   ctx.rotate(-0.1) // Slight horizontal angle
-  
+
   // Upper arm
   ctx.fillStyle = COLORS.player.shirt
   ctx.fillRect(-2, -4, 14, 8)
+  // Shoulder patch
+  ctx.fillStyle = 'rgba(0,0,0,0.08)'
+  ctx.fillRect(-1, -3, 5, 5)
+  // Sleeve rolled cuff
+  ctx.fillStyle = COLORS.player.shirtDark || '#4a5a3a'
+  ctx.fillRect(10, -3.5, 2, 7)
   // Forearm/hand
   ctx.fillStyle = COLORS.player.skin
   ctx.fillRect(10, -3, 14, 6)
+  // Glove
+  ctx.fillStyle = COLORS.player.glove || '#3a3a3a'
+  ctx.fillRect(18, -2.5, 6, 5)
+  // Glove knuckle padding
+  ctx.fillStyle = 'rgba(0,0,0,0.1)'
+  ctx.fillRect(20, -1.5, 4, 1)
+  // Watch/wrist
+  ctx.fillStyle = '#333'
+  ctx.fillRect(16, -2.5, 2.5, 5)
   
   // Gun - varies by weapon type (matches in-game weapon visuals)
   const gunX = 22
@@ -2419,28 +3041,105 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#2a2a3a'
     ctx.fillRect(gunX - 14, gunY + 1.5, 2, 7)
   } else {
-    // Rifle (default)
+    // Blastop (default) - assault rifle with scope
+    // Receiver
     ctx.fillStyle = '#2a2a2a'
     roundRect(ctx, gunX, gunY, 28, 9, 2)
     ctx.fill()
+    // Receiver panel lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 3)
+    ctx.lineTo(gunX + 26, gunY + 3)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 6)
+    ctx.lineTo(gunX + 14, gunY + 6)
+    ctx.stroke()
     ctx.fillStyle = '#3a3a3a'
     ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 16, gunY + 1.5, 5, 3)
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 16.5, gunY + 2, 4, 2)
+    // Forward assist
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 22, gunY + 1, 1.5, 2)
+    // Charging handle
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 1, gunY - 0.5, 4, 1.5)
+    // Grip with texture
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 10, gunY + 8, 6, 8)
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 10, gunY + 9 + i * 1.7)
+      ctx.lineTo(gunX + 16, gunY + 9 + i * 1.7)
+      ctx.stroke()
+    }
+    // Trigger guard
+    ctx.strokeStyle = '#444'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.moveTo(gunX + 10, gunY + 8)
+    ctx.quadraticCurveTo(gunX + 13, gunY + 14, gunX + 16, gunY + 8)
+    ctx.stroke()
+    // Trigger
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 12.5, gunY + 9.5, 1.2, 2.5)
+    // Barrel with gas tube
     ctx.fillStyle = '#4a4a4a'
     ctx.fillRect(gunX + 26, gunY + 2, 16, 5)
+    // Gas tube
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 26, gunY + 1, 14, 1.2)
+    // Flash suppressor
     ctx.fillStyle = '#333'
     roundRect(ctx, gunX + 40, gunY + 1, 5, 7, 1)
     ctx.fill()
+    // Flash suppressor slots
     ctx.fillStyle = '#222'
-    ctx.fillRect(gunX + 43, gunY + 2, 2, 1)
-    ctx.fillRect(gunX + 43, gunY + 5, 2, 1)
+    ctx.fillRect(gunX + 41, gunY + 1.8, 0.6, 1.5)
+    ctx.fillRect(gunX + 41, gunY + 5.5, 0.6, 1.5)
+    ctx.fillRect(gunX + 43, gunY + 1.8, 0.6, 1.5)
+    ctx.fillRect(gunX + 43, gunY + 5.5, 0.6, 1.5)
+    // Magazine with floor plate
     ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX + 6, gunY + 8, 6, 10, 1)
+    roundRect(ctx, gunX + 4, gunY + 8, 6, 10, 1)
     ctx.fill()
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX + 4, gunY + 16, 6, 2)
+    ctx.fillStyle = '#444'
+    ctx.fillRect(gunX + 5, gunY + 16.5, 4, 0.6)
+    // Magazine release
+    ctx.fillStyle = '#555'
+    ctx.fillRect(gunX + 10, gunY + 9, 1.2, 2)
+    // Rail on top with notches
     ctx.fillStyle = '#444'
     ctx.fillRect(gunX + 10, gunY - 2, 12, 3)
+    ctx.fillStyle = '#3a3a3a'
+    for (let i = 0; i < 5; i++) {
+      ctx.fillRect(gunX + 11 + i * 2.2, gunY - 2, 0.6, 1)
+    }
+    // Scope with turrets
     ctx.fillStyle = '#555'
     roundRect(ctx, gunX + 8, gunY - 6, 16, 5, 2)
     ctx.fill()
+    // Scope tube highlight
+    ctx.fillStyle = '#666'
+    ctx.fillRect(gunX + 10, gunY - 5.5, 12, 1)
+    // Scope turret (top)
+    ctx.fillStyle = '#5a5a5a'
+    ctx.fillRect(gunX + 14, gunY - 7.5, 3, 2)
+    ctx.fillStyle = '#666'
+    ctx.beginPath()
+    ctx.arc(gunX + 15.5, gunY - 7.5, 1.2, 0, Math.PI * 2)
+    ctx.fill()
+    // Scope lens front
     ctx.fillStyle = '#66aaff'
     ctx.shadowColor = '#66aaff'
     ctx.shadowBlur = 3
@@ -2448,14 +3147,57 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.arc(gunX + 22, gunY - 3.5, 2.5, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
+    // Scope lens glint
+    ctx.fillStyle = '#aaddff'
+    ctx.beginPath()
+    ctx.arc(gunX + 21.3, gunY - 4.3, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+    // Scope rear lens
+    ctx.fillStyle = '#4488cc'
+    ctx.globalAlpha = 0.4
+    ctx.beginPath()
+    ctx.arc(gunX + 10, gunY - 3.5, 1.8, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Sling mount
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 9, gunY + 3, 1, 0, Math.PI * 2)
+    ctx.fill()
+    // Stock with wood grain
     ctx.fillStyle = '#5a4a3a'
     roundRect(ctx, gunX - 14, gunY + 0, 16, 8, 2)
     ctx.fill()
     ctx.fillStyle = '#4a3a2a'
     ctx.fillRect(gunX - 12, gunY + 3, 12, 2)
+    // Stock wood grain
+    ctx.strokeStyle = '#3a2a18'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 12, gunY + 2.5)
+    ctx.lineTo(gunX + 1, gunY + 3)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX - 12, gunY + 5.5)
+    ctx.lineTo(gunX + 1, gunY + 6)
+    ctx.stroke()
+    // Rubber butt pad
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 14, gunY + 0.5, 2, 7)
+    // Forward grip with texture
     ctx.fillStyle = '#3a3a3a'
     roundRect(ctx, gunX + 14, gunY + 7, 5, 8, 1)
     ctx.fill()
+    ctx.strokeStyle = '#2a2a2a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 14, gunY + 9)
+    ctx.lineTo(gunX + 19, gunY + 9)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 14, gunY + 11.5)
+    ctx.lineTo(gunX + 19, gunY + 11.5)
+    ctx.stroke()
   }
   
   ctx.restore()
