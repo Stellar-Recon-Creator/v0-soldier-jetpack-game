@@ -43,6 +43,7 @@ export default function GameCanvas() {
     jetpack: false,
     mouseX: 0,
     mouseY: 0,
+    mouseAim: false,
     switchWeapon: null,
   })
   const lastTimeRef = useRef<number>(0)
@@ -267,7 +268,7 @@ export default function GameCanvas() {
           e.preventDefault()
           keys.jetpack = true
           break
-        case 'KeyJ': keys.shoot = true; break
+        case 'KeyJ': keys.shoot = true; keys.mouseAim = false; break
       }
     }
 
@@ -283,7 +284,7 @@ export default function GameCanvas() {
     }
 
     const handleMouseDown = (e: MouseEvent) => {
-      if (e.button === 0) keysRef.current.shoot = true
+      if (e.button === 0) { keysRef.current.shoot = true; keysRef.current.mouseAim = true }
     }
     const handleMouseUp = (e: MouseEvent) => {
       if (e.button === 0) keysRef.current.shoot = false

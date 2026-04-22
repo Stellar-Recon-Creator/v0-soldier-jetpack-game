@@ -3957,7 +3957,7 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText('A/D or Arrows - Move', canvasW - 20, 30)
   ctx.fillText('W or Space - Jump', canvasW - 20, 46)
   ctx.fillText('Shift - Jetpack', canvasW - 20, 62)
-  ctx.fillText('Mouse Aim + Click - Shoot', canvasW - 20, 78)
+  ctx.fillText('Click - Aim & Shoot / J - Shoot', canvasW - 20, 78)
   ctx.textAlign = 'left'
 }
 

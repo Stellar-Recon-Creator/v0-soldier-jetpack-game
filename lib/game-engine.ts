@@ -221,15 +221,21 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   if (keys.left) { player.vx = -PLAYER_SPEED; player.facing = -1 }
   if (keys.right) { player.vx = PLAYER_SPEED; player.facing = 1 }
 
-  // Compute aim angle from mouse position (screen coords to world-relative angle)
-  const playerScreenX = player.x - state.cameraX + player.width / 2
-  const playerScreenY = player.y - state.cameraY + player.height / 2 - 6 // gun height offset
-  const aimDx = keys.mouseX - playerScreenX
-  const aimDy = keys.mouseY - playerScreenY
-  player.aimAngle = Math.atan2(aimDy, aimDx)
-  // Face the direction of the mouse
-  if (aimDx > 0) player.facing = 1
-  else if (aimDx < 0) player.facing = -1
+  // Compute aim angle - mouse aim or facing-direction aim
+  if (keys.mouseAim) {
+    // Mouse aim: aim toward cursor position
+    const playerScreenX = player.x - state.cameraX + player.width / 2
+    const playerScreenY = player.y - state.cameraY + player.height / 2 - 6
+    const aimDx = keys.mouseX - playerScreenX
+    const aimDy = keys.mouseY - playerScreenY
+    player.aimAngle = Math.atan2(aimDy, aimDx)
+    // Face the direction of the mouse
+    if (aimDx > 0) player.facing = 1
+    else if (aimDx < 0) player.facing = -1
+  } else {
+    // Keyboard aim: fire in the direction the player is facing (horizontal)
+    player.aimAngle = player.facing === 1 ? 0 : Math.PI
+  }
 
   // Jump
   if (keys.jump && player.onGround) {
