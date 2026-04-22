@@ -15,9 +15,9 @@ const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; dama
   blastop:  { speed: 700,  cooldown: 0.18, damage: 1,  count: 1, spread: 0,    radius: 4,  ammoCost: 1 },
   relav:    { speed: 650,  cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3,  ammoCost: 0.2 },
   spalmer:  { speed: 500,  cooldown: 0.6,  damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2 },
-  lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 8 },
+  lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 6 },
   plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
-  hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 10 },
+  hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8 },
 }
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
@@ -183,8 +183,8 @@ export function createPlayer(): Player {
     score: 0,
     aimAngle: 0,
     bulletsFired: 0,
-    bulletsRemaining: 250,
-    bulletsMax: 250,
+    bulletsRemaining: 275,
+    bulletsMax: 275,
     lowOxygen: false,
     weapon: 'blastop',
     weapons: ['blastop'],
