@@ -127,11 +127,11 @@ export default function GameCanvas() {
     const player = createPlayer()
     const healthMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 0.75 : 0.5
     // Apply durability upgrade: +10% health per level
-    const durabilityMult = 1 + gearLevels.durability * 0.1
+    const durabilityMult = 1 + gearLevels.durability * 0.06
     player.health = Math.round(player.health * healthMultiplier * durabilityMult)
     player.maxHealth = Math.round(player.maxHealth * healthMultiplier * durabilityMult)
     // Apply starting ammo upgrade: +10% ammo per level
-    const startAmmoMult = 1 + gearLevels.startAmmo * 0.1
+    const startAmmoMult = 1 + gearLevels.startAmmo * 0.06
     player.bulletsRemaining = Math.round(startingAmmo * startAmmoMult)
     player.bulletsMax = Math.round(startingAmmo * startAmmoMult)
     player.weapons = [...ownedWeapons]

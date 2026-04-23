@@ -195,10 +195,10 @@ export function createPlayer(): Player {
 export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: number, canvasH: number, gear?: GearUpgrades): GameState & { soundEvents: SoundEvents } {
   // Gear upgrade multipliers
   const g = gear || { power: 0, fuel: 0, ammoUse: 0, weight: 0 }
-  const jetpackForceMult = 1 + g.power * 0.1 + g.weight * 0.05   // power: +10%, weight: +5%
-  const fuelRateMult = 1 - g.fuel * 0.1                           // fuel: -10% per level
-  const ammoUseMult = 1 - g.ammoUse * 0.1                         // ammo use: -10% per level
-  const speedMult = 1 + g.weight * 0.05                            // weight: +5% per level
+  const jetpackForceMult = 1 + g.power * 0.06 + g.weight * 0.03   // power: +6%, weight: +3%
+  const fuelRateMult = 1 - g.fuel * 0.06                           // fuel: -6% per level
+  const ammoUseMult = 1 - g.ammoUse * 0.06                         // ammo use: -6% per level
+  const speedMult = 1 + g.weight * 0.03                            // weight: +3% per level
   const emptySoundEvents: SoundEvents = {
     playerShoot: false,
     playerJump: false,
