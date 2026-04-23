@@ -251,10 +251,13 @@ export default function GameCanvas() {
     }
 
     // Player
+    const gl = gearLevelsRef.current
+    const jetpackVisualLevel = Math.max(gl.power, gl.fuel)
+    const armorVisualLevel = Math.max(gl.durability, gl.weight)
     if (keysRef.current.jetpack && newState.player.jetpackFuel > 0) {
-      drawJetpackFlame(ctx, newState.player, newState.cameraX, newState.cameraY)
+      drawJetpackFlame(ctx, newState.player, newState.cameraX, newState.cameraY, jetpackVisualLevel)
     }
-    drawPlayer(ctx, newState.player, newState.cameraX, newState.cameraY, newState.platforms, GROUND_Y)
+    drawPlayer(ctx, newState.player, newState.cameraX, newState.cameraY, newState.platforms, GROUND_Y, armorVisualLevel, jetpackVisualLevel)
 
     // Particles
     for (const particle of newState.particles) {

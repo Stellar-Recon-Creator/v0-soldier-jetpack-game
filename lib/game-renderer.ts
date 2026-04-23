@@ -453,7 +453,7 @@ export function drawPlatform(ctx: CanvasRenderingContext2D, platform: Platform, 
 }
 
 // ─── Player (Detailed Human Soldier) ───
-export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, cameraX: number, cameraY: number, platforms: { x: number; y: number; width: number; height: number; type?: string; floatOffset?: number }[] = [], groundY: number = 600) {
+export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, cameraX: number, cameraY: number, platforms: { x: number; y: number; width: number; height: number; type?: string; floatOffset?: number }[] = [], groundY: number = 600, armorLevel: number = 0, jetpackLevel: number = 0) {
   const px = player.x - cameraX
   const py = player.y - cameraY
   const f = player.facing
@@ -470,93 +470,93 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   const hw = player.width / 2
   const hh = player.height / 2
 
-  // ─ JETPACK (behind body) ─
+  // ─ JETPACK (behind body, scales with jetpackLevel 0-5) ─
+  const jpScale = 1 + jetpackLevel * 0.08  // each level adds 8% size
+  const jpW = Math.round(10 * jpScale)
+  const jpH = Math.round(23 * jpScale)
+  const jpX = -hw - jpW + 2   // left edge of housing
+  const jpY = -hh + 8
+
   // Main housing
   ctx.fillStyle = COLORS.player.jetpackDark
-  roundRect(ctx, -hw - 8, -hh + 8, 10, 23, 3)
+  roundRect(ctx, jpX, jpY, jpW, jpH, 3)
   ctx.fill()
   ctx.fillStyle = COLORS.player.jetpack
-  roundRect(ctx, -hw - 7, -hh + 9, 8, 21, 2)
+  roundRect(ctx, jpX + 1, jpY + 1, jpW - 2, jpH - 2, 2)
   ctx.fill()
   // Housing panel lines
   ctx.strokeStyle = 'rgba(0,0,0,0.2)'
   ctx.lineWidth = 0.4
   ctx.beginPath()
-  ctx.moveTo(-hw - 6, -hh + 14)
-  ctx.lineTo(-hw - 1, -hh + 14)
+  ctx.moveTo(jpX + 2, jpY + jpH * 0.26)
+  ctx.lineTo(jpX + jpW - 2, jpY + jpH * 0.26)
   ctx.stroke()
   ctx.beginPath()
-  ctx.moveTo(-hw - 6, -hh + 20)
-  ctx.lineTo(-hw - 1, -hh + 20)
+  ctx.moveTo(jpX + 2, jpY + jpH * 0.52)
+  ctx.lineTo(jpX + jpW - 2, jpY + jpH * 0.52)
   ctx.stroke()
   // Housing rivets
   ctx.fillStyle = '#888'
-  ctx.beginPath()
-  ctx.arc(-hw - 6, -hh + 10, 0.5, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.arc(-hw - 1, -hh + 10, 0.5, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.arc(-hw - 6, -hh + 28, 0.5, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.beginPath()
-  ctx.arc(-hw - 1, -hh + 28, 0.5, 0, Math.PI * 2)
-  ctx.fill()
+  for (const ry of [0.08, 0.87]) {
+    for (const rx of [0.2, 0.8]) {
+      ctx.beginPath()
+      ctx.arc(jpX + jpW * rx, jpY + jpH * ry, 0.5, 0, Math.PI * 2)
+      ctx.fill()
+    }
+  }
   // Fuel tanks
+  const tankW = Math.round(4 * jpScale)
+  const tankH = Math.round(17 * jpScale)
   ctx.fillStyle = COLORS.player.jetpackTank
-  roundRect(ctx, -hw - 10, -hh + 10, 4, 17, 2)
+  roundRect(ctx, jpX - tankW, jpY + 2, tankW, tankH, 2)
   ctx.fill()
   ctx.fillStyle = '#7a5a4a'
-  ctx.fillRect(-hw - 9, -hh + 11, 2, 15)
+  ctx.fillRect(jpX - tankW + 1, jpY + 3, tankW - 2, tankH - 2)
   // Fuel level indicator stripe
   ctx.fillStyle = player.jetpackFuel > 50 ? '#44aa44' : player.jetpackFuel > 20 ? '#aaaa44' : '#aa4444'
   ctx.globalAlpha = 0.5
-  const fuelH = (player.jetpackFuel / 100) * 13
-  ctx.fillRect(-hw - 9.5, -hh + 25 - fuelH, 1, fuelH)
+  const fuelH = (player.jetpackFuel / 100) * (tankH - 4)
+  ctx.fillRect(jpX - tankW + 0.5, jpY + 2 + tankH - 2 - fuelH, 1, fuelH)
   ctx.globalAlpha = 1
   // Tank caps
   ctx.fillStyle = '#999'
-  roundRect(ctx, -hw - 10, -hh + 9, 4, 2, 1)
+  roundRect(ctx, jpX - tankW, jpY + 1, tankW, 2, 1)
   ctx.fill()
-  roundRect(ctx, -hw - 10, -hh + 27, 4, 2, 1)
-  ctx.fill()
-  // Tank cap screw detail
-  ctx.fillStyle = '#777'
-  ctx.beginPath()
-  ctx.arc(-hw - 8, -hh + 10, 0.5, 0, Math.PI * 2)
+  roundRect(ctx, jpX - tankW, jpY + tankH + 1, tankW, 2, 1)
   ctx.fill()
   // Connecting pipes
   ctx.strokeStyle = '#777'
   ctx.lineWidth = 1.5
   ctx.beginPath()
-  ctx.moveTo(-hw - 3, -hh + 14)
-  ctx.lineTo(-hw + 2, -hh + 13)
+  ctx.moveTo(jpX + jpW * 0.5, jpY + jpH * 0.26)
+  ctx.lineTo(-hw + 2, jpY + jpH * 0.22)
   ctx.stroke()
   ctx.beginPath()
-  ctx.moveTo(-hw - 3, -hh + 22)
-  ctx.lineTo(-hw + 2, -hh + 21)
+  ctx.moveTo(jpX + jpW * 0.5, jpY + jpH * 0.6)
+  ctx.lineTo(-hw + 2, jpY + jpH * 0.56)
   ctx.stroke()
   // Pipe clamp rings
   ctx.fillStyle = '#888'
-  ctx.fillRect(-hw - 4, -hh + 13.5, 1, 1.5)
-  ctx.fillRect(-hw - 4, -hh + 21.5, 1, 1.5)
+  ctx.fillRect(jpX + jpW * 0.4, jpY + jpH * 0.24, 1, 1.5)
+  ctx.fillRect(jpX + jpW * 0.4, jpY + jpH * 0.58, 1, 1.5)
   // Nozzle
+  const nozW = Math.round(8 * jpScale)
+  const nozY = jpY + jpH - 1
   ctx.fillStyle = '#3a3a3a'
-  roundRect(ctx, -hw - 7, -hh + 29, 8, 5, 2)
+  roundRect(ctx, jpX - 1, nozY, nozW, 5, 2)
   ctx.fill()
   ctx.fillStyle = '#555'
-  ctx.fillRect(-hw - 5, -hh + 30, 4, 3)
+  ctx.fillRect(jpX + 1, nozY + 1, nozW - 4, 3)
   // Nozzle heat vents
   ctx.fillStyle = '#2a2a2a'
-  ctx.fillRect(-hw - 6, -hh + 31, 0.5, 2)
-  ctx.fillRect(-hw - 2, -hh + 31, 0.5, 2)
+  ctx.fillRect(jpX, nozY + 2, 0.5, 2)
+  ctx.fillRect(jpX + nozW - 3, nozY + 2, 0.5, 2)
   // LED indicator
   ctx.fillStyle = player.jetpackFuel > 10 ? '#44ff44' : '#ff4444'
   ctx.shadowColor = player.jetpackFuel > 10 ? '#44ff44' : '#ff4444'
   ctx.shadowBlur = 4
   ctx.beginPath()
-  ctx.arc(-hw - 3, -hh + 12, 1.5, 0, Math.PI * 2)
+  ctx.arc(jpX + jpW * 0.5, jpY + jpH * 0.15, 1.5, 0, Math.PI * 2)
   ctx.fill()
   ctx.shadowBlur = 0
   // Secondary status LED
@@ -564,9 +564,72 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.shadowColor = '#4488ff'
   ctx.shadowBlur = 2
   ctx.beginPath()
-  ctx.arc(-hw - 3, -hh + 26, 0.8, 0, Math.PI * 2)
+  ctx.arc(jpX + jpW * 0.5, jpY + jpH * 0.78, 0.8, 0, Math.PI * 2)
   ctx.fill()
   ctx.shadowBlur = 0
+
+  // ─ SIDE BOOSTERS (jetpack level 5) ─
+  if (jetpackLevel >= 5) {
+    const boosterW = 5
+    const boosterH = 14
+    const boosterColor = '#5a5a5a'
+    const boosterLight = '#7a7a7a'
+    // Left side booster (further from body)
+    const lbX = jpX - tankW - boosterW + 1
+    const lbY = jpY + jpH * 0.3
+    ctx.fillStyle = boosterColor
+    roundRect(ctx, lbX, lbY, boosterW, boosterH, 2)
+    ctx.fill()
+    ctx.fillStyle = boosterLight
+    ctx.fillRect(lbX + 1, lbY + 1, boosterW - 2, 2)
+    // booster nozzle
+    ctx.fillStyle = '#3a3a3a'
+    roundRect(ctx, lbX - 0.5, lbY + boosterH - 1, boosterW + 1, 3, 1)
+    ctx.fill()
+    // booster LED
+    ctx.fillStyle = '#ff8800'
+    ctx.shadowColor = '#ff8800'
+    ctx.shadowBlur = 3
+    ctx.beginPath()
+    ctx.arc(lbX + boosterW / 2, lbY + 4, 1, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    // Pipe connecting to main housing
+    ctx.strokeStyle = '#666'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(lbX + boosterW, lbY + boosterH * 0.3)
+    ctx.lineTo(jpX, jpY + jpH * 0.4)
+    ctx.stroke()
+
+    // Right side booster (closer to body, on top/right)
+    const rbX = jpX + jpW - 1
+    const rbY = jpY + jpH * 0.25
+    ctx.fillStyle = boosterColor
+    roundRect(ctx, rbX, rbY, boosterW, boosterH, 2)
+    ctx.fill()
+    ctx.fillStyle = boosterLight
+    ctx.fillRect(rbX + 1, rbY + 1, boosterW - 2, 2)
+    // booster nozzle
+    ctx.fillStyle = '#3a3a3a'
+    roundRect(ctx, rbX - 0.5, rbY + boosterH - 1, boosterW + 1, 3, 1)
+    ctx.fill()
+    // booster LED
+    ctx.fillStyle = '#ff8800'
+    ctx.shadowColor = '#ff8800'
+    ctx.shadowBlur = 3
+    ctx.beginPath()
+    ctx.arc(rbX + boosterW / 2, rbY + 4, 1, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    // Pipe connecting to main housing
+    ctx.strokeStyle = '#666'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(rbX, rbY + boosterH * 0.3)
+    ctx.lineTo(jpX + jpW, jpY + jpH * 0.35)
+    ctx.stroke()
+  }
 
   // ─ LEGS (realistic walk cycle - no crossing, proper stride) ─
   const isMoving = player.vx !== 0
@@ -1882,6 +1945,132 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = '#bbb'
   roundRect(ctx, 0, -hh + 16, 3, 2.5, 0.5)
   ctx.fill()
+
+  // ─ ARMOR VISUAL UPGRADES (drawn on top based on armorLevel 0-5) ─
+  if (armorLevel >= 1) {
+    // Level 1: Reinforced knee armor plates
+    ctx.fillStyle = '#5a6a4a'
+    // Left knee plate
+    roundRect(ctx, -6, hh - 10, 8, 4, 1.5)
+    ctx.fill()
+    // Right knee plate
+    roundRect(ctx, 1, hh - 10, 8, 4, 1.5)
+    ctx.fill()
+    // Plate rivets
+    ctx.fillStyle = '#888'
+    ctx.beginPath()
+    ctx.arc(-4, hh - 8, 0.4, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(7, hh - 8, 0.4, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  if (armorLevel >= 2) {
+    // Level 2: Shoulder armor plates
+    ctx.fillStyle = '#4a5a3a'
+    // Right shoulder plate (front arm side)
+    roundRect(ctx, hw - 6, -hh + 10, 8, 5, 2)
+    ctx.fill()
+    // Left shoulder plate (back arm side)
+    roundRect(ctx, -hw - 2, -hh + 10, 7, 5, 2)
+    ctx.fill()
+    // Plate highlights
+    ctx.fillStyle = '#6a7a5a'
+    ctx.fillRect(hw - 5, -hh + 11, 5, 1.5)
+    ctx.fillRect(-hw - 1, -hh + 11, 5, 1.5)
+    // Edge trim
+    ctx.strokeStyle = '#3a4a2a'
+    ctx.lineWidth = 0.5
+    roundRect(ctx, hw - 6, -hh + 10, 8, 5, 2)
+    ctx.stroke()
+    roundRect(ctx, -hw - 2, -hh + 10, 7, 5, 2)
+    ctx.stroke()
+  }
+
+  if (armorLevel >= 3) {
+    // Level 3: Tactical goggles over eyes
+    ctx.fillStyle = '#333'
+    roundRect(ctx, -2, -hh + 1.5, 14, 5, 2)
+    ctx.fill()
+    // Goggle lenses (reflective orange tint)
+    ctx.fillStyle = '#664422'
+    roundRect(ctx, 0, -hh + 2.5, 5, 3, 1.5)
+    ctx.fill()
+    roundRect(ctx, 6, -hh + 2.5, 5, 3, 1.5)
+    ctx.fill()
+    // Lens glare
+    ctx.fillStyle = 'rgba(255,200,100,0.3)'
+    ctx.fillRect(1, -hh + 3, 2, 1)
+    ctx.fillRect(7, -hh + 3, 2, 1)
+    // Goggle strap (wraps around helmet)
+    ctx.fillStyle = '#222'
+    ctx.fillRect(-8, -hh + 2, 6, 2)
+    ctx.fillRect(12, -hh + 2, 2, 2)
+  }
+
+  if (armorLevel >= 4) {
+    // Level 4: Heavy chest plate over vest
+    ctx.fillStyle = '#3a4a2a'
+    roundRect(ctx, -hw + 3, -hh + 13, player.width - 6, 10, 2)
+    ctx.fill()
+    // Plate segments
+    ctx.strokeStyle = '#2a3a1a'
+    ctx.lineWidth = 0.5
+    ctx.beginPath()
+    ctx.moveTo(0, -hh + 13)
+    ctx.lineTo(0, -hh + 23)
+    ctx.stroke()
+    // Plate highlights
+    ctx.fillStyle = '#4a5a3a'
+    ctx.fillRect(-hw + 4, -hh + 14, 5, 2)
+    ctx.fillRect(3, -hh + 14, 5, 2)
+    // Mounting bolts
+    ctx.fillStyle = '#666'
+    ctx.beginPath()
+    ctx.arc(-hw + 5, -hh + 21, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(hw - 5, -hh + 21, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  if (armorLevel >= 5) {
+    // Level 5: Full face mask / balaclava covering lower face
+    // Dark mask covering nose, mouth, jaw
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, -3, -hh + 5, 12, 8, 2)
+    ctx.fill()
+    // Mesh breathing area
+    ctx.fillStyle = '#1a1a1a'
+    roundRect(ctx, 0, -hh + 7, 8, 4, 1)
+    ctx.fill()
+    // Mesh pattern (ventilation holes)
+    ctx.fillStyle = '#333'
+    for (let mx = 1; mx < 7; mx += 2) {
+      for (let my = 0; my < 3; my += 1.5) {
+        ctx.fillRect(mx, -hh + 7.5 + my, 0.8, 0.8)
+      }
+    }
+    // NVG mount bracket on helmet
+    ctx.fillStyle = '#444'
+    roundRect(ctx, -1, -hh - 5, 8, 3, 1)
+    ctx.fill()
+    ctx.fillStyle = '#555'
+    ctx.fillRect(1, -hh - 4.5, 4, 2)
+    // Helmet side rails
+    ctx.fillStyle = '#555'
+    ctx.fillRect(-8, -hh + 1, 2, 5)
+    ctx.fillRect(10, -hh + 1, 2, 5)
+    // Rail mounting holes
+    ctx.fillStyle = '#333'
+    ctx.beginPath()
+    ctx.arc(-7, -hh + 2.5, 0.4, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(-7, -hh + 4.5, 0.4, 0, Math.PI * 2)
+    ctx.fill()
+  }
 
   ctx.restore()
   ctx.globalAlpha = 1
@@ -3965,29 +4154,62 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
 }
 
 // ─── Jetpack Flames ───
-export function drawJetpackFlame(ctx: CanvasRenderingContext2D, player: Player, cameraX: number, cameraY: number) {
+export function drawJetpackFlame(ctx: CanvasRenderingContext2D, player: Player, cameraX: number, cameraY: number, jetpackLevel: number = 0) {
   const px = player.x - cameraX + player.width / 2
   const py = player.y - cameraY + player.height / 2
   const f = player.facing
+  const flameMult = 1 + jetpackLevel * 0.12  // flame gets 12% bigger per level
 
   const baseX = px - f * 10
   const baseY = py + 18
 
-  for (let i = 0; i < 4; i++) {
-    const flameH = 10 + Math.random() * 14
-    const flameW = 3 + Math.random() * 4
+  // Main thruster flame
+  const flameCount = 4 + Math.floor(jetpackLevel * 0.5)
+  for (let i = 0; i < flameCount; i++) {
+    const flameH = (10 + Math.random() * 14) * flameMult
+    const flameW = (3 + Math.random() * 4) * flameMult
     ctx.fillStyle = COLORS.player.flame[i % 3]
     ctx.globalAlpha = 0.6 + Math.random() * 0.4
     ctx.beginPath()
-    ctx.ellipse(baseX + (Math.random() - 0.5) * 6, baseY + flameH / 2, flameW, flameH, 0, 0, Math.PI * 2)
+    ctx.ellipse(baseX + (Math.random() - 0.5) * 6 * flameMult, baseY + flameH / 2, flameW, flameH, 0, 0, Math.PI * 2)
     ctx.fill()
   }
-  // White-hot core
+  // White-hot core (scales with level)
   ctx.fillStyle = '#ffffcc'
   ctx.globalAlpha = 0.8
   ctx.beginPath()
-  ctx.ellipse(baseX, baseY + 2, 2, 4, 0, 0, Math.PI * 2)
+  ctx.ellipse(baseX, baseY + 2, 2 * flameMult, 4 * flameMult, 0, 0, Math.PI * 2)
   ctx.fill()
+
+  // Side booster flames (level 5)
+  if (jetpackLevel >= 5) {
+    const hw = player.width / 2
+    // Left booster flame (further from body)
+    const lbX = px - f * (hw + 14)
+    const lbY = py + 14
+    for (let i = 0; i < 2; i++) {
+      const fH = 6 + Math.random() * 8
+      const fW = 2 + Math.random() * 2
+      ctx.fillStyle = COLORS.player.flame[i % 3]
+      ctx.globalAlpha = 0.5 + Math.random() * 0.4
+      ctx.beginPath()
+      ctx.ellipse(lbX + (Math.random() - 0.5) * 3, lbY + fH / 2, fW, fH, 0, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    // Right booster flame (closer to body)
+    const rbX = px - f * (hw - 2)
+    const rbY = py + 13
+    for (let i = 0; i < 2; i++) {
+      const fH = 6 + Math.random() * 8
+      const fW = 2 + Math.random() * 2
+      ctx.fillStyle = COLORS.player.flame[i % 3]
+      ctx.globalAlpha = 0.5 + Math.random() * 0.4
+      ctx.beginPath()
+      ctx.ellipse(rbX + (Math.random() - 0.5) * 3, rbY + fH / 2, fW, fH, 0, 0, Math.PI * 2)
+      ctx.fill()
+    }
+  }
+
   ctx.globalAlpha = 1
 }
 
