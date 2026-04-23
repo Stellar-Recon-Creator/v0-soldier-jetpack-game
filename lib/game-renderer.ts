@@ -2036,22 +2036,62 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   }
 
   if (armorLevel >= 5) {
-    // Level 5: Full face mask / balaclava covering lower face
-    // Dark mask covering nose, mouth, jaw
+    // Level 5: Full balaclava — covers ALL skin (face, ear, jaw, chin, neck)
+    // Cover the entire face area including ear
     ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, -3, -hh + 5, 12, 8, 2)
+    // Main face mask — covers from forehead to chin, matches face roundRect shape
+    roundRect(ctx, -4, -hh + 1, 13, 11, 3)
     ctx.fill()
-    // Mesh breathing area
+    // Cover the ear completely
+    ctx.beginPath()
+    ctx.ellipse(-5, -hh + 5, 2.8, 3.8, 0, 0, Math.PI * 2)
+    ctx.fill()
+    // Cover chin strap area and any exposed jaw/neck
+    ctx.fillRect(-5, -hh + 8, 14, 5)
+    // Slight darker shade on lower mask for depth
+    ctx.fillStyle = '#232323'
+    roundRect(ctx, -3, -hh + 7, 11, 5, 2)
+    ctx.fill()
+
+    // Eye cutout — only the eyes are visible through the mask
+    // Eye opening slit
     ctx.fillStyle = '#1a1a1a'
-    roundRect(ctx, 0, -hh + 7, 8, 4, 1)
+    roundRect(ctx, 1, -hh + 2.5, 8, 4.5, 2)
     ctx.fill()
-    // Mesh pattern (ventilation holes)
+    // Redraw the eye through the slit
+    ctx.fillStyle = '#ffffff'
+    roundRect(ctx, 2, -hh + 3, 6, 3.5, 1.5)
+    ctx.fill()
+    ctx.fillStyle = '#3a6a3a'
+    ctx.beginPath()
+    ctx.arc(5.5, -hh + 4.8, 1.8, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#111'
+    ctx.beginPath()
+    ctx.arc(5.5, -hh + 4.8, 0.9, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#fff'
+    ctx.beginPath()
+    ctx.arc(6.2, -hh + 4.2, 0.5, 0, Math.PI * 2)
+    ctx.fill()
+
+    // Mesh breathing area over mouth/nose
+    ctx.fillStyle = '#1a1a1a'
+    roundRect(ctx, 0, -hh + 7.5, 8, 3.5, 1)
+    ctx.fill()
+    // Mesh ventilation holes
     ctx.fillStyle = '#333'
-    for (let mx = 1; mx < 7; mx += 2) {
-      for (let my = 0; my < 3; my += 1.5) {
-        ctx.fillRect(mx, -hh + 7.5 + my, 0.8, 0.8)
+    for (let mx = 1; mx < 7; mx += 1.5) {
+      for (let my = 0; my < 3; my += 1.2) {
+        ctx.fillRect(mx, -hh + 7.8 + my, 0.6, 0.6)
       }
     }
+    // Mask stitching line around eye cutout
+    ctx.strokeStyle = '#3a3a3a'
+    ctx.lineWidth = 0.4
+    roundRect(ctx, 1.5, -hh + 2.8, 7, 4, 1.8)
+    ctx.stroke()
+
     // NVG mount bracket on helmet
     ctx.fillStyle = '#444'
     roundRect(ctx, -1, -hh - 5, 8, 3, 1)
@@ -3393,19 +3433,74 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   }
 
   if (armorLevel >= 5) {
-    // Level 5: Full face mask
+    // Level 5: Full balaclava — covers ALL skin
     ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, -5, -hh + 5, 14, 10, 2)
+    // Cover entire face area (matches face roundRect)
+    roundRect(ctx, -7, -hh + 0, 18, 14, 4)
     ctx.fill()
+    // Cover both ears
+    ctx.beginPath()
+    ctx.ellipse(-8, -hh + 5, 2.3, 3.3, 0, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.ellipse(12, -hh + 5, 2.3, 3.3, 0, 0, Math.PI * 2)
+    ctx.fill()
+    // Cover neck
+    ctx.fillRect(-3, -hh + 6, 8, 6)
+    // Darker lower mask
+    ctx.fillStyle = '#232323'
+    roundRect(ctx, -5, -hh + 7, 14, 7, 2)
+    ctx.fill()
+
+    // Eye cutout slits — only eyes visible
     ctx.fillStyle = '#1a1a1a'
-    roundRect(ctx, -2, -hh + 7, 8, 5, 1)
+    roundRect(ctx, -6, -hh + 1, 7, 5, 2)
+    ctx.fill()
+    roundRect(ctx, 3, -hh + 1, 7, 5, 2)
+    ctx.fill()
+    // Redraw left eye through slit
+    ctx.fillStyle = '#ffffff'
+    roundRect(ctx, -5, -hh + 2, 5, 4, 2)
+    ctx.fill()
+    ctx.fillStyle = '#3a6a3a'
+    ctx.beginPath()
+    ctx.arc(-2.5, -hh + 4, 1.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#111'
+    ctx.beginPath()
+    ctx.arc(-2.5, -hh + 4, 0.7, 0, Math.PI * 2)
+    ctx.fill()
+    // Redraw right eye through slit
+    ctx.fillStyle = '#ffffff'
+    roundRect(ctx, 4, -hh + 2, 5, 4, 2)
+    ctx.fill()
+    ctx.fillStyle = '#3a6a3a'
+    ctx.beginPath()
+    ctx.arc(6.5, -hh + 4, 1.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#111'
+    ctx.beginPath()
+    ctx.arc(6.5, -hh + 4, 0.7, 0, Math.PI * 2)
+    ctx.fill()
+
+    // Mesh breathing area
+    ctx.fillStyle = '#1a1a1a'
+    roundRect(ctx, -2, -hh + 8, 8, 4, 1)
     ctx.fill()
     ctx.fillStyle = '#333'
-    for (let mx = -1; mx < 6; mx += 2) {
-      for (let my = 0; my < 4; my += 1.5) {
-        ctx.fillRect(mx, -hh + 7.5 + my, 1, 1)
+    for (let mx = -1; mx < 6; mx += 1.5) {
+      for (let my = 0; my < 3.5; my += 1.2) {
+        ctx.fillRect(mx, -hh + 8.5 + my, 0.8, 0.8)
       }
     }
+    // Mask stitch lines around eye slits
+    ctx.strokeStyle = '#3a3a3a'
+    ctx.lineWidth = 0.4
+    roundRect(ctx, -5.5, -hh + 1.5, 6, 4.5, 1.8)
+    ctx.stroke()
+    roundRect(ctx, 3.5, -hh + 1.5, 6, 4.5, 1.8)
+    ctx.stroke()
+
     // NVG mount
     ctx.fillStyle = '#444'
     roundRect(ctx, -3, -hh - 5, 10, 4, 1)

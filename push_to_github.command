@@ -6,10 +6,10 @@ echo "=== Pushing changes to GitHub ==="
 rm -f .git/config.lock .git/index.lock .git/objects/*/tmp_obj_*
 
 echo "Staging changes..."
-git add lib/game-renderer.ts components/game-canvas.tsx push_to_github.command
+git add lib/game-renderer.ts push_to_github.command
 
 echo "Committing..."
-git commit -m "visual: gear upgrade visuals now appear on home screen character preview too"
+git commit -m "visual: full balaclava covers all skin - face, ears, jaw, neck with eye slits only"
 
 echo "Pushing to GitHub..."
 git push origin main
