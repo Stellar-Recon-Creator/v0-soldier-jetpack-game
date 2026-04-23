@@ -6,10 +6,10 @@ echo "=== Pushing changes to GitHub ==="
 rm -f .git/config.lock .git/index.lock .git/objects/*/tmp_obj_*
 
 echo "Staging changes..."
-git add lib/game-engine.ts push_to_github.command
+git add lib/game-renderer.ts push_to_github.command
 
 echo "Committing..."
-git commit -m "balance: reduce blastop damage from 1.0 to 0.8 (20% nerf)"
+git commit -m "ui: show health bars on all enemies regardless of difficulty"
 
 echo "Pushing to GitHub..."
 git push origin main

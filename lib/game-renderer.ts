@@ -3571,8 +3571,8 @@ export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy, cameraX: 
 
   ctx.restore()
 
-  // Health bar for tougher enemies
-  if (enemy.maxHealth > 2) {
+  // Health bar for all enemies
+  {
     const barW = enemy.width
     const barH = 4
     const hpRatio = enemy.health / enemy.maxHealth
