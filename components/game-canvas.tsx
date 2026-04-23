@@ -90,8 +90,9 @@ export default function GameCanvas() {
   }
 
   // ─── Gear Upgrades ───
-  const GEAR_UPGRADE_COST = 200
   const GEAR_MAX_LEVEL = 5
+  const GEAR_COSTS = [200, 220, 240, 260, 280]  // cost to go from level 0→1, 1→2, 2→3, 3→4, 4→5
+  const getGearCost = (currentLevel: number) => currentLevel < GEAR_MAX_LEVEL ? GEAR_COSTS[currentLevel] : 0
   const [gearLevels, setGearLevels] = useState({
     power: 0,       // jetpack 10% more powerful per level
     fuel: 0,        // jetpack uses 10% less fuel per level
@@ -105,9 +106,11 @@ export default function GameCanvas() {
   useEffect(() => { gearLevelsRef.current = gearLevels }, [gearLevels])
 
   const upgradeGear = (stat: keyof typeof gearLevels) => {
-    if (gearLevels[stat] >= GEAR_MAX_LEVEL) return
-    if (starCurrency < GEAR_UPGRADE_COST) return
-    setStarCurrency(prev => prev - GEAR_UPGRADE_COST)
+    const currentLevel = gearLevels[stat]
+    if (currentLevel >= GEAR_MAX_LEVEL) return
+    const cost = GEAR_COSTS[currentLevel]
+    if (starCurrency < cost) return
+    setStarCurrency(prev => prev - cost)
     setGearLevels(prev => ({ ...prev, [stat]: prev[stat] + 1 }))
   }
 
@@ -624,7 +627,7 @@ export default function GameCanvas() {
                       boxShadow: gearLevels.power >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(0,146,255,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>POWER</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.power}/{GEAR_MAX_LEVEL}</span>{gearLevels.power < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
+                    <span className="flex flex-col items-center leading-tight"><span>POWER</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.power}/{GEAR_MAX_LEVEL}</span>{gearLevels.power < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {getGearCost(gearLevels.power)}</span>}</span>
                   </button>
                   <button
                     onClick={() => upgradeGear('fuel')}
@@ -635,7 +638,7 @@ export default function GameCanvas() {
                       boxShadow: gearLevels.fuel >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(0,146,255,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>FUEL</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.fuel}/{GEAR_MAX_LEVEL}</span>{gearLevels.fuel < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
+                    <span className="flex flex-col items-center leading-tight"><span>FUEL</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.fuel}/{GEAR_MAX_LEVEL}</span>{gearLevels.fuel < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {getGearCost(gearLevels.fuel)}</span>}</span>
                   </button>
                 </div>
               </div>
@@ -668,7 +671,7 @@ export default function GameCanvas() {
                       boxShadow: gearLevels.startAmmo >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(114,0,234,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>STARTING AMMO</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.startAmmo}/{GEAR_MAX_LEVEL}</span>{gearLevels.startAmmo < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
+                    <span className="flex flex-col items-center leading-tight"><span>STARTING AMMO</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.startAmmo}/{GEAR_MAX_LEVEL}</span>{gearLevels.startAmmo < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {getGearCost(gearLevels.startAmmo)}</span>}</span>
                   </button>
                   <button
                     onClick={() => upgradeGear('ammoUse')}
@@ -679,7 +682,7 @@ export default function GameCanvas() {
                       boxShadow: gearLevels.ammoUse >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(114,0,234,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>AMMO USE</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.ammoUse}/{GEAR_MAX_LEVEL}</span>{gearLevels.ammoUse < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
+                    <span className="flex flex-col items-center leading-tight"><span>AMMO USE</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.ammoUse}/{GEAR_MAX_LEVEL}</span>{gearLevels.ammoUse < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {getGearCost(gearLevels.ammoUse)}</span>}</span>
                   </button>
                 </div>
               </div>
@@ -712,7 +715,7 @@ export default function GameCanvas() {
                       boxShadow: gearLevels.durability >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(11,81,124,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>DURABILITY</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.durability}/{GEAR_MAX_LEVEL}</span>{gearLevels.durability < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
+                    <span className="flex flex-col items-center leading-tight"><span>DURABILITY</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.durability}/{GEAR_MAX_LEVEL}</span>{gearLevels.durability < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {getGearCost(gearLevels.durability)}</span>}</span>
                   </button>
                   <button
                     onClick={() => upgradeGear('weight')}
@@ -723,7 +726,7 @@ export default function GameCanvas() {
                       boxShadow: gearLevels.weight >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(11,81,124,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>WEIGHT</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.weight}/{GEAR_MAX_LEVEL}</span>{gearLevels.weight < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
+                    <span className="flex flex-col items-center leading-tight"><span>WEIGHT</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.weight}/{GEAR_MAX_LEVEL}</span>{gearLevels.weight < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {getGearCost(gearLevels.weight)}</span>}</span>
                   </button>
                 </div>
               </div>
