@@ -210,7 +210,7 @@ export default function GameCanvas() {
     if (newState.gameWon && screen === 'playing') {
       setScore(newState.player.score)
       // Award stars based on difficulty
-      const starReward = difficulty === 'easy' ? 25 : difficulty === 'medium' ? 50 : 75
+      const starReward = difficulty === 'easy' ? 50 : difficulty === 'medium' ? 75 : 100
       setStarCurrency(prev => prev + starReward)
       setScreen('won')
       stopJetpackSound()
