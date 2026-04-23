@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add lib/game-renderer.ts push_to_github.command
 
 echo "Committing..."
-git commit -m "ui: show health bars on all enemies regardless of difficulty"
+git commit -m "balance: reduce flame growth to 7% per level (35% max)"
 
 echo "Pushing to GitHub..."
 git push origin main

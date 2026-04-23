@@ -4436,7 +4436,7 @@ export function drawJetpackFlame(ctx: CanvasRenderingContext2D, player: Player, 
   const f = player.facing
   const hw = player.width / 2
   const hh = player.height / 2
-  const flameMult = 1 + jetpackLevel * 0.12
+  const flameMult = 1 + jetpackLevel * 0.07
 
   // Compute nozzle center to match drawPlayer's jetpack position exactly
   const jpScale = 1 + jetpackLevel * 0.04
