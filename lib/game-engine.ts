@@ -14,7 +14,7 @@ const SHOOT_COOLDOWN = 0.18
 const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number; ammoCost: number }> = {
   blastop:  { speed: 700,  cooldown: 0.18, damage: 0.8, count: 1, spread: 0,    radius: 4,  ammoCost: 1 },
   relav:    { speed: 650,  cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3,  ammoCost: 0.2 },
-  spalmer:  { speed: 500,  cooldown: 0.6,  damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2 },
+  spalmer:  { speed: 500,  cooldown: 0.72, damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2 },
   lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 6 },
   plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
   hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8 },
@@ -474,8 +474,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           bullets.push({
             x: enemy.x + enemy.width / 2,
             y: enemy.y + enemy.height / 2,
-            vx: Math.cos(angle) * 250,
-            vy: Math.sin(angle) * 250,
+            vx: Math.cos(angle) * 300,
+            vy: Math.sin(angle) * 300,
             radius: 5,
             fromPlayer: false,
             active: true,
@@ -504,8 +504,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           bullets.push({
             x: enemy.x + enemy.width / 2,
             y: enemy.y + enemy.height / 2,
-            vx: Math.cos(angle) * 180,
-            vy: Math.sin(angle) * 180,
+            vx: Math.cos(angle) * 216,
+            vy: Math.sin(angle) * 216,
             radius: 5,
             fromPlayer: false,
             active: true,
@@ -537,8 +537,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             bullets.push({
               x: enemy.x + enemy.width / 2,
               y: enemy.y + enemy.height / 2,
-              vx: Math.cos(angle) * 280,
-              vy: Math.sin(angle) * 280,
+              vx: Math.cos(angle) * 336,
+              vy: Math.sin(angle) * 336,
               radius: 6,
               fromPlayer: false,
               active: true,
