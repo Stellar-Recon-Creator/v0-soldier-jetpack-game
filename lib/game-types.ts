@@ -130,7 +130,15 @@ export interface Keys {
   jetpack: boolean
   mouseX: number
   mouseY: number
+  mouseAim: boolean
   switchWeapon: WeaponType | null
+}
+
+export interface GearUpgrades {
+  power: number       // jetpack 10% more powerful per level
+  fuel: number        // jetpack uses 10% less fuel per level
+  ammoUse: number     // weapons use 10% less ammo per level
+  weight: number      // 5% faster walk + 5% stronger jetpack per level
 }
 
 export interface SoundEvents {

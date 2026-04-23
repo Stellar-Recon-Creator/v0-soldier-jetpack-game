@@ -1,4 +1,4 @@
-import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star, Keys, EnemyType, SoundEvents, WeaponType } from './game-types'
+import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star, Keys, EnemyType, SoundEvents, WeaponType, GearUpgrades } from './game-types'
 
 // ─── Constants ───
 const GRAVITY = 1400
@@ -192,7 +192,13 @@ export function createPlayer(): Player {
 }
 
 // ─── Update ───
-export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: number, canvasH: number): GameState & { soundEvents: SoundEvents } {
+export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: number, canvasH: number, gear?: GearUpgrades): GameState & { soundEvents: SoundEvents } {
+  // Gear upgrade multipliers
+  const g = gear || { power: 0, fuel: 0, ammoUse: 0, weight: 0 }
+  const jetpackForceMult = 1 + g.power * 0.1 + g.weight * 0.05   // power: +10%, weight: +5%
+  const fuelRateMult = 1 - g.fuel * 0.1                           // fuel: -10% per level
+  const ammoUseMult = 1 - g.ammoUse * 0.1                         // ammo use: -10% per level
+  const speedMult = 1 + g.weight * 0.05                            // weight: +5% per level
   const emptySoundEvents: SoundEvents = {
     playerShoot: false,
     playerJump: false,
@@ -218,8 +224,9 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
 
   // ─ Player Movement ─
   player.vx = 0
-  if (keys.left) { player.vx = -PLAYER_SPEED; player.facing = -1 }
-  if (keys.right) { player.vx = PLAYER_SPEED; player.facing = 1 }
+  const effectiveSpeed = PLAYER_SPEED * speedMult
+  if (keys.left) { player.vx = -effectiveSpeed; player.facing = -1 }
+  if (keys.right) { player.vx = effectiveSpeed; player.facing = 1 }
 
   // Compute aim angle - mouse aim or facing-direction aim
   if (keys.mouseAim) {
@@ -247,8 +254,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   // Jetpack
   let usingJetpack = false
   if (keys.jetpack && player.jetpackFuel > 0) {
-    player.vy += JETPACK_FORCE * dt
-    player.jetpackFuel -= JETPACK_FUEL_RATE * dt
+    player.vy += JETPACK_FORCE * jetpackForceMult * dt
+    player.jetpackFuel -= JETPACK_FUEL_RATE * fuelRateMult * dt
     player.jetpackFuel = Math.max(0, player.jetpackFuel)
     usingJetpack = true
   } else if (player.onGround) {
@@ -284,7 +291,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     player.shooting = true
     soundEvents.playerShoot = true
     player.bulletsFired++
-    player.bulletsRemaining = Math.max(0, player.bulletsRemaining - weaponCfg.ammoCost)
+    player.bulletsRemaining = Math.max(0, player.bulletsRemaining - weaponCfg.ammoCost * ammoUseMult)
     const bulletAngle = player.aimAngle
     for (let i = 0; i < weaponCfg.count; i++) {
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread

@@ -89,6 +89,28 @@ export default function GameCanvas() {
     setCrateResult({ weapon, isDuplicate, refund: isDuplicate ? Math.floor(cost * 0.5) : 0 })
   }
 
+  // ─── Gear Upgrades ───
+  const GEAR_UPGRADE_COST = 200
+  const GEAR_MAX_LEVEL = 5
+  const [gearLevels, setGearLevels] = useState({
+    power: 0,       // jetpack 10% more powerful per level
+    fuel: 0,        // jetpack uses 10% less fuel per level
+    startAmmo: 0,   // 10% more starting ammo per level
+    ammoUse: 0,     // weapons use 10% less ammo per level
+    durability: 0,  // 10% more health per level
+    weight: 0,      // 5% faster walk + 5% stronger jetpack per level
+  })
+
+  const gearLevelsRef = useRef(gearLevels)
+  useEffect(() => { gearLevelsRef.current = gearLevels }, [gearLevels])
+
+  const upgradeGear = (stat: keyof typeof gearLevels) => {
+    if (gearLevels[stat] >= GEAR_MAX_LEVEL) return
+    if (starCurrency < GEAR_UPGRADE_COST) return
+    setStarCurrency(prev => prev - GEAR_UPGRADE_COST)
+    setGearLevels(prev => ({ ...prev, [stat]: prev[stat] + 1 }))
+  }
+
   const initGame = useCallback((lvl: number, diff: 'easy' | 'medium' | 'hard' = 'easy') => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -101,10 +123,14 @@ export default function GameCanvas() {
 
     const player = createPlayer()
     const healthMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 0.75 : 0.5
-    player.health = Math.round(player.health * healthMultiplier)
-    player.maxHealth = Math.round(player.maxHealth * healthMultiplier)
-    player.bulletsRemaining = startingAmmo
-    player.bulletsMax = startingAmmo
+    // Apply durability upgrade: +10% health per level
+    const durabilityMult = 1 + gearLevels.durability * 0.1
+    player.health = Math.round(player.health * healthMultiplier * durabilityMult)
+    player.maxHealth = Math.round(player.maxHealth * healthMultiplier * durabilityMult)
+    // Apply starting ammo upgrade: +10% ammo per level
+    const startAmmoMult = 1 + gearLevels.startAmmo * 0.1
+    player.bulletsRemaining = Math.round(startingAmmo * startAmmoMult)
+    player.bulletsMax = Math.round(startingAmmo * startAmmoMult)
     player.weapons = [...ownedWeapons]
     player.weapon = equippedWeapon
 
@@ -128,7 +154,7 @@ export default function GameCanvas() {
 
     setScreen('playing')
     lastTimeRef.current = performance.now()
-  }, [ownedWeapons, equippedWeapon])
+  }, [ownedWeapons, equippedWeapon, gearLevels])
 
   // ─── Game Loop ───
   const gameLoop = useCallback((timestamp: number) => {
@@ -146,7 +172,7 @@ export default function GameCanvas() {
 
     // Update (use logical dimensions, not physical pixels)
     const dprUpdate = window.devicePixelRatio || 1
-    const newState = updateGame(state, keysRef.current, dt, canvas.width / dprUpdate, canvas.height / dprUpdate)
+    const newState = updateGame(state, keysRef.current, dt, canvas.width / dprUpdate, canvas.height / dprUpdate, gearLevelsRef.current)
     stateRef.current = newState
 
     // Play sounds based on events
@@ -590,26 +616,26 @@ export default function GameCanvas() {
                 </svg>
                 <div className="flex gap-6 mt-24">
                   <button
-                    onClick={() => {}}
+                    onClick={() => upgradeGear('power')}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -ml-3"
                     style={{
-                      background: '#0092ff',
+                      background: gearLevels.power >= GEAR_MAX_LEVEL ? '#555' : '#0092ff',
                       color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(0,146,255,0.2)',
+                      boxShadow: gearLevels.power >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(0,146,255,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>POWER</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                    <span className="flex flex-col items-center leading-tight"><span>POWER</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.power}/{GEAR_MAX_LEVEL}</span>{gearLevels.power < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
                   </button>
                   <button
-                    onClick={() => {}}
+                    onClick={() => upgradeGear('fuel')}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
-                      background: '#0092ff',
+                      background: gearLevels.fuel >= GEAR_MAX_LEVEL ? '#555' : '#0092ff',
                       color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(0,146,255,0.2)',
+                      boxShadow: gearLevels.fuel >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(0,146,255,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>FUEL</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                    <span className="flex flex-col items-center leading-tight"><span>FUEL</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.fuel}/{GEAR_MAX_LEVEL}</span>{gearLevels.fuel < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
                   </button>
                 </div>
               </div>
@@ -634,26 +660,26 @@ export default function GameCanvas() {
                 </svg>
                 <div className="flex gap-6 mt-24">
                   <button
-                    onClick={() => {}}
+                    onClick={() => upgradeGear('startAmmo')}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
-                      background: '#7200ea',
+                      background: gearLevels.startAmmo >= GEAR_MAX_LEVEL ? '#555' : '#7200ea',
                       color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(114,0,234,0.2)',
+                      boxShadow: gearLevels.startAmmo >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(114,0,234,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>STARTING AMMO</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                    <span className="flex flex-col items-center leading-tight"><span>STARTING AMMO</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.startAmmo}/{GEAR_MAX_LEVEL}</span>{gearLevels.startAmmo < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
                   </button>
                   <button
-                    onClick={() => {}}
+                    onClick={() => upgradeGear('ammoUse')}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -mr-3"
                     style={{
-                      background: '#7200ea',
+                      background: gearLevels.ammoUse >= GEAR_MAX_LEVEL ? '#555' : '#7200ea',
                       color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(114,0,234,0.2)',
+                      boxShadow: gearLevels.ammoUse >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(114,0,234,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>AMMO USE</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                    <span className="flex flex-col items-center leading-tight"><span>AMMO USE</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.ammoUse}/{GEAR_MAX_LEVEL}</span>{gearLevels.ammoUse < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
                   </button>
                 </div>
               </div>
@@ -678,26 +704,26 @@ export default function GameCanvas() {
                 </svg>
                 <div className="flex gap-6 mt-24">
                   <button
-                    onClick={() => {}}
+                    onClick={() => upgradeGear('durability')}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap -ml-3"
                     style={{
-                      background: '#0b517c',
+                      background: gearLevels.durability >= GEAR_MAX_LEVEL ? '#555' : '#0b517c',
                       color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(11,81,124,0.2)',
+                      boxShadow: gearLevels.durability >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(11,81,124,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>DURABILITY</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                    <span className="flex flex-col items-center leading-tight"><span>DURABILITY</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.durability}/{GEAR_MAX_LEVEL}</span>{gearLevels.durability < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
                   </button>
                   <button
-                    onClick={() => {}}
+                    onClick={() => upgradeGear('weight')}
                     className="w-[109px] py-[18px] text-xs font-bold font-sans rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer -mr-3"
                     style={{
-                      background: '#0b517c',
+                      background: gearLevels.weight >= GEAR_MAX_LEVEL ? '#555' : '#0b517c',
                       color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(11,81,124,0.2)',
+                      boxShadow: gearLevels.weight >= GEAR_MAX_LEVEL ? 'none' : '0 2px 10px rgba(11,81,124,0.2)',
                     }}
                   >
-                    <span className="flex flex-col items-center leading-tight"><span>WEIGHT</span><span className="text-[9px] font-normal opacity-80">Level: 0</span></span>
+                    <span className="flex flex-col items-center leading-tight"><span>WEIGHT</span><span className="text-[9px] font-normal opacity-80">Level: {gearLevels.weight}/{GEAR_MAX_LEVEL}</span>{gearLevels.weight < GEAR_MAX_LEVEL && <span className="text-[8px] font-normal opacity-60">&#9733; {GEAR_UPGRADE_COST}</span>}</span>
                   </button>
                 </div>
               </div>
