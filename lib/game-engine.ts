@@ -619,11 +619,22 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           enemy.health -= bullet.damage
           soundEvents.alienHit = true
 
+          // Hit particle colors: plasma=purple, hypershot=red, otherwise match alien body color
+          const alienColors: Record<EnemyType, string[]> = {
+            grunt:   ['#3da34d', '#5cc06c', '#2a8a3a'],
+            spitter: ['#4a9a7a', '#6abba0', '#387a5a'],
+            flyer:   ['#5578bb', '#7799dd', '#3a5588'],
+            brute:   ['#cc8844', '#eeaa66', '#aa6622'],
+            boss:    ['#cc2233', '#ee4455', '#991122'],
+          }
+          const hitColors = bullet.weaponType === 'plasma'
+            ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
+            : bullet.weaponType === 'hypershot'
+            ? ['#ff2222', '#ff4444', '#dd0000', '#ff6644']
+            : alienColors[enemy.type] || ['#44ffaa']
+
           for (let i = 0; i < 5; i++) {
-            const hitColor = bullet.weaponType === 'launcher'
-              ? ['#ff6600', '#ff8800', '#ffaa00', '#ff4400'][Math.floor(Math.random() * 4)]
-              : '#44ffaa'
-            particles.push(createParticle(bullet.x, bullet.y, hitColor))
+            particles.push(createParticle(bullet.x, bullet.y, hitColors[Math.floor(Math.random() * hitColors.length)]))
           }
 
           if (enemy.health <= 0) {
@@ -633,11 +644,14 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             const scoreMap: Record<EnemyType, number> = { grunt: 100, spitter: 200, flyer: 250, brute: 500, boss: 2000 }
             player.score += scoreMap[enemy.type]
 
+            // Death particles: plasma=purple, hypershot=red, otherwise alien body colors
+            const deathColors = bullet.weaponType === 'plasma'
+              ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
+              : bullet.weaponType === 'hypershot'
+              ? ['#ff2222', '#ff4444', '#dd0000', '#ff6644']
+              : [...(alienColors[enemy.type] || ['#44ffaa']), '#ffffff']
             for (let i = 0; i < 15; i++) {
-              const colors = bullet.weaponType === 'launcher' 
-                ? ['#ff6600', '#ff8800', '#ffaa00', '#ff4400']
-                : ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ffffff']
-              particles.push(createParticle(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, colors[Math.floor(Math.random() * colors.length)]))
+              particles.push(createParticle(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, deathColors[Math.floor(Math.random() * deathColors.length)]))
             }
 
             if (enemy.type === 'boss') {

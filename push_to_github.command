@@ -6,10 +6,10 @@ echo "=== Pushing changes to GitHub ==="
 rm -f .git/config.lock .git/index.lock .git/objects/*/tmp_obj_*
 
 echo "Staging changes..."
-git add components/game-canvas.tsx push_to_github.command
+git add lib/game-engine.ts push_to_github.command
 
 echo "Committing..."
-git commit -m "balance: star rewards now 50 easy, 75 medium, 100 hard"
+git commit -m "visual: hit particles match alien body color, plasma=purple, hypershot=red"
 
 echo "Pushing to GitHub..."
 git push origin main
