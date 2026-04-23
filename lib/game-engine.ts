@@ -12,7 +12,7 @@ const SHOOT_COOLDOWN = 0.18
 
 // Weapon configs
 const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number; ammoCost: number }> = {
-  blastop:  { speed: 700,  cooldown: 0.18, damage: 1,  count: 1, spread: 0,    radius: 4,  ammoCost: 1 },
+  blastop:  { speed: 700,  cooldown: 0.18, damage: 0.8, count: 1, spread: 0,    radius: 4,  ammoCost: 1 },
   relav:    { speed: 650,  cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3,  ammoCost: 0.2 },
   spalmer:  { speed: 500,  cooldown: 0.6,  damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2 },
   lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 6 },
