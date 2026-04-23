@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add lib/game-renderer.ts components/game-canvas.tsx push_to_github.command
 
 echo "Committing..."
-git commit -m "visual: armor upgrades add knee plates, shoulders, goggles, chest plate, face mask; jetpack scales up with side boosters at max"
+git commit -m "visual: gear upgrade visuals now appear on home screen character preview too"
 
 echo "Pushing to GitHub..."
 git push origin main

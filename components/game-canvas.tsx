@@ -442,11 +442,13 @@ export default function GameCanvas() {
                       el.width = 500
                       el.height = 200
                       ctx.clearRect(0, 0, 500, 200)
-                      drawPlayerZoomed(ctx, 200, 100, 3.5, equippedWeapon)
+                      const jpVis = Math.max(gearLevels.power, gearLevels.fuel)
+                      const arVis = Math.max(gearLevels.durability, gearLevels.weight)
+                      drawPlayerZoomed(ctx, 200, 100, 3.5, equippedWeapon, arVis, jpVis)
                     }
                   }
                 }}
-                key={equippedWeapon}
+                key={`${equippedWeapon}-${JSON.stringify(gearLevels)}`}
                 width={500}
                 height={200}
                 style={{ imageRendering: 'pixelated' }}
