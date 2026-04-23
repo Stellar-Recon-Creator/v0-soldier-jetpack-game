@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add lib/game-renderer.ts push_to_github.command
 
 echo "Committing..."
-git commit -m "visual: full balaclava covers all skin - face, ears, jaw, neck with eye slits only"
+git commit -m "visual: level 5 balaclava now includes tactical goggles over the mask"
 
 echo "Pushing to GitHub..."
 git push origin main

@@ -2075,6 +2075,25 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.arc(6.2, -hh + 4.2, 0.5, 0, Math.PI * 2)
     ctx.fill()
 
+    // Tactical goggles over the eye slit (from level 3)
+    ctx.fillStyle = '#333'
+    roundRect(ctx, -2, -hh + 1.5, 14, 5, 2)
+    ctx.fill()
+    // Goggle lenses (reflective orange tint)
+    ctx.fillStyle = '#664422'
+    roundRect(ctx, 0, -hh + 2.5, 5, 3, 1.5)
+    ctx.fill()
+    roundRect(ctx, 6, -hh + 2.5, 5, 3, 1.5)
+    ctx.fill()
+    // Lens glare
+    ctx.fillStyle = 'rgba(255,200,100,0.3)'
+    ctx.fillRect(1, -hh + 3, 2, 1)
+    ctx.fillRect(7, -hh + 3, 2, 1)
+    // Goggle strap
+    ctx.fillStyle = '#222'
+    ctx.fillRect(-8, -hh + 2, 6, 2)
+    ctx.fillRect(12, -hh + 2, 2, 2)
+
     // Mesh breathing area over mouth/nose
     ctx.fillStyle = '#1a1a1a'
     roundRect(ctx, 0, -hh + 7.5, 8, 3.5, 1)
@@ -3483,6 +3502,22 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.arc(6.5, -hh + 4, 0.7, 0, Math.PI * 2)
     ctx.fill()
 
+    // Tactical goggles over the eye slits (from level 3)
+    ctx.fillStyle = '#333'
+    roundRect(ctx, -7, -hh + 0.5, 18, 6, 2)
+    ctx.fill()
+    ctx.fillStyle = '#664422'
+    roundRect(ctx, -5, -hh + 1.5, 6, 4, 1.5)
+    ctx.fill()
+    roundRect(ctx, 3, -hh + 1.5, 6, 4, 1.5)
+    ctx.fill()
+    ctx.fillStyle = 'rgba(255,200,100,0.3)'
+    ctx.fillRect(-4, -hh + 2.5, 3, 1)
+    ctx.fillRect(4, -hh + 2.5, 3, 1)
+    ctx.fillStyle = '#222'
+    ctx.fillRect(-11, -hh + 1.5, 4, 2)
+    ctx.fillRect(11, -hh + 1.5, 4, 2)
+
     // Mesh breathing area
     ctx.fillStyle = '#1a1a1a'
     roundRect(ctx, -2, -hh + 8, 8, 4, 1)
@@ -3493,13 +3528,6 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
         ctx.fillRect(mx, -hh + 8.5 + my, 0.8, 0.8)
       }
     }
-    // Mask stitch lines around eye slits
-    ctx.strokeStyle = '#3a3a3a'
-    ctx.lineWidth = 0.4
-    roundRect(ctx, -5.5, -hh + 1.5, 6, 4.5, 1.8)
-    ctx.stroke()
-    roundRect(ctx, 3.5, -hh + 1.5, 6, 4.5, 1.8)
-    ctx.stroke()
 
     // NVG mount
     ctx.fillStyle = '#444'
