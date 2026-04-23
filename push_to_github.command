@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add lib/game-renderer.ts push_to_github.command
 
 echo "Committing..."
-git commit -m "visual: level 5 balaclava now includes tactical goggles over the mask"
+git commit -m "visual: jetpack scaling reduced to 4% per level, exhaust flame aligned to nozzle position"
 
 echo "Pushing to GitHub..."
 git push origin main

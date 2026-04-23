@@ -471,7 +471,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   const hh = player.height / 2
 
   // ─ JETPACK (behind body, scales with jetpackLevel 0-5) ─
-  const jpScale = 1 + jetpackLevel * 0.08  // each level adds 8% size
+  const jpScale = 1 + jetpackLevel * 0.04  // each level adds 4% size
   const jpW = Math.round(10 * jpScale)
   const jpH = Math.round(23 * jpScale)
   const jpX = -hw - jpW + 2   // left edge of housing
@@ -2146,7 +2146,7 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   const hh = 20
 
   // ─ JETPACK (scales with jetpackLevel) ─
-  const zjpScale = 1 + jetpackLevel * 0.08
+  const zjpScale = 1 + jetpackLevel * 0.04
   const zjpW = Math.round(10 * zjpScale)
   const zjpH = Math.round(23 * zjpScale)
   const zjpX = -hw - zjpW + 2
@@ -4434,10 +4434,23 @@ export function drawJetpackFlame(ctx: CanvasRenderingContext2D, player: Player, 
   const px = player.x - cameraX + player.width / 2
   const py = player.y - cameraY + player.height / 2
   const f = player.facing
-  const flameMult = 1 + jetpackLevel * 0.12  // flame gets 12% bigger per level
+  const hw = player.width / 2
+  const hh = player.height / 2
+  const flameMult = 1 + jetpackLevel * 0.12
 
-  const baseX = px - f * 10
-  const baseY = py + 18
+  // Compute nozzle center to match drawPlayer's jetpack position exactly
+  const jpScale = 1 + jetpackLevel * 0.04
+  const jpW = Math.round(10 * jpScale)
+  const jpH = Math.round(23 * jpScale)
+  const jpX = -hw - jpW + 2       // local left edge of housing
+  const jpY = -hh + 8             // local top of housing
+  const nozW = Math.round(8 * jpScale)
+  const nozCenterLocalX = jpX - 1 + nozW / 2  // nozzle center X in local coords
+  const nozBottomLocalY = jpY + jpH - 1 + 5   // nozzle bottom Y in local coords
+
+  // Convert to screen coords (account for facing flip)
+  const baseX = f === 1 ? px + nozCenterLocalX : px - nozCenterLocalX
+  const baseY = py + nozBottomLocalY
 
   // Main thruster flame
   const flameCount = 4 + Math.floor(jetpackLevel * 0.5)
@@ -4450,7 +4463,7 @@ export function drawJetpackFlame(ctx: CanvasRenderingContext2D, player: Player, 
     ctx.ellipse(baseX + (Math.random() - 0.5) * 6 * flameMult, baseY + flameH / 2, flameW, flameH, 0, 0, Math.PI * 2)
     ctx.fill()
   }
-  // White-hot core (scales with level)
+  // White-hot core
   ctx.fillStyle = '#ffffcc'
   ctx.globalAlpha = 0.8
   ctx.beginPath()
@@ -4459,10 +4472,12 @@ export function drawJetpackFlame(ctx: CanvasRenderingContext2D, player: Player, 
 
   // Side booster flames (level 5)
   if (jetpackLevel >= 5) {
-    const hw = player.width / 2
-    // Left booster flame (further from body)
-    const lbX = px - f * (hw + 14)
-    const lbY = py + 14
+    const tankW = Math.round(4 * jpScale)
+    // Left booster (further from body) — positioned relative to jetpack
+    const lbLocalX = jpX - tankW - 5 + 2.5  // booster center
+    const lbLocalY = jpY + jpH * 0.3 + 14 + 2  // booster nozzle bottom
+    const lbX = f === 1 ? px + lbLocalX : px - lbLocalX
+    const lbY = py + lbLocalY
     for (let i = 0; i < 2; i++) {
       const fH = 6 + Math.random() * 8
       const fW = 2 + Math.random() * 2
@@ -4472,9 +4487,11 @@ export function drawJetpackFlame(ctx: CanvasRenderingContext2D, player: Player, 
       ctx.ellipse(lbX + (Math.random() - 0.5) * 3, lbY + fH / 2, fW, fH, 0, 0, Math.PI * 2)
       ctx.fill()
     }
-    // Right booster flame (closer to body)
-    const rbX = px - f * (hw - 2)
-    const rbY = py + 13
+    // Right booster (closer to body)
+    const rbLocalX = jpX + jpW - 1 + 2.5  // booster center
+    const rbLocalY = jpY + jpH * 0.25 + 14 + 2
+    const rbX = f === 1 ? px + rbLocalX : px - rbLocalX
+    const rbY = py + rbLocalY
     for (let i = 0; i < 2; i++) {
       const fH = 6 + Math.random() * 8
       const fW = 2 + Math.random() * 2
