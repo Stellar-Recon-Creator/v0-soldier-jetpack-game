@@ -65,12 +65,12 @@ export default function GameCanvas() {
   // Weapon loot tables per crate tier
   const crateLootTables: Record<string, WeaponType[]> = {
     pulsar: ['relav', 'spalmer'],
-    nova: ['spalmer', 'plasma'],
+    nova: ['spalmer', 'pulse'],
     stellar: ['lerange', 'plasma', 'hypershot'],
   }
 
   const crateColors: Record<string, string> = {
-    relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', blastop: '#ffcc22',
+    relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', blastop: '#ffcc22', pulse: '#00ccff',
   }
 
   const openCrate = (tier: 'pulsar' | 'nova' | 'stellar', cost: number) => {

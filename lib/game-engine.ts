@@ -18,6 +18,7 @@ const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; dama
   lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 6 },
   plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
   hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8 },
+  pulse:     { speed: 665,  cooldown: 0.092, damage: 0.92, count: 1, spread: 0, radius: 4,  ammoCost: 0.8 },
 }
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
@@ -188,6 +189,8 @@ export function createPlayer(): Player {
     lowOxygen: false,
     weapon: 'blastop',
     weapons: ['blastop'],
+    burstCount: 0,
+    burstCooldown: 0,
   }
 }
 
@@ -286,18 +289,31 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   // Shooting
   const weaponCfg = WEAPON_CONFIGS[player.weapon]
   player.shootCooldown -= dt
-  if (keys.shoot && player.shootCooldown <= 0 && player.bulletsRemaining > 0) {
+  player.burstCooldown -= dt
+  // Pulse burst mechanic: after 6 shots, 1 second forced cooldown
+  const burstBlocked = player.weapon === 'pulse' && player.burstCooldown > 0
+  if (keys.shoot && player.shootCooldown <= 0 && player.bulletsRemaining > 0 && !burstBlocked) {
     player.shootCooldown = weaponCfg.cooldown
     player.shooting = true
     soundEvents.playerShoot = true
     player.bulletsFired++
+    // Pulse burst tracking
+    if (player.weapon === 'pulse') {
+      player.burstCount++
+      if (player.burstCount >= 6) {
+        player.burstCount = 0
+        player.burstCooldown = 1.0  // 1 second forced pause
+      }
+    } else {
+      player.burstCount = 0
+    }
     player.bulletsRemaining = Math.max(0, player.bulletsRemaining - weaponCfg.ammoCost * ammoUseMult)
     const bulletAngle = player.aimAngle
     for (let i = 0; i < weaponCfg.count; i++) {
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
 
       // Muzzle tip offsets in arm-local space (matches renderer gunX/muzzleX, gunY+2)
-      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31 }
+      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31, pulse: 26 }
       const tipLocal = muzzleTipX[player.weapon] ?? 30
 
       // Reconstruct world-space muzzle position matching the renderer transforms:
@@ -627,7 +643,9 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             brute:   ['#cc8844', '#eeaa66', '#aa6622'],
             boss:    ['#cc2233', '#ee4455', '#991122'],
           }
-          const hitColors = bullet.weaponType === 'plasma'
+          const hitColors = bullet.weaponType === 'pulse'
+            ? ['#00ccff', '#0099dd', '#44ddff', '#0077bb']
+            : bullet.weaponType === 'plasma'
             ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
             : bullet.weaponType === 'hypershot'
             ? ['#ff2222', '#ff4444', '#dd0000', '#ff6644']
@@ -645,7 +663,9 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             player.score += scoreMap[enemy.type]
 
             // Death particles: plasma=purple, hypershot=red, otherwise alien body colors
-            const deathColors = bullet.weaponType === 'plasma'
+            const deathColors = bullet.weaponType === 'pulse'
+              ? ['#00ccff', '#0099dd', '#44ddff', '#0077bb']
+              : bullet.weaponType === 'plasma'
               ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
               : bullet.weaponType === 'hypershot'
               ? ['#ff2222', '#ff4444', '#dd0000', '#ff6644']
