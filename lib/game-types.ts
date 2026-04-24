@@ -24,11 +24,6 @@ export interface Player {
   shootCooldown: number
   invincibleTimer: number
   score: number
-  aimAngle: number
-  bulletsFired: number
-  bulletsRemaining: number
-  bulletsMax: number
-  lowOxygen: boolean
 }
 
 export interface Platform {
@@ -70,7 +65,6 @@ export interface Bullet {
   fromPlayer: boolean
   active: boolean
   damage: number
-  isRedAcid?: boolean
 }
 
 export interface Particle {
@@ -123,17 +117,4 @@ export interface Keys {
   jump: boolean
   shoot: boolean
   jetpack: boolean
-  mouseX: number
-  mouseY: number
-}
-
-export interface SoundEvents {
-  playerShoot: boolean
-  playerJump: boolean
-  playerHit: boolean
-  alienHit: boolean
-  alienDeath: boolean
-  alienShoot: boolean
-  bossRoar: boolean
-  explosion: boolean
 }
