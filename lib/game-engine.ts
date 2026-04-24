@@ -192,7 +192,7 @@ export function createPlayer(): Player {
 }
 
 // ─── Update ───
-export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: number, canvasH: number, gear?: GearUpgrades): GameState & { soundEvents: SoundEvents } {
+export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: number, canvasH: number, gear?: GearUpgrades, enemyFireRateMult: number = 1): GameState & { soundEvents: SoundEvents } {
   // Gear upgrade multipliers
   const g = gear || { power: 0, fuel: 0, ammoUse: 0, weight: 0 }
   const jetpackForceMult = 1 + g.power * 0.06 + g.weight * 0.03   // power: +6%, weight: +3%
@@ -468,7 +468,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         enemy.vy += GRAVITY * dt
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 500) {
-          enemy.shootCooldown = 2 + Math.random()
+          enemy.shootCooldown = (2 + Math.random()) / enemyFireRateMult
           soundEvents.alienShoot = true
           const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x)
           bullets.push({
@@ -498,7 +498,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         // Flyer shoots acid (same as spitter)
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 400) {
-          enemy.shootCooldown = 2.0 // Shoots every 2 seconds
+          enemy.shootCooldown = 2.0 / enemyFireRateMult
           soundEvents.alienShoot = true
           const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x)
           bullets.push({
@@ -530,7 +530,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         enemy.vy += GRAVITY * dt
         enemy.shootCooldown -= dt
         if (enemy.shootCooldown <= 0 && distToPlayer < 1000) {
-          enemy.shootCooldown = 0.8 + Math.random() * 0.5
+          enemy.shootCooldown = (0.8 + Math.random() * 0.5) / enemyFireRateMult
           soundEvents.bossRoar = true
           for (let i = -1; i <= 1; i++) {
             const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x) + i * 0.3

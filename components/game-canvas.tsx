@@ -175,7 +175,8 @@ export default function GameCanvas() {
 
     // Update (use logical dimensions, not physical pixels)
     const dprUpdate = window.devicePixelRatio || 1
-    const newState = updateGame(state, keysRef.current, dt, canvas.width / dprUpdate, canvas.height / dprUpdate, gearLevelsRef.current)
+    const enemyFireMult = difficulty === 'hard' ? 1.5 : difficulty === 'medium' ? 1.3 : 1.0
+    const newState = updateGame(state, keysRef.current, dt, canvas.width / dprUpdate, canvas.height / dprUpdate, gearLevelsRef.current, enemyFireMult)
     stateRef.current = newState
 
     // Play sounds based on events
