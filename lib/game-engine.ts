@@ -18,7 +18,7 @@ const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; dama
   lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 6 },
   plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
   hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8 },
-  pulse:     { speed: 665,  cooldown: 0.092, damage: 0.92, count: 1, spread: 0, radius: 4,  ammoCost: 0.8 },
+  pulse:     { speed: 618,  cooldown: 0.092, damage: 1.012, count: 1, spread: 0, radius: 4,  ammoCost: 0.8 },
 }
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100

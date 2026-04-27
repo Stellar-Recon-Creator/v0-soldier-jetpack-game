@@ -65,8 +65,8 @@ export default function GameCanvas() {
   // Weapon loot tables per crate tier
   const crateLootTables: Record<string, WeaponType[]> = {
     pulsar: ['relav', 'spalmer'],
-    nova: ['spalmer', 'pulse'],
-    stellar: ['lerange', 'plasma', 'hypershot'],
+    nova: ['spalmer', 'lerange'],
+    stellar: ['pulse', 'plasma', 'hypershot'],
   }
 
   const crateColors: Record<string, string> = {
