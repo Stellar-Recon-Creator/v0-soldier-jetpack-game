@@ -644,7 +644,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             boss:    ['#cc2233', '#ee4455', '#991122'],
           }
           const hitColors = bullet.weaponType === 'pulse'
-            ? ['#00ccff', '#0099dd', '#44ddff', '#0077bb']
+            ? ['#3355ff', '#2244cc', '#5588ff', '#1a33aa']
             : bullet.weaponType === 'plasma'
             ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
             : bullet.weaponType === 'hypershot'
@@ -664,7 +664,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
 
             // Death particles: plasma=purple, hypershot=red, otherwise alien body colors
             const deathColors = bullet.weaponType === 'pulse'
-              ? ['#00ccff', '#0099dd', '#44ddff', '#0077bb']
+              ? ['#3355ff', '#2244cc', '#5588ff', '#1a33aa']
               : bullet.weaponType === 'plasma'
               ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
               : bullet.weaponType === 'hypershot'

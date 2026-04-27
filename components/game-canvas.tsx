@@ -70,7 +70,7 @@ export default function GameCanvas() {
   }
 
   const crateColors: Record<string, string> = {
-    relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', blastop: '#ffcc22', pulse: '#00ccff',
+    relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', blastop: '#ffcc22', pulse: '#3355ff',
   }
 
   const openCrate = (tier: 'pulsar' | 'nova' | 'stellar', cost: number) => {
