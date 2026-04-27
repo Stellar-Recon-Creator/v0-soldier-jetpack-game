@@ -1654,9 +1654,21 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#2a2a33'
     roundRect(ctx, gunX, gunY, 20, 7, 1.5)
     ctx.fill()
+    // Receiver panel line
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 5)
+    ctx.lineTo(gunX + 16, gunY + 5)
+    ctx.stroke()
     // Receiver top rail (flat, no scope)
     ctx.fillStyle = '#3a3a44'
     ctx.fillRect(gunX + 2, gunY - 1, 14, 1.5)
+    // Rail notches
+    ctx.fillStyle = '#2a2a33'
+    for (let i = 0; i < 5; i++) {
+      ctx.fillRect(gunX + 3 + i * 2.5, gunY - 1, 0.5, 1.5)
+    }
     // Receiver accent stripe (cyan energy line)
     ctx.fillStyle = '#00aadd'
     ctx.globalAlpha = 0.6
@@ -1668,13 +1680,22 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.shadowBlur = 3
     ctx.fillRect(gunX + 5, gunY + 2.2, 2, 1.2)
     ctx.fillRect(gunX + 10, gunY + 2.2, 2, 1.2)
+    ctx.fillRect(gunX + 15, gunY + 2.2, 1.5, 1.2)
     ctx.shadowBlur = 0
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 12, gunY + 0.5, 2.5, 2)
     // Grip
     ctx.fillStyle = '#222'
     ctx.fillRect(gunX + 4, gunY + 6, 4, 5)
     ctx.fillStyle = '#333'
     ctx.fillRect(gunX + 4.5, gunY + 7, 1, 3)
     ctx.fillRect(gunX + 6.5, gunY + 7, 1, 3)
+    // Grip texture dots
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 5.3, gunY + 7.5, 0.4, 0.4)
+    ctx.fillRect(gunX + 5.3, gunY + 8.5, 0.4, 0.4)
+    ctx.fillRect(gunX + 5.3, gunY + 9.5, 0.4, 0.4)
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.5
@@ -1689,11 +1710,26 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#3a3a44'
     roundRect(ctx, gunX + 18, gunY + 0.5, 8, 5, 1)
     ctx.fill()
+    // Barrel inner lining
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 18.5, gunY + 1, 7, 0.5)
     // Barrel vents (3 horizontal slits)
     ctx.fillStyle = '#222'
     ctx.fillRect(gunX + 19, gunY + 1.5, 6, 0.5)
     ctx.fillRect(gunX + 19, gunY + 3, 6, 0.5)
     ctx.fillRect(gunX + 19, gunY + 4.5, 6, 0.5)
+    // Vent glow (subtle cyan behind slits)
+    ctx.fillStyle = '#00ccff'
+    ctx.globalAlpha = 0.15
+    ctx.fillRect(gunX + 19, gunY + 2, 6, 0.5)
+    ctx.fillRect(gunX + 19, gunY + 3.5, 6, 0.5)
+    ctx.globalAlpha = 1
+    // Barrel tip ring
+    ctx.strokeStyle = '#00aadd'
+    ctx.lineWidth = 0.5
+    ctx.beginPath()
+    ctx.arc(gunX + 26, gunY + 3, 2.2, 0, Math.PI * 2)
+    ctx.stroke()
     // Barrel tip glow
     ctx.fillStyle = '#00ccff'
     ctx.shadowColor = '#00ccff'
@@ -1706,10 +1742,20 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#1a1a22'
     roundRect(ctx, gunX + 2, gunY + 7, 5, 6, 1)
     ctx.fill()
+    // Magazine border highlight
+    ctx.strokeStyle = '#333'
+    ctx.lineWidth = 0.3
+    roundRect(ctx, gunX + 2, gunY + 7, 5, 6, 1)
+    ctx.stroke()
     // Magazine energy level indicator
     ctx.fillStyle = '#00aadd'
     ctx.globalAlpha = 0.5
     ctx.fillRect(gunX + 3, gunY + 9, 3, 3)
+    ctx.globalAlpha = 1
+    // Magazine energy line
+    ctx.fillStyle = '#00ccff'
+    ctx.globalAlpha = 0.7
+    ctx.fillRect(gunX + 3.5, gunY + 8, 2, 0.5)
     ctx.globalAlpha = 1
     // Stock (stubby polymer)
     ctx.fillStyle = '#2a2a33'
@@ -1717,6 +1763,9 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fill()
     ctx.fillStyle = '#1a1a22'
     ctx.fillRect(gunX - 7, gunY + 1, 1.5, 4)
+    // Stock butt plate
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 7.5, gunY + 1, 1, 4)
   } else {
     // Blastop (default) - assault rifle with scope
     // Gun body / receiver
@@ -3289,9 +3338,21 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#2a2a33'
     roundRect(ctx, gunX, gunY, 24, 9, 2)
     ctx.fill()
+    // Receiver panel line
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 2, gunY + 6.5)
+    ctx.lineTo(gunX + 20, gunY + 6.5)
+    ctx.stroke()
     // Top rail (flat, no scope)
     ctx.fillStyle = '#3a3a44'
     ctx.fillRect(gunX + 2, gunY - 1.5, 18, 2)
+    // Rail notches
+    ctx.fillStyle = '#2a2a33'
+    for (let i = 0; i < 7; i++) {
+      ctx.fillRect(gunX + 3 + i * 2.5, gunY - 1.5, 0.6, 2)
+    }
     // Energy accent stripes
     ctx.fillStyle = '#00aadd'
     ctx.globalAlpha = 0.6
@@ -3303,13 +3364,22 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.shadowBlur = 4
     ctx.fillRect(gunX + 6, gunY + 3, 3, 1.5)
     ctx.fillRect(gunX + 13, gunY + 3, 3, 1.5)
+    ctx.fillRect(gunX + 19, gunY + 3, 2, 1.5)
     ctx.shadowBlur = 0
+    // Ejection port
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 15, gunY + 0.5, 3, 2.5)
     // Grip
     ctx.fillStyle = '#222'
     ctx.fillRect(gunX + 6, gunY + 8, 5, 7)
     ctx.fillStyle = '#333'
     ctx.fillRect(gunX + 6.5, gunY + 9.5, 1.2, 4)
     ctx.fillRect(gunX + 9.5, gunY + 9.5, 1.2, 4)
+    // Grip texture dots
+    ctx.fillStyle = '#2a2a2a'
+    ctx.fillRect(gunX + 7.8, gunY + 10, 0.5, 0.5)
+    ctx.fillRect(gunX + 7.8, gunY + 11.5, 0.5, 0.5)
+    ctx.fillRect(gunX + 7.8, gunY + 13, 0.5, 0.5)
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.6
@@ -3324,11 +3394,26 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#3a3a44'
     roundRect(ctx, gunX + 22, gunY + 0.5, 10, 7, 1.5)
     ctx.fill()
+    // Barrel inner lining
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX + 22.5, gunY + 1, 9, 0.6)
     // Barrel vent slits
     ctx.fillStyle = '#222'
     ctx.fillRect(gunX + 23, gunY + 2, 8, 0.7)
     ctx.fillRect(gunX + 23, gunY + 4, 8, 0.7)
     ctx.fillRect(gunX + 23, gunY + 6, 8, 0.7)
+    // Vent glow (subtle cyan behind slits)
+    ctx.fillStyle = '#00ccff'
+    ctx.globalAlpha = 0.15
+    ctx.fillRect(gunX + 23, gunY + 2.7, 8, 0.6)
+    ctx.fillRect(gunX + 23, gunY + 4.7, 8, 0.6)
+    ctx.globalAlpha = 1
+    // Barrel tip ring
+    ctx.strokeStyle = '#00aadd'
+    ctx.lineWidth = 0.6
+    ctx.beginPath()
+    ctx.arc(gunX + 32, gunY + 4, 2.8, 0, Math.PI * 2)
+    ctx.stroke()
     // Barrel tip glow
     ctx.fillStyle = '#00ccff'
     ctx.shadowColor = '#00ccff'
@@ -3341,9 +3426,19 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#1a1a22'
     roundRect(ctx, gunX + 3, gunY + 9, 6, 8, 1)
     ctx.fill()
+    // Magazine border highlight
+    ctx.strokeStyle = '#333'
+    ctx.lineWidth = 0.4
+    roundRect(ctx, gunX + 3, gunY + 9, 6, 8, 1)
+    ctx.stroke()
     ctx.fillStyle = '#00aadd'
     ctx.globalAlpha = 0.5
     ctx.fillRect(gunX + 4, gunY + 12, 4, 4)
+    ctx.globalAlpha = 1
+    // Magazine energy line
+    ctx.fillStyle = '#00ccff'
+    ctx.globalAlpha = 0.7
+    ctx.fillRect(gunX + 4.5, gunY + 10.5, 3, 0.6)
     ctx.globalAlpha = 1
     // Stock (stubby)
     ctx.fillStyle = '#2a2a33'
@@ -3351,6 +3446,9 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fill()
     ctx.fillStyle = '#1a1a22'
     ctx.fillRect(gunX - 10, gunY + 1, 2, 6)
+    // Stock butt plate
+    ctx.fillStyle = '#222'
+    ctx.fillRect(gunX - 10.5, gunY + 1, 1.2, 6)
   } else {
     // Blastop (default) - assault rifle with scope
     // Receiver
