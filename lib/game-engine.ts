@@ -11,13 +11,13 @@ const BULLET_SPEED = 700
 const SHOOT_COOLDOWN = 0.18
 
 // Weapon configs
-const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number; ammoCost: number }> = {
-  blastop:  { speed: 700,  cooldown: 0.18, damage: 1,  count: 1, spread: 0,    radius: 4,  ammoCost: 1 },
-  relav:    { speed: 650,  cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3,  ammoCost: 0.2 },
-  spalmer:  { speed: 500,  cooldown: 0.6,  damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2 },
-  lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 8 },
-  plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
-  hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 10 },
+const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number }> = {
+  rifle: { speed: 700, cooldown: 0.18, damage: 1, count: 1, spread: 0, radius: 4 },
+  smg: { speed: 650, cooldown: 0.08, damage: 1, count: 1, spread: 0.08, radius: 3 },
+  shotgun: { speed: 500, cooldown: 0.6, damage: 1, count: 5, spread: 0.15, radius: 3 },
+  sniper: { speed: 1200, cooldown: 1.2, damage: 8, count: 1, spread: 0, radius: 3 },
+  plasma: { speed: 400, cooldown: 0.8, damage: 4, count: 1, spread: 0, radius: 7 },
+  launcher: { speed: 350, cooldown: 1.5, damage: 10, count: 1, spread: 0, radius: 10 },
 }
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
@@ -186,8 +186,8 @@ export function createPlayer(): Player {
     bulletsRemaining: 250,
     bulletsMax: 250,
     lowOxygen: false,
-    weapon: 'blastop',
-    weapons: ['blastop'],
+    weapon: 'rifle',
+    weapons: ['rifle'],
   }
 }
 
@@ -278,102 +278,20 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     player.shooting = true
     soundEvents.playerShoot = true
     player.bulletsFired++
-    player.bulletsRemaining = Math.max(0, player.bulletsRemaining - weaponCfg.ammoCost)
+    player.bulletsRemaining--
     const bulletAngle = player.aimAngle
     for (let i = 0; i < weaponCfg.count; i++) {
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
-
-      // Muzzle tip offsets in arm-local space (matches renderer gunX/muzzleX, gunY+2)
-      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31 }
-      const tipLocal = muzzleTipX[player.weapon] ?? 30
-
-      // Reconstruct world-space muzzle position matching the renderer transforms:
-      // 1. shoulder offset from player center (shoulderX = hw-4, shoulderY = -hh+16)
-      // 2. arm rotation by drawAngle (clamped aimAngle, flipped if facing left)
-      // 3. muzzle tip at (tipLocal, 1.5) in arm-local space
-      const hw = player.width / 2
-      const hh = player.height / 2
-      const f = player.facing
-      const shoulderX = hw - 4
-      const shoulderY = -hh + 16
-      let drawAngle = player.aimAngle
-      if (f === -1) drawAngle = Math.PI - player.aimAngle
-      drawAngle = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, drawAngle))
-
-      // Tip in arm space
-      const tipArmX = tipLocal
-      const tipArmY = 1.5
-
-      // Rotate by drawAngle
-      const rotX = tipArmX * Math.cos(drawAngle) - tipArmY * Math.sin(drawAngle)
-      const rotY = tipArmX * Math.sin(drawAngle) + tipArmY * Math.cos(drawAngle)
-
-      // Apply shoulder offset
-      let localX = shoulderX + rotX
-      const localY = shoulderY + rotY
-
-      // Flip for facing
-      if (f === -1) localX = -localX
-
-      // World space - shoulder origin and muzzle tip
-      const shoulderWorldX = player.x + player.width / 2 + (f === -1 ? -shoulderX : shoulderX)
-      const shoulderWorldY = player.y + player.height / 2 + shoulderY
-      const spawnX = player.x + player.width / 2 + localX
-      const spawnY = player.y + player.height / 2 + localY
-
-      // Check if the line from shoulder to muzzle intersects any platform
-      let blockedByPlatform = false
-      for (const plat of state.platforms) {
-        const platY = plat.y + (plat.type === 'floating' ? Math.sin((Date.now() * 0.002) + (plat.floatOffset || 0)) * 6 : 0)
-        // Line-segment vs AABB intersection test
-        const x1 = shoulderWorldX, y1 = shoulderWorldY
-        const x2 = spawnX, y2 = spawnY
-        const left = plat.x, right = plat.x + plat.width
-        const top = platY, bottom = platY + plat.height
-        
-        // Check if line segment intersects rectangle
-        // Using parametric line clipping (Liang-Barsky style)
-        let tMin = 0, tMax = 1
-        const dx = x2 - x1, dy = y2 - y1
-        const edges = [
-          { p: -dx, q: x1 - left },   // left
-          { p: dx, q: right - x1 },   // right
-          { p: -dy, q: y1 - top },    // top
-          { p: dy, q: bottom - y1 },  // bottom
-        ]
-        let intersects = true
-        for (const { p, q } of edges) {
-          if (p === 0) {
-            if (q < 0) { intersects = false; break }
-          } else {
-            const t = q / p
-            if (p < 0) { if (t > tMax) { intersects = false; break } else if (t > tMin) tMin = t }
-            else { if (t < tMin) { intersects = false; break } else if (t < tMax) tMax = t }
-          }
-        }
-        if (intersects && tMin <= tMax) {
-          blockedByPlatform = true
-          break
-        }
-      }
-      // Also check ground collision - line crosses ground level
-      if (spawnY > GROUND_Y || (shoulderWorldY < GROUND_Y && spawnY >= GROUND_Y)) {
-        blockedByPlatform = true
-      }
-
-      if (!blockedByPlatform) {
-        bullets.push({
-          x: spawnX,
-          y: spawnY,
-          vx: Math.cos(angle) * weaponCfg.speed,
-          vy: Math.sin(angle) * weaponCfg.speed,
-          radius: weaponCfg.radius,
-          fromPlayer: true,
-          active: true,
-          damage: weaponCfg.damage,
-          weaponType: player.weapon,
-        })
-      }
+      bullets.push({
+        x: player.x + player.width / 2 + Math.cos(angle) * 20,
+        y: player.y + 12 + Math.sin(angle) * 20,
+        vx: Math.cos(angle) * weaponCfg.speed,
+        vy: Math.sin(angle) * weaponCfg.speed,
+        radius: weaponCfg.radius,
+        fromPlayer: true,
+        active: true,
+        damage: weaponCfg.damage,
+      })
     }
   }
 
@@ -603,10 +521,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           soundEvents.alienHit = true
 
           for (let i = 0; i < 5; i++) {
-            const hitColor = bullet.weaponType === 'launcher'
-              ? ['#ff6600', '#ff8800', '#ffaa00', '#ff4400'][Math.floor(Math.random() * 4)]
-              : '#44ffaa'
-            particles.push(createParticle(bullet.x, bullet.y, hitColor))
+            particles.push(createParticle(bullet.x, bullet.y, '#44ffaa'))
           }
 
           if (enemy.health <= 0) {
@@ -617,9 +532,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             player.score += scoreMap[enemy.type]
 
             for (let i = 0; i < 15; i++) {
-              const colors = bullet.weaponType === 'launcher' 
-                ? ['#ff6600', '#ff8800', '#ffaa00', '#ff4400']
-                : ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ffffff']
+              const colors = ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ffffff']
               particles.push(createParticle(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, colors[Math.floor(Math.random() * colors.length)]))
             }
 

@@ -5,7 +5,7 @@ export interface Vector2 {
   y: number
 }
 
-export type WeaponType = 'blastop' | 'spalmer' | 'plasma' | 'relav' | 'lerange' | 'hypershot'
+export type WeaponType = 'rifle' | 'shotgun' | 'plasma' | 'smg' | 'sniper' | 'launcher'
 
 export interface Player {
   x: number
@@ -75,7 +75,6 @@ export interface Bullet {
   active: boolean
   damage: number
   isRedAcid?: boolean
-  weaponType?: WeaponType
 }
 
 export interface Particle {

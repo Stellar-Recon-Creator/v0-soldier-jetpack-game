@@ -302,6 +302,7 @@ function drawDetailedTreeline(ctx: CanvasRenderingContext2D, offset: number, w: 
 
 // ─── Ground ───
 export function drawGround(ctx: CanvasRenderingContext2D, cameraX: number, cameraY: number, canvasW: number, canvasH: number, groundY: number) {
+  const gx = -((cameraX) % 64)
   const gy = groundY - cameraY
 
   // Main dirt fill with gradient
@@ -313,18 +314,15 @@ export function drawGround(ctx: CanvasRenderingContext2D, cameraX: number, camer
   ctx.fillStyle = dirtGrad
   ctx.fillRect(0, gy + 6, canvasW, canvasH - gy)
 
-  // Rock/stone layer — world-space x so positions never shift
+  // Rock/stone layer
   ctx.fillStyle = COLORS.ground.stone
   ctx.globalAlpha = 0.15
-  const rockStep = 30
-  const rockStartW = Math.floor(cameraX / rockStep) * rockStep
-  for (let wx = rockStartW; wx < cameraX + canvasW + rockStep; wx += rockStep) {
-    const seed = Math.abs(Math.sin(wx * 0.07) * 100)
+  for (let rx = gx; rx < canvasW + 64; rx += 30) {
+    const seed = Math.abs(Math.sin(rx * 0.07 + cameraX * 0.07) * 100)
     if (seed % 4 < 1) {
-      const sx = wx - cameraX
       const rw = 8 + (seed % 12)
       const ry = gy + 30 + (seed % 30)
-      roundRect(ctx, sx, ry, rw, rw * 0.6, 3)
+      roundRect(ctx, rx, ry, rw, rw * 0.6, 3)
       ctx.fill()
     }
   }
@@ -344,51 +342,43 @@ export function drawGround(ctx: CanvasRenderingContext2D, cameraX: number, camer
   ctx.fillRect(0, gy, canvasW, 2)
   ctx.globalAlpha = 1
 
-  // Grass blades — world-space x so blades don't shuffle
-  const bladeStep = 3
-  const bladeStartW = Math.floor(cameraX / bladeStep) * bladeStep
-  for (let wx = bladeStartW; wx < cameraX + canvasW + bladeStep; wx += bladeStep) {
-    const seed = Math.sin(wx * 0.4) * 1000
+  // Grass blades (varied sizes and shades)
+  for (let bx = gx; bx < canvasW + 20; bx += 3) {
+    const seed = Math.sin(bx * 0.4 + cameraX * 0.4) * 1000
     const bladeH = 3 + Math.abs(seed % 7)
-    const sway = Math.sin(wx * 0.08 + Date.now() * 0.001) * 1.5
+    const sway = Math.sin(bx * 0.08 + Date.now() * 0.001) * 1.5
     ctx.fillStyle = Math.abs(seed) % 3 < 1 ? COLORS.ground.grassTip : COLORS.ground.grassLight
     ctx.globalAlpha = 0.8
     ctx.save()
-    ctx.translate(wx - cameraX + sway, gy)
+    ctx.translate(bx + sway, gy)
     ctx.fillRect(0, -bladeH, 1.5, bladeH)
     ctx.restore()
   }
   ctx.globalAlpha = 1
 
-  // Dirt texture pebbles — world-space so they stay put
+  // Dirt texture - pebbles and root hints
   ctx.fillStyle = COLORS.ground.dirtLight
-  const pebbleStep = 48
-  const pebbleStartW = Math.floor(cameraX / pebbleStep) * pebbleStep
-  for (let wx = pebbleStartW; wx < cameraX + canvasW + pebbleStep; wx += pebbleStep) {
+  for (let px = gx; px < canvasW + 64; px += 48) {
     for (let py = gy + 14; py < Math.min(canvasH, gy + 70); py += 14) {
-      const seed = Math.abs(Math.sin(wx * 0.12 + py * 0.18) * 100)
+      const seed = Math.abs(Math.sin(px * 0.12 + py * 0.18) * 100)
       if (seed % 3 < 1) {
-        const sx = wx - cameraX
         ctx.beginPath()
-        ctx.arc(sx + (seed % 10), py, 1 + (seed % 2), 0, Math.PI * 2)
+        ctx.arc(px + (seed % 10), py, 1 + (seed % 2), 0, Math.PI * 2)
         ctx.fill()
       }
     }
   }
 
-  // Worm/root lines — world-space
+  // Worm/root lines
   ctx.strokeStyle = COLORS.ground.dirtLight
   ctx.globalAlpha = 0.15
   ctx.lineWidth = 1
-  const rootStep = 100
-  const rootStartW = Math.floor(cameraX / rootStep) * rootStep
-  for (let wx = rootStartW; wx < cameraX + canvasW + rootStep; wx += rootStep) {
-    const seed = Math.abs(Math.sin(wx * 0.03) * 100)
+  for (let wx = gx; wx < canvasW + 64; wx += 100) {
+    const seed = Math.abs(Math.sin(wx * 0.03 + cameraX * 0.03) * 100)
     if (seed % 3 < 1) {
-      const sx = wx - cameraX
       ctx.beginPath()
-      ctx.moveTo(sx, gy + 18 + (seed % 20))
-      ctx.quadraticCurveTo(sx + 15, gy + 14 + (seed % 25), sx + 30, gy + 20 + (seed % 20))
+      ctx.moveTo(wx, gy + 18 + (seed % 20))
+      ctx.quadraticCurveTo(wx + 15, gy + 14 + (seed % 25), wx + 30, gy + 20 + (seed % 20))
       ctx.stroke()
     }
   }
@@ -453,7 +443,7 @@ export function drawPlatform(ctx: CanvasRenderingContext2D, platform: Platform, 
 }
 
 // ─── Player (Detailed Human Soldier) ───
-export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, cameraX: number, cameraY: number, platforms: { x: number; y: number; width: number; height: number; type?: string; floatOffset?: number }[] = [], groundY: number = 600) {
+export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, cameraX: number, cameraY: number) {
   const px = player.x - cameraX
   const py = player.y - cameraY
   const f = player.facing
@@ -667,65 +657,6 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   }
   drawAngle = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, drawAngle))
 
-  // Get barrel length for current weapon to check collision
-  const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31 }
-  const barrelLen = muzzleTipX[player.weapon] ?? 30
-
-  // Calculate world-space muzzle position to check for platform clipping
-  const shoulderWorldX = player.x + player.width / 2 + (f === -1 ? -shoulderX : shoulderX)
-  const shoulderWorldY = player.y + player.height / 2 + shoulderY
-  const worldAngle = f === -1 ? Math.PI - drawAngle : drawAngle
-  const muzzleWorldX = shoulderWorldX + Math.cos(worldAngle) * barrelLen
-  const muzzleWorldY = shoulderWorldY + Math.sin(worldAngle) * barrelLen
-
-  // Check if barrel clips through any platform and limit angle if so
-  const checkBarrelClip = (testAngle: number): boolean => {
-    const testWorldAngle = f === -1 ? Math.PI - testAngle : testAngle
-    const testMuzzleX = shoulderWorldX + Math.cos(testWorldAngle) * barrelLen
-    const testMuzzleY = shoulderWorldY + Math.sin(testWorldAngle) * barrelLen
-    // Line segment from shoulder to muzzle
-    for (const plat of platforms) {
-      const platY = plat.y + (plat.type === 'floating' ? Math.sin((Date.now() * 0.002) + (plat.floatOffset || 0)) * 6 : 0)
-      // Liang-Barsky line-rect intersection
-      let tMin = 0, tMax = 1
-      const dx = testMuzzleX - shoulderWorldX, dy = testMuzzleY - shoulderWorldY
-      const edges = [
-        { p: -dx, q: shoulderWorldX - plat.x },
-        { p: dx, q: plat.x + plat.width - shoulderWorldX },
-        { p: -dy, q: shoulderWorldY - platY },
-        { p: dy, q: platY + plat.height - shoulderWorldY },
-      ]
-      let intersects = true
-      for (const { p, q } of edges) {
-        if (p === 0) { if (q < 0) { intersects = false; break } }
-        else {
-          const t = q / p
-          if (p < 0) { if (t > tMax) { intersects = false; break } else if (t > tMin) tMin = t }
-          else { if (t < tMin) { intersects = false; break } else if (t < tMax) tMax = t }
-        }
-      }
-      if (intersects && tMin <= tMax) return true
-    }
-    // Check ground
-    if (testMuzzleY > groundY) return true
-    return false
-  }
-
-  // If current angle clips, find the maximum safe angle
-  if (checkBarrelClip(drawAngle)) {
-    // Binary search for max safe angle (searching from 0 toward current angle)
-    let safeAngle = 0
-    const step = drawAngle > 0 ? 0.02 : -0.02
-    for (let testA = 0; Math.abs(testA) < Math.abs(drawAngle); testA += step) {
-      if (!checkBarrelClip(testA)) {
-        safeAngle = testA
-      } else {
-        break
-      }
-    }
-    drawAngle = safeAngle
-  }
-
   ctx.save()
   ctx.translate(shoulderX, shoulderY)
   ctx.rotate(drawAngle)
@@ -740,317 +671,89 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
   ctx.fillStyle = COLORS.player.glove
   ctx.fillRect(10, -2, 7 + recoil, 5)
 
-  // Gun - varies by weapon type
+  // Gun - detailed assault rifle
   const gunX = 15 + recoil
   const gunY = -3.5
-  const weapon = player.weapon
+  // Gun body / receiver
+  ctx.fillStyle = COLORS.player.gunDark
+  roundRect(ctx, gunX, gunY, 18, 7, 1)
+  ctx.fill()
+  // Grip
+  ctx.fillStyle = '#2a2a2a'
+  ctx.fillRect(gunX + 7, gunY + 6, 4, 5)
+  // Trigger guard
+  ctx.strokeStyle = '#444'
+  ctx.lineWidth = 0.8
+  ctx.beginPath()
+  ctx.moveTo(gunX + 7, gunY + 6)
+  ctx.quadraticCurveTo(gunX + 9, gunY + 10, gunX + 11, gunY + 6)
+  ctx.stroke()
+  // Barrel
+  ctx.fillStyle = COLORS.player.gunBarrel
+  ctx.fillRect(gunX + 16, gunY + 1.5, 9, 3)
+  // Barrel tip / flash suppressor
+  ctx.fillStyle = '#444'
+  roundRect(ctx, gunX + 24, gunY + 0.5, 4, 5, 1)
+  ctx.fill()
+  // Magazine
+  ctx.fillStyle = '#2a2a2a'
+  ctx.fillRect(gunX + 3, gunY + 6, 4, 7)
+  ctx.fillStyle = '#222'
+  ctx.fillRect(gunX + 3, gunY + 11, 4, 2) // mag base
+  // Scope
+  ctx.fillStyle = '#505050'
+  roundRect(ctx, gunX + 6, gunY - 4, 10, 3.5, 1.5)
+  ctx.fill()
+  // Scope lens
+  ctx.fillStyle = '#4488cc'
+  ctx.globalAlpha = 0.7
+  ctx.beginPath()
+  ctx.arc(gunX + 15, gunY - 2.2, 1.8, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.globalAlpha = 1
+  // Scope lens glint
+  ctx.fillStyle = '#aaddff'
+  ctx.beginPath()
+  ctx.arc(gunX + 14.5, gunY - 2.8, 0.6, 0, Math.PI * 2)
+  ctx.fill()
+  // Rail on top
+  ctx.fillStyle = '#4a4a4a'
+  ctx.fillRect(gunX + 2, gunY - 0.5, 14, 1)
+  // Gun highlight
+  ctx.fillStyle = COLORS.player.gunLight
+  ctx.fillRect(gunX + 2, gunY + 1.5, 12, 0.8)
+  // Stock
+  ctx.fillStyle = '#4a3a28'
+  roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
+  ctx.fill()
+  ctx.fillStyle = '#5a4a38'
+  ctx.fillRect(gunX - 5, gunY + 1.5, 6, 2)
+  // Forward grip
+  ctx.fillStyle = '#3a3a3a'
+  ctx.fillRect(gunX + 13, gunY + 6, 3, 4)
 
-  // Draw weapon based on type
-  if (weapon === 'relav') {
-    // Relav - small tommy gun style, no scope
-    // Receiver (compact)
-    ctx.fillStyle = COLORS.player.gunDark
-    roundRect(ctx, gunX, gunY, 14, 6, 1)
-    ctx.fill()
-    // Grip
-    ctx.fillStyle = '#2a2a2a'
-    ctx.fillRect(gunX + 5, gunY + 5, 4, 5)
-    // Trigger guard
-    ctx.strokeStyle = '#444'
-    ctx.lineWidth = 0.8
-    ctx.beginPath()
-    ctx.moveTo(gunX + 5, gunY + 5)
-    ctx.quadraticCurveTo(gunX + 7, gunY + 9, gunX + 9, gunY + 5)
-    ctx.stroke()
-    // Short barrel
-    ctx.fillStyle = COLORS.player.gunBarrel
-    ctx.fillRect(gunX + 12, gunY + 1.5, 6, 2.5)
-    // Barrel tip
-    ctx.fillStyle = '#444'
-    roundRect(ctx, gunX + 17, gunY + 0.5, 3, 4.5, 1)
-    ctx.fill()
-    // Drum magazine (tommy gun style)
-    ctx.fillStyle = '#2a2a2a'
-    ctx.beginPath()
-    ctx.arc(gunX + 7, gunY + 11, 5, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.fillStyle = '#222'
-    ctx.beginPath()
-    ctx.arc(gunX + 7, gunY + 11, 3, 0, Math.PI * 2)
-    ctx.fill()
-    // Gun highlight
-    ctx.fillStyle = COLORS.player.gunLight
-    ctx.fillRect(gunX + 2, gunY + 1.5, 10, 0.8)
-    // Small stock
-    ctx.fillStyle = '#4a3a28'
-    roundRect(ctx, gunX - 5, gunY + 1, 7, 4, 2)
-    ctx.fill()
-  } else if (weapon === 'lerange') {
-    // Lerange - long barrel with scope
-    // Receiver
-    ctx.fillStyle = COLORS.player.gunDark
-    roundRect(ctx, gunX, gunY, 20, 6, 1)
-    ctx.fill()
-    // Grip
-    ctx.fillStyle = '#2a2a2a'
-    ctx.fillRect(gunX + 8, gunY + 5, 4, 5)
-    // Trigger guard
-    ctx.strokeStyle = '#444'
-    ctx.lineWidth = 0.8
-    ctx.beginPath()
-    ctx.moveTo(gunX + 8, gunY + 5)
-    ctx.quadraticCurveTo(gunX + 10, gunY + 9, gunX + 12, gunY + 5)
-    ctx.stroke()
-    // Long barrel
-    ctx.fillStyle = COLORS.player.gunBarrel
-    ctx.fillRect(gunX + 18, gunY + 1.5, 16, 2.5)
-    // Barrel tip
-    ctx.fillStyle = '#444'
-    roundRect(ctx, gunX + 33, gunY + 0.5, 4, 4.5, 1)
-    ctx.fill()
-    // Magazine
-    ctx.fillStyle = '#2a2a2a'
-    ctx.fillRect(gunX + 3, gunY + 5, 4, 6)
-    ctx.fillStyle = '#222'
-    ctx.fillRect(gunX + 3, gunY + 10, 4, 2)
-    // Large scope
-    ctx.fillStyle = '#505050'
-    roundRect(ctx, gunX + 5, gunY - 6, 18, 5, 2)
-    ctx.fill()
-    // Scope lens front
-    ctx.fillStyle = '#4488cc'
-    ctx.globalAlpha = 0.7
-    ctx.beginPath()
-    ctx.arc(gunX + 20, gunY - 3.5, 2.2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-    // Scope lens glint
-    ctx.fillStyle = '#aaddff'
-    ctx.beginPath()
-    ctx.arc(gunX + 19.5, gunY - 4, 0.7, 0, Math.PI * 2)
-    ctx.fill()
-    // Rail
-    ctx.fillStyle = '#4a4a4a'
-    ctx.fillRect(gunX + 2, gunY - 0.5, 16, 1)
-    // Gun highlight
-    ctx.fillStyle = COLORS.player.gunLight
-    ctx.fillRect(gunX + 2, gunY + 1.5, 14, 0.8)
-    // Stock
-    ctx.fillStyle = '#4a3a28'
-    roundRect(ctx, gunX - 9, gunY + 0.5, 11, 5, 2)
-    ctx.fill()
-    ctx.fillStyle = '#5a4a38'
-    ctx.fillRect(gunX - 7, gunY + 1.5, 7, 2)
-  } else if (weapon === 'hypershot') {
-    // Hypershot - wide big barrel, no scope
-    // Receiver (wide)
-    ctx.fillStyle = COLORS.player.gunDark
-    roundRect(ctx, gunX, gunY - 2, 16, 10, 2)
-    ctx.fill()
-    // Grip
-    ctx.fillStyle = '#2a2a2a'
-    ctx.fillRect(gunX + 6, gunY + 7, 5, 6)
-    // Trigger guard
-    ctx.strokeStyle = '#444'
-    ctx.lineWidth = 0.8
-    ctx.beginPath()
-    ctx.moveTo(gunX + 6, gunY + 7)
-    ctx.quadraticCurveTo(gunX + 8.5, gunY + 12, gunX + 11, gunY + 7)
-    ctx.stroke()
-    // Big wide barrel
-    ctx.fillStyle = '#555'
-    roundRect(ctx, gunX + 14, gunY - 3, 14, 12, 3)
-    ctx.fill()
-    // Barrel glow ring (red)
-    ctx.fillStyle = '#ff4444'
-    ctx.shadowColor = '#ff4444'
-    ctx.shadowBlur = 6
-    roundRect(ctx, gunX + 26, gunY - 2.5, 3, 11, 1)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Barrel hole
-    ctx.fillStyle = '#222'
-    ctx.beginPath()
-    ctx.arc(gunX + 27, gunY + 3, 4, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.fillStyle = '#111'
-    ctx.beginPath()
-    ctx.arc(gunX + 27, gunY + 3, 3, 0, Math.PI * 2)
-    ctx.fill()
-    // Inner glow
-    ctx.fillStyle = '#ff6644'
-    ctx.globalAlpha = 0.6
-    ctx.beginPath()
-    ctx.arc(gunX + 27, gunY + 3, 2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-    // Gun highlight
-    ctx.fillStyle = COLORS.player.gunLight
-    ctx.fillRect(gunX + 2, gunY, 12, 0.8)
-    // Stock
-    ctx.fillStyle = '#4a3a28'
-    roundRect(ctx, gunX - 7, gunY + 1, 9, 5, 2)
-    ctx.fill()
-  } else if (weapon === 'spalmer') {
-    // Spalmer - receiver
-    // Receiver
-    ctx.fillStyle = COLORS.player.gunDark
-    roundRect(ctx, gunX, gunY, 15, 6, 1)
-    ctx.fill()
-    // Grip
-    ctx.fillStyle = '#2a2a2a'
-    ctx.fillRect(gunX + 6, gunY + 5, 4, 5)
-    // Trigger guard
-    ctx.strokeStyle = '#444'
-    ctx.lineWidth = 0.8
-    ctx.beginPath()
-    ctx.moveTo(gunX + 6, gunY + 5)
-    ctx.quadraticCurveTo(gunX + 8, gunY + 9, gunX + 10, gunY + 5)
-    ctx.stroke()
-    // Shorter, thicker barrel
-    ctx.fillStyle = COLORS.player.gunBarrel
-    ctx.fillRect(gunX + 13, gunY + 0.5, 8, 4)
-    // Barrel tip
-    ctx.fillStyle = '#444'
-    roundRect(ctx, gunX + 20, gunY - 0.5, 4, 6, 1)
-    ctx.fill()
-    // Pump grip
-    ctx.fillStyle = '#4a3a28'
-    roundRect(ctx, gunX + 10, gunY + 5, 6, 3, 1)
-    ctx.fill()
-    // Gun highlight
-    ctx.fillStyle = COLORS.player.gunLight
-    ctx.fillRect(gunX + 2, gunY + 1.5, 11, 0.8)
-    // Stock
-    ctx.fillStyle = '#4a3a28'
-    roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
-    ctx.fill()
-    ctx.fillStyle = '#5a4a38'
-    ctx.fillRect(gunX - 5, gunY + 1.5, 6, 2)
-  } else if (weapon === 'plasma') {
-    // Plasma - slightly longer and wider barrel
-    // Receiver (wider)
-    ctx.fillStyle = COLORS.player.gunDark
-    roundRect(ctx, gunX, gunY - 1, 18, 8, 1)
-    ctx.fill()
-    // Grip
-    ctx.fillStyle = '#2a2a2a'
-    ctx.fillRect(gunX + 7, gunY + 6, 4, 5)
-    // Trigger guard
-    ctx.strokeStyle = '#444'
-    ctx.lineWidth = 0.8
-    ctx.beginPath()
-    ctx.moveTo(gunX + 7, gunY + 6)
-    ctx.quadraticCurveTo(gunX + 9, gunY + 10, gunX + 11, gunY + 6)
-    ctx.stroke()
-    // Wider longer barrel
-    ctx.fillStyle = '#6644aa'
-    roundRect(ctx, gunX + 16, gunY - 1, 12, 6, 2)
-    ctx.fill()
-    // Barrel glow ring
-    ctx.fillStyle = '#aa66ff'
-    ctx.globalAlpha = 0.8
-    roundRect(ctx, gunX + 26, gunY - 0.5, 3, 5, 1)
-    ctx.fill()
-    ctx.globalAlpha = 1
-    // Energy cell
-    ctx.fillStyle = '#aa66ff'
-    ctx.globalAlpha = 0.6
-    ctx.fillRect(gunX + 3, gunY + 6, 4, 6)
-    ctx.globalAlpha = 1
-    ctx.fillStyle = '#cc88ff'
-    ctx.fillRect(gunX + 4, gunY + 7, 2, 4)
-    // Gun highlight
-    ctx.fillStyle = COLORS.player.gunLight
-    ctx.fillRect(gunX + 2, gunY + 1, 12, 0.8)
-    // Stock
-    ctx.fillStyle = '#3a3a4a'
-    roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
-    ctx.fill()
-  } else {
-    // Blastop (default) - assault rifle with scope
-    // Gun body / receiver
-    ctx.fillStyle = COLORS.player.gunDark
-    roundRect(ctx, gunX, gunY, 18, 7, 1)
-    ctx.fill()
-    // Grip
-    ctx.fillStyle = '#2a2a2a'
-    ctx.fillRect(gunX + 7, gunY + 6, 4, 5)
-    // Trigger guard
-    ctx.strokeStyle = '#444'
-    ctx.lineWidth = 0.8
-    ctx.beginPath()
-    ctx.moveTo(gunX + 7, gunY + 6)
-    ctx.quadraticCurveTo(gunX + 9, gunY + 10, gunX + 11, gunY + 6)
-    ctx.stroke()
-    // Barrel
-    ctx.fillStyle = COLORS.player.gunBarrel
-    ctx.fillRect(gunX + 16, gunY + 1.5, 9, 3)
-    // Barrel tip / flash suppressor
-    ctx.fillStyle = '#444'
-    roundRect(ctx, gunX + 24, gunY + 0.5, 4, 5, 1)
-    ctx.fill()
-    // Magazine
-    ctx.fillStyle = '#2a2a2a'
-    ctx.fillRect(gunX + 3, gunY + 6, 4, 7)
-    ctx.fillStyle = '#222'
-    ctx.fillRect(gunX + 3, gunY + 11, 4, 2)
-    // Scope
-    ctx.fillStyle = '#505050'
-    roundRect(ctx, gunX + 6, gunY - 4, 10, 3.5, 1.5)
-    ctx.fill()
-    // Scope lens
-    ctx.fillStyle = '#4488cc'
-    ctx.globalAlpha = 0.7
-    ctx.beginPath()
-    ctx.arc(gunX + 15, gunY - 2.2, 1.8, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-    // Scope lens glint
-    ctx.fillStyle = '#aaddff'
-    ctx.beginPath()
-    ctx.arc(gunX + 14.5, gunY - 2.8, 0.6, 0, Math.PI * 2)
-    ctx.fill()
-    // Rail on top
-    ctx.fillStyle = '#4a4a4a'
-    ctx.fillRect(gunX + 2, gunY - 0.5, 14, 1)
-    // Gun highlight
-    ctx.fillStyle = COLORS.player.gunLight
-    ctx.fillRect(gunX + 2, gunY + 1.5, 12, 0.8)
-    // Stock
-    ctx.fillStyle = '#4a3a28'
-    roundRect(ctx, gunX - 7, gunY + 0.5, 9, 5, 2)
-    ctx.fill()
-    ctx.fillStyle = '#5a4a38'
-    ctx.fillRect(gunX - 5, gunY + 1.5, 6, 2)
-    // Forward grip
-    ctx.fillStyle = '#3a3a3a'
-    ctx.fillRect(gunX + 13, gunY + 6, 3, 4)
-  }
-
-  // Muzzle flash (adjusted position based on weapon)
-  const muzzleX = weapon === 'lerange' ? gunX + 38 : weapon === 'hypershot' ? gunX + 30 : weapon === 'relav' ? gunX + 22 : weapon === 'spalmer' ? gunX + 26 : weapon === 'plasma' ? gunX + 32 : gunX + 30
+  // Muzzle flash
   if (player.shootCooldown > 0.12) {
     ctx.globalAlpha = 0.9
-    const flashGrad = ctx.createRadialGradient(muzzleX, gunY + 2, 0, muzzleX, gunY + 2, 12)
+    const flashGrad = ctx.createRadialGradient(gunX + 30, gunY + 2, 0, gunX + 30, gunY + 2, 12)
     flashGrad.addColorStop(0, '#ffffff')
-    flashGrad.addColorStop(0.2, weapon === 'plasma' ? '#ddaaff' : '#ffffaa')
-    flashGrad.addColorStop(0.4, weapon === 'plasma' ? '#aa66ff' : '#ffaa00')
-    flashGrad.addColorStop(0.7, weapon === 'plasma' ? '#6622aa' : '#ff6600')
-    flashGrad.addColorStop(1, weapon === 'plasma' ? 'rgba(102,34,170,0)' : 'rgba(255,100,0,0)')
+    flashGrad.addColorStop(0.2, '#ffffaa')
+    flashGrad.addColorStop(0.4, '#ffaa00')
+    flashGrad.addColorStop(0.7, '#ff6600')
+    flashGrad.addColorStop(1, 'rgba(255,100,0,0)')
     ctx.fillStyle = flashGrad
     ctx.beginPath()
-    ctx.arc(muzzleX, gunY + 2, 12, 0, Math.PI * 2)
+    ctx.arc(gunX + 30, gunY + 2, 12, 0, Math.PI * 2)
     ctx.fill()
     // Flash spikes
-    ctx.strokeStyle = weapon === 'plasma' ? '#cc88ff' : '#ffdd44'
+    ctx.strokeStyle = '#ffdd44'
     ctx.lineWidth = 1.5
     ctx.globalAlpha = 0.6
     for (let i = 0; i < 4; i++) {
       const sAngle = (i / 4) * Math.PI * 2 + Date.now() * 0.01
       ctx.beginPath()
-      ctx.moveTo(muzzleX, gunY + 2)
-      ctx.lineTo(muzzleX + Math.cos(sAngle) * 14, gunY + 2 + Math.sin(sAngle) * 14)
+      ctx.moveTo(gunX + 30, gunY + 2)
+      ctx.lineTo(gunX + 30 + Math.cos(sAngle) * 14, gunY + 2 + Math.sin(sAngle) * 14)
       ctx.stroke()
     }
     ctx.globalAlpha = 1
@@ -1177,7 +880,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
 }
 
 // ─── Player Zoomed (for home screen) ───
-export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number = 3, weapon: WeaponType = 'rifle') {
+export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number = 3) {
   ctx.save()
   ctx.translate(x, y)
   ctx.scale(scale, scale)
@@ -1368,191 +1071,57 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
   ctx.fillStyle = COLORS.player.skin
   ctx.fillRect(10, -3, 14, 6)
   
-  // Gun - varies by weapon type (matches in-game weapon visuals)
+  // Gun - large and detailed (fully visible)
   const gunX = 22
   const gunY = -5
-
-  if (weapon === 'relav') {
-    // Compact receiver
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX, gunY + 1, 18, 7, 1)
-    ctx.fill()
-    ctx.fillStyle = '#3a3a3a'
-    ctx.fillRect(gunX + 2, gunY + 2, 12, 2)
-    // Short barrel
-    ctx.fillStyle = '#4a4a4a'
-    ctx.fillRect(gunX + 16, gunY + 3, 9, 3)
-    // Drum magazine
-    ctx.fillStyle = '#2a2a2a'
-    ctx.beginPath()
-    ctx.arc(gunX + 9, gunY + 15, 7, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.fillStyle = '#222'
-    ctx.beginPath()
-    ctx.arc(gunX + 9, gunY + 15, 4, 0, Math.PI * 2)
-    ctx.fill()
-    // Stock
-    ctx.fillStyle = '#5a4a3a'
-    roundRect(ctx, gunX - 8, gunY + 2, 10, 6, 2)
-    ctx.fill()
-  } else if (weapon === 'lerange') {
-    // Long receiver
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX, gunY, 28, 9, 2)
-    ctx.fill()
-    ctx.fillStyle = '#3a3a3a'
-    ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
-    // Long barrel
-    ctx.fillStyle = '#4a4a4a'
-    ctx.fillRect(gunX + 26, gunY + 2, 24, 4)
-    ctx.fillStyle = '#333'
-    roundRect(ctx, gunX + 48, gunY + 1, 5, 6, 1)
-    ctx.fill()
-    // Magazine
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX + 4, gunY + 8, 6, 10, 1)
-    ctx.fill()
-    // Large scope
-    ctx.fillStyle = '#555'
-    roundRect(ctx, gunX + 7, gunY - 8, 22, 6, 2)
-    ctx.fill()
-    ctx.fillStyle = '#66aaff'
-    ctx.shadowColor = '#66aaff'
-    ctx.shadowBlur = 3
-    ctx.beginPath()
-    ctx.arc(gunX + 27, gunY - 5, 2.5, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Stock
-    ctx.fillStyle = '#5a4a3a'
-    roundRect(ctx, gunX - 14, gunY, 16, 8, 2)
-    ctx.fill()
-  } else if (weapon === 'hypershot') {
-    // Wide receiver
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX, gunY - 2, 22, 14, 3)
-    ctx.fill()
-    ctx.fillStyle = '#3a3a3a'
-    ctx.fillRect(gunX + 2, gunY, 16, 2)
-    // Wide barrel
-    ctx.fillStyle = '#555'
-    roundRect(ctx, gunX + 20, gunY - 4, 22, 16, 4)
-    ctx.fill()
-    // Barrel glow ring (red)
-    ctx.fillStyle = '#ff4444'
-    ctx.shadowColor = '#ff4444'
-    ctx.shadowBlur = 6
-    roundRect(ctx, gunX + 38, gunY - 3, 4, 14, 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Barrel opening
-    ctx.fillStyle = '#222'
-    ctx.beginPath()
-    ctx.arc(gunX + 40, gunY + 4, 5, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.fillStyle = '#111'
-    ctx.beginPath()
-    ctx.arc(gunX + 40, gunY + 4, 3, 0, Math.PI * 2)
-    ctx.fill()
-    // Inner glow
-    ctx.fillStyle = '#ff6644'
-    ctx.globalAlpha = 0.6
-    ctx.beginPath()
-    ctx.arc(gunX + 40, gunY + 4, 2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-    // Stock
-    ctx.fillStyle = '#5a4a3a'
-    roundRect(ctx, gunX - 14, gunY + 1, 16, 8, 2)
-    ctx.fill()
-  } else if (weapon === 'spalmer') {
-    // Receiver
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX, gunY, 22, 9, 2)
-    ctx.fill()
-    ctx.fillStyle = '#3a3a3a'
-    ctx.fillRect(gunX + 2, gunY + 1, 16, 2)
-    // Shorter thick barrel
-    ctx.fillStyle = '#4a4a4a'
-    ctx.fillRect(gunX + 20, gunY + 1, 14, 6)
-    ctx.fillStyle = '#333'
-    roundRect(ctx, gunX + 32, gunY, 5, 8, 1)
-    ctx.fill()
-    // Pump grip
-    ctx.fillStyle = '#5a4a3a'
-    roundRect(ctx, gunX + 14, gunY + 8, 9, 4, 1)
-    ctx.fill()
-    // Stock
-    ctx.fillStyle = '#5a4a3a'
-    roundRect(ctx, gunX - 14, gunY, 16, 8, 2)
-    ctx.fill()
-  } else if (weapon === 'plasma') {
-    // Wider receiver
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX, gunY - 1, 26, 11, 2)
-    ctx.fill()
-    ctx.fillStyle = '#3a3a3a'
-    ctx.fillRect(gunX + 2, gunY + 1, 20, 2)
-    // Wider longer barrel with purple
-    ctx.fillStyle = '#6644aa'
-    roundRect(ctx, gunX + 24, gunY - 1, 20, 9, 3)
-    ctx.fill()
-    // Barrel glow
-    ctx.fillStyle = '#aa66ff'
-    ctx.shadowColor = '#aa66ff'
-    ctx.shadowBlur = 6
-    roundRect(ctx, gunX + 40, gunY, 5, 7, 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Energy cell
-    ctx.fillStyle = '#aa66ff'
-    ctx.globalAlpha = 0.7
-    roundRect(ctx, gunX + 4, gunY + 10, 7, 9, 1)
-    ctx.fill()
-    ctx.globalAlpha = 1
-    // Stock
-    ctx.fillStyle = '#3a3a4a'
-    roundRect(ctx, gunX - 14, gunY + 1, 16, 8, 2)
-    ctx.fill()
-  } else {
-    // Rifle (default)
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX, gunY, 28, 9, 2)
-    ctx.fill()
-    ctx.fillStyle = '#3a3a3a'
-    ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
-    ctx.fillStyle = '#4a4a4a'
-    ctx.fillRect(gunX + 26, gunY + 2, 16, 5)
-    ctx.fillStyle = '#333'
-    roundRect(ctx, gunX + 40, gunY + 1, 5, 7, 1)
-    ctx.fill()
-    ctx.fillStyle = '#222'
-    ctx.fillRect(gunX + 43, gunY + 2, 2, 1)
-    ctx.fillRect(gunX + 43, gunY + 5, 2, 1)
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX + 6, gunY + 8, 6, 10, 1)
-    ctx.fill()
-    ctx.fillStyle = '#444'
-    ctx.fillRect(gunX + 10, gunY - 2, 12, 3)
-    ctx.fillStyle = '#555'
-    roundRect(ctx, gunX + 8, gunY - 6, 16, 5, 2)
-    ctx.fill()
-    ctx.fillStyle = '#66aaff'
-    ctx.shadowColor = '#66aaff'
-    ctx.shadowBlur = 3
-    ctx.beginPath()
-    ctx.arc(gunX + 22, gunY - 3.5, 2.5, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    ctx.fillStyle = '#5a4a3a'
-    roundRect(ctx, gunX - 14, gunY + 0, 16, 8, 2)
-    ctx.fill()
-    ctx.fillStyle = '#4a3a2a'
-    ctx.fillRect(gunX - 12, gunY + 3, 12, 2)
-    ctx.fillStyle = '#3a3a3a'
-    roundRect(ctx, gunX + 14, gunY + 7, 5, 8, 1)
-    ctx.fill()
-  }
+  // Gun body / receiver
+  ctx.fillStyle = '#2a2a2a'
+  roundRect(ctx, gunX, gunY, 28, 9, 2)
+  ctx.fill()
+  // Gun body highlight
+  ctx.fillStyle = '#3a3a3a'
+  ctx.fillRect(gunX + 2, gunY + 1, 22, 2)
+  // Barrel
+  ctx.fillStyle = '#4a4a4a'
+  ctx.fillRect(gunX + 26, gunY + 2, 16, 5)
+  // Barrel tip / muzzle
+  ctx.fillStyle = '#333'
+  roundRect(ctx, gunX + 40, gunY + 1, 5, 7, 1)
+  ctx.fill()
+  // Muzzle holes
+  ctx.fillStyle = '#222'
+  ctx.fillRect(gunX + 43, gunY + 2, 2, 1)
+  ctx.fillRect(gunX + 43, gunY + 5, 2, 1)
+  // Magazine
+  ctx.fillStyle = '#2a2a2a'
+  roundRect(ctx, gunX + 6, gunY + 8, 6, 10, 1)
+  ctx.fill()
+  // Scope mount
+  ctx.fillStyle = '#444'
+  ctx.fillRect(gunX + 10, gunY - 2, 12, 3)
+  // Scope tube
+  ctx.fillStyle = '#555'
+  roundRect(ctx, gunX + 8, gunY - 6, 16, 5, 2)
+  ctx.fill()
+  // Scope lens
+  ctx.fillStyle = '#66aaff'
+  ctx.shadowColor = '#66aaff'
+  ctx.shadowBlur = 3
+  ctx.beginPath()
+  ctx.arc(gunX + 22, gunY - 3.5, 2.5, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  // Stock
+  ctx.fillStyle = '#5a4a3a'
+  roundRect(ctx, gunX - 14, gunY + 0, 16, 8, 2)
+  ctx.fill()
+  // Stock detail
+  ctx.fillStyle = '#4a3a2a'
+  ctx.fillRect(gunX - 12, gunY + 3, 12, 2)
+  // Grip
+  ctx.fillStyle = '#3a3a3a'
+  roundRect(ctx, gunX + 14, gunY + 7, 5, 8, 1)
+  ctx.fill()
   
   ctx.restore()
 
@@ -2285,24 +1854,21 @@ export function drawBullet(ctx: CanvasRenderingContext2D, bullet: Bullet, camera
     return
   }
 
-  const isPlasma = bullet.fromPlayer && bullet.weaponType === 'plasma'
-  const isHypershot = bullet.fromPlayer && bullet.weaponType === 'hypershot'
-
-  ctx.shadowColor = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : isHypershot ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
+  ctx.shadowColor = bullet.fromPlayer ? COLORS.bullet.playerGlow : COLORS.bullet.enemyGlow
   ctx.shadowBlur = 10
 
   // Outer glow
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#aa66ff' : isHypershot ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
+  ctx.fillStyle = bullet.fromPlayer ? COLORS.bullet.playerGlow : COLORS.bullet.enemyGlow
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 1.5, 0, Math.PI * 2)
   ctx.fill()
   // Main bullet
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#6644aa' : isHypershot ? '#cc2222' : COLORS.bullet.player) : COLORS.bullet.enemy
+  ctx.fillStyle = bullet.fromPlayer ? COLORS.bullet.player : COLORS.bullet.enemy
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius, 0, Math.PI * 2)
   ctx.fill()
   // Core
-  ctx.fillStyle = bullet.fromPlayer ? (isPlasma ? '#cc88ff' : isHypershot ? '#ffaa88' : COLORS.bullet.playerCore) : COLORS.bullet.enemyCore
+  ctx.fillStyle = bullet.fromPlayer ? COLORS.bullet.playerCore : COLORS.bullet.enemyCore
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 0.4, 0, Math.PI * 2)
   ctx.fill()
@@ -2336,11 +1902,11 @@ export function drawParticle(ctx: CanvasRenderingContext2D, particle: Particle, 
 export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: number, canvasH: number) {
   // Panel background
   ctx.fillStyle = COLORS.hud.panelBg
-  roundRect(ctx, 10, 10, 220, 115, 8)
+  roundRect(ctx, 10, 10, 220, 130, 8)
   ctx.fill()
   ctx.strokeStyle = COLORS.hud.panelBorder
   ctx.lineWidth = 1
-  roundRect(ctx, 10, 10, 220, 115, 8)
+  roundRect(ctx, 10, 10, 220, 130, 8)
   ctx.stroke()
 
   // Health
@@ -2385,14 +1951,18 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   // Bullets remaining
   ctx.fillStyle = player.bulletsRemaining > player.bulletsMax * 0.2 ? COLORS.hud.text : player.bulletsRemaining > 0 ? '#ffaa00' : '#ff4444'
   ctx.font = 'bold 14px Geist, sans-serif'
-  ctx.fillText(`AMMO: ${Math.round((player.bulletsRemaining / player.bulletsMax) * 100)}%`, 20, 92)
+  ctx.fillText(`AMMO: ${player.bulletsRemaining}/${player.bulletsMax}`, 20, 92)
 
   // Current weapon
-  const weaponNames: Record<string, string> = { blastop: 'BLASTOP', relav: 'RELAV', spalmer: 'SPALMER', lerange: 'LERANGE', plasma: 'PLASMA', hypershot: 'HYPERSHOT' }
-  const weaponColors: Record<string, string> = { blastop: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222' }
+  const weaponNames: Record<string, string> = { rifle: 'RIFLE', smg: 'SMG', shotgun: 'SHOTGUN', sniper: 'SNIPER', plasma: 'PLASMA', launcher: 'LAUNCHER' }
+  const weaponColors: Record<string, string> = { rifle: '#ffcc22', smg: '#44ddff', shotgun: '#ff8844', sniper: '#ff4488', plasma: '#aa66ff', launcher: '#ff2222' }
   ctx.fillStyle = weaponColors[player.weapon] || COLORS.hud.text
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)
+  // Weapon slots hint
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'
+  ctx.font = '10px Geist, sans-serif'
+  ctx.fillText(player.weapons.map((w, i) => `[${i + 1}]${w === player.weapon ? '*' : ''}`).join(' '), 20, 128)
 
   // LOW OXYGEN warning
   if (player.lowOxygen) {
@@ -2434,6 +2004,7 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.fillText('W or Space - Jump', canvasW - 20, 46)
   ctx.fillText('Shift - Jetpack', canvasW - 20, 62)
   ctx.fillText('Mouse Aim + Click - Shoot', canvasW - 20, 78)
+  ctx.fillText('1/2/3 - Switch Weapon', canvasW - 20, 94)
   ctx.textAlign = 'left'
 }
 
