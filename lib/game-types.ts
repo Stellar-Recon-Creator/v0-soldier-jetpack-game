@@ -5,7 +5,7 @@ export interface Vector2 {
   y: number
 }
 
-export type WeaponType = 'blastop' | 'spalmer' | 'plasma' | 'relav' | 'lerange' | 'hypershot' | 'pulse'
+export type WeaponType = 'blastop' | 'spalmer' | 'plasma' | 'relav' | 'lerange' | 'hypershot' | 'pulse' | 'charger'
 
 export interface Player {
   x: number
@@ -35,6 +35,8 @@ export interface Player {
   weapons: WeaponType[]
   burstCount: number
   burstCooldown: number
+  chargeTime: number
+  wasShootingLastFrame: boolean
 }
 
 export interface Platform {

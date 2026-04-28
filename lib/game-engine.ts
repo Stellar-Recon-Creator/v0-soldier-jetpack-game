@@ -19,6 +19,7 @@ const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; dama
   plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
   hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8 },
   pulse:     { speed: 556,  cooldown: 0.092, damage: 1.012, count: 1, spread: 0, radius: 4,  ammoCost: 0.8 },
+  charger:   { speed: 700,  cooldown: 0.3,  damage: 0.88, count: 1, spread: 0, radius: 5,  ammoCost: 2 },
 }
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
@@ -191,6 +192,8 @@ export function createPlayer(): Player {
     weapons: ['blastop'],
     burstCount: 0,
     burstCooldown: 0,
+    chargeTime: 0,
+    wasShootingLastFrame: false,
   }
 }
 
@@ -290,9 +293,69 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   const weaponCfg = WEAPON_CONFIGS[player.weapon]
   player.shootCooldown -= dt
   player.burstCooldown -= dt
+
+  // Charger charge mechanic: hold to charge, release to fire
+  if (player.weapon === 'charger') {
+    if (keys.shoot && player.shootCooldown <= 0 && player.bulletsRemaining > 0) {
+      player.chargeTime = Math.min(player.chargeTime + dt, 0.9)
+    }
+    // Fire on release if charged enough
+    const justReleased = !keys.shoot && player.wasShootingLastFrame
+    if (justReleased && player.chargeTime >= 0.3 && player.shootCooldown <= 0 && player.bulletsRemaining > 0) {
+      const chargeLevel = player.chargeTime >= 0.9 ? 3 : player.chargeTime >= 0.6 ? 2 : 1
+      const chargeDamage = chargeLevel === 3 ? 8.5 : chargeLevel === 2 ? 1.08 : 0.88
+      const chargeCooldown = chargeLevel === 3 ? 0.9 : chargeLevel === 2 ? 0.65 : 0.3
+      const chargeRadius = chargeLevel === 3 ? 8 : chargeLevel === 2 ? 6 : 5
+      const chargeSpeed = chargeLevel === 3 ? 500 : chargeLevel === 2 ? 600 : 700
+      const chargeAmmo = chargeLevel === 3 ? 5 : chargeLevel === 2 ? 3 : 2
+      player.shootCooldown = chargeCooldown
+      player.shooting = true
+      soundEvents.playerShoot = true
+      player.bulletsFired++
+      player.bulletsRemaining = Math.max(0, player.bulletsRemaining - chargeAmmo * ammoUseMult)
+      player.chargeTime = 0
+
+      // Fire charger bullet (uses same muzzle position logic below)
+      const bulletAngle = player.aimAngle
+      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31, pulse: 26, charger: 28 }
+      const tipLocal = muzzleTipX[player.weapon] ?? 30
+      const hw = player.width / 2
+      const hh = player.height / 2
+      const f = player.facing
+      const shoulderX = hw - 4
+      const shoulderY = -hh + 16
+      let drawAngle = player.aimAngle
+      if (f === -1) {
+        drawAngle = Math.PI - player.aimAngle
+        if (drawAngle > Math.PI) drawAngle -= 2 * Math.PI
+        if (drawAngle < -Math.PI) drawAngle += 2 * Math.PI
+      }
+      drawAngle = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, drawAngle))
+      const tipArmX = tipLocal, tipArmY = 1.5
+      const rotX = tipArmX * Math.cos(drawAngle) - tipArmY * Math.sin(drawAngle)
+      const rotY = tipArmX * Math.sin(drawAngle) + tipArmY * Math.cos(drawAngle)
+      let localX = shoulderX + rotX
+      const localY = shoulderY + rotY
+      if (f === -1) localX = -localX
+      const spawnX = player.x + player.width / 2 + localX
+      const spawnY = player.y + player.height / 2 + localY
+
+      bullets.push({
+        x: spawnX, y: spawnY,
+        vx: Math.cos(bulletAngle) * chargeSpeed,
+        vy: Math.sin(bulletAngle) * chargeSpeed,
+        radius: chargeRadius, fromPlayer: true, active: true,
+        damage: chargeDamage, weaponType: 'charger',
+      })
+    }
+    if (!keys.shoot) player.chargeTime = 0
+    player.wasShootingLastFrame = keys.shoot
+  }
+
   // Pulse burst mechanic: after 6 shots, 1 second forced cooldown
   const burstBlocked = player.weapon === 'pulse' && player.burstCooldown > 0
-  if (keys.shoot && player.shootCooldown <= 0 && player.bulletsRemaining > 0 && !burstBlocked) {
+  const chargerBlocked = player.weapon === 'charger'
+  if (keys.shoot && player.shootCooldown <= 0 && player.bulletsRemaining > 0 && !burstBlocked && !chargerBlocked) {
     player.shootCooldown = weaponCfg.cooldown
     player.shooting = true
     soundEvents.playerShoot = true
@@ -313,7 +376,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
 
       // Muzzle tip offsets in arm-local space (matches renderer gunX/muzzleX, gunY+2)
-      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31, pulse: 26 }
+      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31, pulse: 26, charger: 28 }
       const tipLocal = muzzleTipX[player.weapon] ?? 30
 
       // Reconstruct world-space muzzle position matching the renderer transforms:
@@ -643,7 +706,9 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             brute:   ['#cc8844', '#eeaa66', '#aa6622'],
             boss:    ['#cc2233', '#ee4455', '#991122'],
           }
-          const hitColors = bullet.weaponType === 'pulse'
+          const hitColors = bullet.weaponType === 'charger'
+            ? ['#ff8800', '#ffaa33', '#cc6600', '#ffcc66']
+            : bullet.weaponType === 'pulse'
             ? ['#3355ff', '#2244cc', '#5588ff', '#1a33aa']
             : bullet.weaponType === 'plasma'
             ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
@@ -663,7 +728,9 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             player.score += scoreMap[enemy.type]
 
             // Death particles: plasma=purple, hypershot=red, otherwise alien body colors
-            const deathColors = bullet.weaponType === 'pulse'
+            const deathColors = bullet.weaponType === 'charger'
+              ? ['#ff8800', '#ffaa33', '#cc6600', '#ffcc66']
+              : bullet.weaponType === 'pulse'
               ? ['#3355ff', '#2244cc', '#5588ff', '#1a33aa']
               : bullet.weaponType === 'plasma'
               ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']

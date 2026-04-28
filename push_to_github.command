@@ -6,10 +6,10 @@ echo "=== Pushing changes to GitHub ==="
 rm -f .git/config.lock .git/index.lock .git/HEAD.lock .git/objects/*/tmp_obj_*
 
 echo "Staging changes..."
-git add lib/game-engine.ts push_to_github.command
+git add lib/game-types.ts lib/game-engine.ts lib/game-renderer.ts components/game-canvas.tsx push_to_github.command
 
 echo "Committing..."
-git commit -m "balance: increase all enemy detection ranges to 1400 for far camera visibility"
+git commit -m "feature: add Charger weapon - hold to charge 3 bars, release to fire, orange theme, stellar crate"
 
 echo "Pushing to GitHub..."
 git push origin main
