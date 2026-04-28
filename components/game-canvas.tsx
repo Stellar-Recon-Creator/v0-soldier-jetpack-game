@@ -235,6 +235,10 @@ export default function GameCanvas() {
     const zw = cw / zoom  // effective width in world space
     const zh = ch / zoom  // effective height in world space
 
+    // On far zoom, shift camera up so the ground stays near the bottom instead of showing tons of dirt
+    const camYOffset = zoom < 1 ? (ch / zoom - ch) * 0.45 : 0
+    const adjCamY = newState.cameraY - camYOffset
+
     ctx.save()
     ctx.scale(zoom, zoom)
 
@@ -244,25 +248,25 @@ export default function GameCanvas() {
     drawParallaxMountains(ctx, newState.cameraX, zw, zh)
 
     // Continuous ground
-    drawGround(ctx, newState.cameraX, newState.cameraY, zw, zh, GROUND_Y)
+    drawGround(ctx, newState.cameraX, adjCamY, zw, zh, GROUND_Y)
 
     // Platforms
     for (const plat of newState.platforms) {
       if (plat.x - newState.cameraX > zw + 50 || plat.x + plat.width - newState.cameraX < -50) continue
-      drawPlatform(ctx, plat, newState.cameraX, newState.cameraY)
+      drawPlatform(ctx, plat, newState.cameraX, adjCamY)
     }
 
     // Enemies
     for (const enemy of newState.enemies) {
       if (!enemy.active) continue
       if (enemy.x - newState.cameraX > zw + 50 || enemy.x + enemy.width - newState.cameraX < -50) continue
-      drawEnemy(ctx, enemy, newState.cameraX, newState.cameraY)
+      drawEnemy(ctx, enemy, newState.cameraX, adjCamY)
     }
 
     // Bullets
     for (const bullet of newState.bullets) {
       if (!bullet.active) continue
-      drawBullet(ctx, bullet, newState.cameraX, newState.cameraY)
+      drawBullet(ctx, bullet, newState.cameraX, adjCamY)
     }
 
     // Player
@@ -270,29 +274,29 @@ export default function GameCanvas() {
     const jetpackVisualLevel = Math.max(gl.power, gl.fuel)
     const armorVisualLevel = Math.max(gl.durability, gl.weight)
     if (keysRef.current.jetpack && newState.player.jetpackFuel > 0) {
-      drawJetpackFlame(ctx, newState.player, newState.cameraX, newState.cameraY, jetpackVisualLevel)
+      drawJetpackFlame(ctx, newState.player, newState.cameraX, adjCamY, jetpackVisualLevel)
     }
-    drawPlayer(ctx, newState.player, newState.cameraX, newState.cameraY, newState.platforms, GROUND_Y, armorVisualLevel, jetpackVisualLevel)
+    drawPlayer(ctx, newState.player, newState.cameraX, adjCamY, newState.platforms, GROUND_Y, armorVisualLevel, jetpackVisualLevel)
 
     // Particles
     for (const particle of newState.particles) {
-      drawParticle(ctx, particle, newState.cameraX, newState.cameraY)
+      drawParticle(ctx, particle, newState.cameraX, adjCamY)
     }
 
     // HUD (draw at zoomed scale so it stays readable)
     drawHUD(ctx, newState.player, zw, zh)
 
-    // Progress bar at bottom
+    ctx.restore()
+
+    // Progress bar at bottom (drawn in screen space so it doesn't scale)
     const progress = Math.max(0, Math.min(1, newState.player.x / newState.levelLength))
     ctx.fillStyle = 'rgba(0,0,0,0.4)'
-    ctx.fillRect(10, zh - 16, zw - 20, 8)
-    const progGrad = ctx.createLinearGradient(10, 0, 10 + (zw - 20) * progress, 0)
+    ctx.fillRect(10, ch - 16, cw - 20, 8)
+    const progGrad = ctx.createLinearGradient(10, 0, 10 + (cw - 20) * progress, 0)
     progGrad.addColorStop(0, '#2a7a2a')
     progGrad.addColorStop(1, '#44cc44')
     ctx.fillStyle = progGrad
-    ctx.fillRect(10, zh - 16, (zw - 20) * progress, 8)
-
-    ctx.restore()
+    ctx.fillRect(10, ch - 16, (cw - 20) * progress, 8)
     // Boss icon at end
     ctx.fillStyle = '#ff3344'
     ctx.font = 'bold 10px Geist, sans-serif'

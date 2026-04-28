@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add components/game-canvas.tsx push_to_github.command
 
 echo "Committing..."
-git commit -m "feature: add settings menu with camera view (close/normal/far) zoom control"
+git commit -m "fix: progress bar stays screen-sized on close zoom, ground stays low on far zoom"
 
 echo "Pushing to GitHub..."
 git push origin main
