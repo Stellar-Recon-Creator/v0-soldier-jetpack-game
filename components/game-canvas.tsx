@@ -237,7 +237,7 @@ export default function GameCanvas() {
 
     // On far zoom, shift camera up so the ground stays near the bottom instead of showing tons of dirt
     // Camera Y offset: close pushes down to show ground/dirt, far pushes up to hide excess dirt
-    const camYOffset = zoom > 1 ? -40 : zoom < 1 ? (ch / zoom - ch) * 0.7 : 0
+    const camYOffset = zoom > 1 ? -40 : zoom < 1 ? (ch / zoom - ch) * 0.95 : 0
     const adjCamY = newState.cameraY - camYOffset
 
     ctx.save()
