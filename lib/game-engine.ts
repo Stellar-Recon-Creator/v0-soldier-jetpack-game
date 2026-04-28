@@ -469,7 +469,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
 
     switch (enemy.type) {
       case 'grunt':
-        if (distToPlayer < 400) {
+        if (distToPlayer < 1400) {
           enemy.vx = enemy.facing * 60
         } else {
           enemy.vx = 0
@@ -478,12 +478,12 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         break
 
       case 'spitter':
-        if (distToPlayer < 500) {
+        if (distToPlayer < 1400) {
           enemy.vx = enemy.facing * 30
         }
         enemy.vy += GRAVITY * dt
         enemy.shootCooldown -= dt
-        if (enemy.shootCooldown <= 0 && distToPlayer < 500) {
+        if (enemy.shootCooldown <= 0 && distToPlayer < 1400) {
           enemy.shootCooldown = (2 + Math.random()) / enemyFireRateMult
           soundEvents.alienShoot = true
           const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x)
@@ -503,7 +503,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       case 'flyer':
         enemy.floatAngle = (enemy.floatAngle || 0) + dt * 2
         enemy.vy = Math.sin(enemy.floatAngle) * 80
-        if (distToPlayer < 450) {
+        if (distToPlayer < 1400) {
           enemy.vx = enemy.facing * 100
         } else {
           enemy.vx *= 0.95
@@ -513,7 +513,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         }
         // Flyer shoots acid (same as spitter)
         enemy.shootCooldown -= dt
-        if (enemy.shootCooldown <= 0 && distToPlayer < 400) {
+        if (enemy.shootCooldown <= 0 && distToPlayer < 1400) {
           enemy.shootCooldown = 2.0 / enemyFireRateMult
           soundEvents.alienShoot = true
           const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x)
@@ -531,7 +531,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         break
 
       case 'brute':
-        if (distToPlayer < 300) {
+        if (distToPlayer < 1400) {
           enemy.vx = enemy.facing * 40
         } else {
           enemy.vx = 0
@@ -540,12 +540,12 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         break
 
       case 'boss':
-        if (distToPlayer < 1000) {
+        if (distToPlayer < 1400) {
           enemy.vx = enemy.facing * 35
         }
         enemy.vy += GRAVITY * dt
         enemy.shootCooldown -= dt
-        if (enemy.shootCooldown <= 0 && distToPlayer < 1000) {
+        if (enemy.shootCooldown <= 0 && distToPlayer < 1400) {
           enemy.shootCooldown = (0.8 + Math.random() * 0.5) / enemyFireRateMult
           soundEvents.bossRoar = true
           for (let i = -1; i <= 1; i++) {
