@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add components/game-canvas.tsx push_to_github.command
 
 echo "Committing..."
-git commit -m "fix: progress bar stays screen-sized on close zoom, ground stays low on far zoom"
+git commit -m "fix: show dirt on close zoom, reduce ground on far zoom with stronger offset"
 
 echo "Pushing to GitHub..."
 git push origin main
