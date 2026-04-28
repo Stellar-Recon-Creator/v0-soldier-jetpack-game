@@ -6,10 +6,10 @@ echo "=== Pushing changes to GitHub ==="
 rm -f .git/config.lock .git/index.lock .git/HEAD.lock .git/objects/*/tmp_obj_*
 
 echo "Staging changes..."
-git add lib/game-engine.ts push_to_github.command
+git add components/game-canvas.tsx push_to_github.command
 
 echo "Committing..."
-git commit -m "balance: reduce Pulse bullet speed by 10% (618 -> 556)"
+git commit -m "feature: add settings menu with camera view (close/normal/far) zoom control"
 
 echo "Pushing to GitHub..."
 git push origin main

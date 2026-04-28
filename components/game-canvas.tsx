@@ -58,9 +58,13 @@ export default function GameCanvas() {
   const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['blastop'])
   const ownedWeaponsRef = useRef<WeaponType[]>(['blastop'])
   const [crateResult, setCrateResult] = useState<{ weapon: WeaponType; isDuplicate: boolean; refund: number } | null>(null)
+  const [cameraView, setCameraView] = useState<'close' | 'normal' | 'far'>('normal')
+  const cameraViewRef = useRef<'close' | 'normal' | 'far'>('normal')
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   // Keep ref in sync with state
   useEffect(() => { ownedWeaponsRef.current = ownedWeapons }, [ownedWeapons])
+  useEffect(() => { cameraViewRef.current = cameraView }, [cameraView])
 
   // Weapon loot tables per crate tier
   const crateLootTables: Record<string, WeaponType[]> = {
@@ -173,10 +177,11 @@ export default function GameCanvas() {
     const dt = Math.min((timestamp - lastTimeRef.current) / 1000, 0.05)
     lastTimeRef.current = timestamp
 
-    // Update (use logical dimensions, not physical pixels)
+    // Update (use logical dimensions, not physical pixels, adjusted for camera zoom)
     const dprUpdate = window.devicePixelRatio || 1
+    const zoomUpdate = { close: 1.3, normal: 1.0, far: 0.75 }[cameraViewRef.current]
     const enemyFireMult = difficulty === 'hard' ? 1.5 : difficulty === 'medium' ? 1.3 : 1.0
-    const newState = updateGame(state, keysRef.current, dt, canvas.width / dprUpdate, canvas.height / dprUpdate, gearLevelsRef.current, enemyFireMult)
+    const newState = updateGame(state, keysRef.current, dt, (canvas.width / dprUpdate) / zoomUpdate, (canvas.height / dprUpdate) / zoomUpdate, gearLevelsRef.current, enemyFireMult)
     stateRef.current = newState
 
     // Play sounds based on events
@@ -224,24 +229,33 @@ export default function GameCanvas() {
     const ch = canvas.height / dpr
     ctx.clearRect(0, 0, cw, ch)
 
+    // Camera zoom
+    const zoomMap = { close: 1.3, normal: 1.0, far: 0.75 }
+    const zoom = zoomMap[cameraViewRef.current]
+    const zw = cw / zoom  // effective width in world space
+    const zh = ch / zoom  // effective height in world space
+
+    ctx.save()
+    ctx.scale(zoom, zoom)
+
     // Background
-    drawBackground(ctx, newState, cw, ch)
+    drawBackground(ctx, newState, zw, zh)
     drawStars(ctx, newState.stars, newState.cameraX)
-    drawParallaxMountains(ctx, newState.cameraX, cw, ch)
+    drawParallaxMountains(ctx, newState.cameraX, zw, zh)
 
     // Continuous ground
-    drawGround(ctx, newState.cameraX, newState.cameraY, cw, ch, GROUND_Y)
+    drawGround(ctx, newState.cameraX, newState.cameraY, zw, zh, GROUND_Y)
 
     // Platforms
     for (const plat of newState.platforms) {
-      if (plat.x - newState.cameraX > cw + 50 || plat.x + plat.width - newState.cameraX < -50) continue
+      if (plat.x - newState.cameraX > zw + 50 || plat.x + plat.width - newState.cameraX < -50) continue
       drawPlatform(ctx, plat, newState.cameraX, newState.cameraY)
     }
 
     // Enemies
     for (const enemy of newState.enemies) {
       if (!enemy.active) continue
-      if (enemy.x - newState.cameraX > cw + 50 || enemy.x + enemy.width - newState.cameraX < -50) continue
+      if (enemy.x - newState.cameraX > zw + 50 || enemy.x + enemy.width - newState.cameraX < -50) continue
       drawEnemy(ctx, enemy, newState.cameraX, newState.cameraY)
     }
 
@@ -265,18 +279,20 @@ export default function GameCanvas() {
       drawParticle(ctx, particle, newState.cameraX, newState.cameraY)
     }
 
-    // HUD
-    drawHUD(ctx, newState.player, cw, ch)
+    // HUD (draw at zoomed scale so it stays readable)
+    drawHUD(ctx, newState.player, zw, zh)
 
     // Progress bar at bottom
     const progress = Math.max(0, Math.min(1, newState.player.x / newState.levelLength))
     ctx.fillStyle = 'rgba(0,0,0,0.4)'
-    ctx.fillRect(10, ch - 16, cw - 20, 8)
-    const progGrad = ctx.createLinearGradient(10, 0, 10 + (cw - 20) * progress, 0)
+    ctx.fillRect(10, zh - 16, zw - 20, 8)
+    const progGrad = ctx.createLinearGradient(10, 0, 10 + (zw - 20) * progress, 0)
     progGrad.addColorStop(0, '#2a7a2a')
     progGrad.addColorStop(1, '#44cc44')
     ctx.fillStyle = progGrad
-    ctx.fillRect(10, ch - 16, (cw - 20) * progress, 8)
+    ctx.fillRect(10, zh - 16, (zw - 20) * progress, 8)
+
+    ctx.restore()
     // Boss icon at end
     ctx.fillStyle = '#ff3344'
     ctx.font = 'bold 10px Geist, sans-serif'
@@ -387,6 +403,72 @@ export default function GameCanvas() {
           <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: 'rgba(0,13,111,0.7)' }}>
             <span style={{ color: '#8cd4ff', fontSize: '24px' }}>&#9733;</span>
             <span className="text-xl font-bold font-sans" style={{ color: '#8cd4ff' }}>{starCurrency}</span>
+          </div>
+
+          {/* Settings button - top left */}
+          <div className="absolute top-4 left-4 z-30">
+            <button
+              onClick={() => setSettingsOpen(prev => !prev)}
+              className="w-11 h-11 rounded-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              style={{
+                background: settingsOpen ? 'rgba(0,13,111,0.9)' : 'rgba(0,13,111,0.7)',
+                border: settingsOpen ? '1px solid rgba(140,212,255,0.4)' : '1px solid transparent',
+              }}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8cd4ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </button>
+
+            {/* Settings dropdown */}
+            {settingsOpen && (
+              <div
+                className="absolute top-14 left-0 rounded-xl p-6"
+                style={{
+                  width: '280px',
+                  background: 'rgba(10,10,30,0.95)',
+                  border: '1px solid rgba(140,212,255,0.2)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                <h3 className="text-lg font-bold font-sans mb-5" style={{ color: '#8cd4ff' }}>SETTINGS</h3>
+
+                {/* Camera View */}
+                <div>
+                  <span className="text-sm font-bold font-sans" style={{ color: 'rgba(140,212,255,0.7)' }}>CAMERA VIEW</span>
+                  <div className="flex items-center gap-4 mt-3">
+                    {(['close', 'normal', 'far'] as const).map(view => (
+                      <button
+                        key={view}
+                        onClick={() => setCameraView(view)}
+                        className="flex flex-col items-center gap-2 cursor-pointer transition-all hover:scale-105 active:scale-95"
+                      >
+                        <div
+                          className="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all"
+                          style={{
+                            borderColor: cameraView === view ? '#8cd4ff' : 'rgba(140,212,255,0.3)',
+                            background: cameraView === view ? '#8cd4ff' : 'transparent',
+                            boxShadow: cameraView === view ? '0 0 10px rgba(140,212,255,0.5)' : 'none',
+                          }}
+                        >
+                          {cameraView === view && (
+                            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#0a0a1a' }} />
+                          )}
+                        </div>
+                        <span
+                          className="text-xs font-bold font-sans uppercase"
+                          style={{ color: cameraView === view ? '#8cd4ff' : 'rgba(140,212,255,0.4)' }}
+                        >
+                          {view}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Stars in the night sky - using seeded positions to avoid hydration mismatch */}
