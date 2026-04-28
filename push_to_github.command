@@ -9,7 +9,7 @@ echo "Staging changes..."
 git add lib/game-types.ts lib/game-engine.ts lib/game-renderer.ts components/game-canvas.tsx push_to_github.command
 
 echo "Committing..."
-git commit -m "feature: add Charger weapon - hold to charge 3 bars, release to fire, orange theme, stellar crate"
+git commit -m "redesign: Charger weapon model - capacitor coils, focusing barrel, heat sinks, foregrip"
 
 echo "Pushing to GitHub..."
 git push origin main

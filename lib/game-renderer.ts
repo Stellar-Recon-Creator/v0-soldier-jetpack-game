@@ -1767,105 +1767,164 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#222'
     ctx.fillRect(gunX - 7.5, gunY + 1, 1, 4)
   } else if (weapon === 'charger') {
-    // Charger - charge rifle with display panel, orange/amber accents
-    // Receiver (angular, tech-heavy)
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX, gunY, 22, 7, 1.5)
+    // Charger - heavy energy cannon with capacitor coils, unique silhouette
+    // Main housing (wide, boxy body - very different from Pulse's sleek receiver)
+    ctx.fillStyle = '#1e1e1e'
+    roundRect(ctx, gunX - 2, gunY - 1, 24, 9, 2)
     ctx.fill()
-    // Receiver panel line
-    ctx.strokeStyle = '#1a1a1a'
-    ctx.lineWidth = 0.3
+    // Housing top plate (angular, armored look)
+    ctx.fillStyle = '#2e2e2e'
     ctx.beginPath()
-    ctx.moveTo(gunX + 2, gunY + 5)
-    ctx.lineTo(gunX + 18, gunY + 5)
-    ctx.stroke()
-    // Top rail
-    ctx.fillStyle = '#383838'
-    ctx.fillRect(gunX + 2, gunY - 1, 16, 1.5)
-    // Charge display panel (3 bars on top of receiver)
-    ctx.fillStyle = '#111'
-    roundRect(ctx, gunX + 5, gunY - 3.5, 10, 2.5, 0.5)
+    ctx.moveTo(gunX - 1, gunY - 1)
+    ctx.lineTo(gunX + 20, gunY - 1)
+    ctx.lineTo(gunX + 22, gunY + 1)
+    ctx.lineTo(gunX - 1, gunY + 1)
+    ctx.closePath()
     ctx.fill()
-    ctx.strokeStyle = '#555'
-    ctx.lineWidth = 0.3
-    roundRect(ctx, gunX + 5, gunY - 3.5, 10, 2.5, 0.5)
-    ctx.stroke()
-    // Charge bars (filled based on chargeTime from player)
+    // Capacitor coils on top (3 visible rings - unique to charger)
     const chargeT = (player as any).chargeTime || 0
+    for (let c = 0; c < 3; c++) {
+      const coilX = gunX + 3 + c * 6
+      const coilFill = Math.min(1, Math.max(0, (chargeT - c * 0.3) / 0.3))
+      // Coil housing
+      ctx.fillStyle = '#333'
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 3, 2.5, 0, Math.PI * 2)
+      ctx.fill()
+      // Coil ring
+      ctx.strokeStyle = '#444'
+      ctx.lineWidth = 0.5
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 3, 2.5, 0, Math.PI * 2)
+      ctx.stroke()
+      // Coil charge glow
+      if (coilFill > 0) {
+        const glowColor = c === 2 ? '#ff4400' : c === 1 ? '#ffaa00' : '#ff8800'
+        ctx.fillStyle = glowColor
+        ctx.shadowColor = glowColor
+        ctx.shadowBlur = 4
+        ctx.globalAlpha = 0.3 + coilFill * 0.7
+        ctx.beginPath()
+        ctx.arc(coilX, gunY - 3, 2 * coilFill, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.globalAlpha = 1
+        ctx.shadowBlur = 0
+      }
+      // Coil center dot
+      ctx.fillStyle = coilFill > 0.5 ? '#ffcc66' : '#222'
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 3, 0.8, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    // Connecting wires between coils
+    ctx.strokeStyle = '#ff8800'
+    ctx.globalAlpha = 0.3
+    ctx.lineWidth = 0.4
+    ctx.beginPath()
+    ctx.moveTo(gunX + 3, gunY - 1)
+    ctx.lineTo(gunX + 9, gunY - 1)
+    ctx.lineTo(gunX + 15, gunY - 1)
+    ctx.stroke()
+    ctx.globalAlpha = 1
+    // Side-mounted charge display (vertical bars on the side of body)
+    ctx.fillStyle = '#0a0a0a'
+    roundRect(ctx, gunX + 1, gunY + 2, 3, 5, 0.5)
+    ctx.fill()
     for (let b = 0; b < 3; b++) {
       const barFill = Math.min(1, Math.max(0, (chargeT - b * 0.3) / 0.3))
+      const barY = gunY + 5.5 - b * 1.5
       if (barFill > 0) {
         const barColor = b === 2 ? '#ff4400' : b === 1 ? '#ffaa00' : '#ff8800'
         ctx.fillStyle = barColor
         ctx.shadowColor = barColor
-        ctx.shadowBlur = 2
-        ctx.fillRect(gunX + 6 + b * 3, gunY - 3, 2.2 * barFill, 1.5)
+        ctx.shadowBlur = 1.5
+        ctx.fillRect(gunX + 1.3, barY, 2.4 * barFill, 1)
         ctx.shadowBlur = 0
       }
-      // Bar outline
-      ctx.strokeStyle = '#444'
+      ctx.strokeStyle = '#333'
       ctx.lineWidth = 0.2
-      ctx.strokeRect(gunX + 6 + b * 3, gunY - 3, 2.2, 1.5)
+      ctx.strokeRect(gunX + 1.3, barY, 2.4, 1)
     }
-    // Orange accent stripe
-    ctx.fillStyle = '#cc6600'
-    ctx.globalAlpha = 0.6
-    ctx.fillRect(gunX + 3, gunY + 2.5, 16, 0.8)
+    // Barrel assembly (cylindrical focusing tube - totally different from Pulse's flat barrel)
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX + 20, gunY + 0, 9, 7, 1)
+    ctx.fill()
+    // Focusing rings on barrel (3 orange rings)
+    for (let r = 0; r < 3; r++) {
+      ctx.strokeStyle = '#ff8800'
+      ctx.globalAlpha = 0.4 + (chargeT > 0 ? 0.3 : 0)
+      ctx.lineWidth = 0.6
+      ctx.beginPath()
+      ctx.arc(gunX + 22 + r * 2.5, gunY + 3.5, 3, 0, Math.PI * 2)
+      ctx.stroke()
+    }
     ctx.globalAlpha = 1
-    // Energy nodes
+    // Barrel bore (dark center)
+    ctx.fillStyle = '#111'
+    ctx.beginPath()
+    ctx.arc(gunX + 28, gunY + 3.5, 2, 0, Math.PI * 2)
+    ctx.fill()
+    // Barrel tip energy ring
+    ctx.strokeStyle = '#ff8800'
+    ctx.lineWidth = 0.6
+    ctx.beginPath()
+    ctx.arc(gunX + 28, gunY + 3.5, 2.2, 0, Math.PI * 2)
+    ctx.stroke()
+    // Barrel tip glow
     ctx.fillStyle = '#ff8800'
     ctx.shadowColor = '#ff8800'
-    ctx.shadowBlur = 2
-    ctx.fillRect(gunX + 5, gunY + 2.2, 1.5, 1.2)
-    ctx.fillRect(gunX + 10, gunY + 2.2, 1.5, 1.2)
+    ctx.shadowBlur = chargeT > 0 ? 4 + chargeT * 4 : 2
+    ctx.beginPath()
+    ctx.arc(gunX + 28, gunY + 3.5, 1.2, 0, Math.PI * 2)
+    ctx.fill()
     ctx.shadowBlur = 0
-    // Grip
-    ctx.fillStyle = '#222'
-    ctx.fillRect(gunX + 5, gunY + 6, 4, 5)
+    // Heat sink fins on bottom rear (unique feature)
+    ctx.fillStyle = '#383838'
+    for (let f = 0; f < 4; f++) {
+      ctx.fillRect(gunX + f * 3, gunY + 7.5, 2, 1.5)
+    }
+    // Heat sink glow between fins
+    ctx.fillStyle = '#cc6600'
+    ctx.globalAlpha = 0.25
+    for (let f = 0; f < 3; f++) {
+      ctx.fillRect(gunX + 2 + f * 3, gunY + 8, 1, 1)
+    }
+    ctx.globalAlpha = 1
+    // Foregrip (under barrel, near front - distinct from rear pistol grip)
+    ctx.fillStyle = '#282828'
+    roundRect(ctx, gunX + 16, gunY + 7, 3, 4, 0.8)
+    ctx.fill()
     ctx.fillStyle = '#333'
-    ctx.fillRect(gunX + 5.5, gunY + 7, 1, 3)
-    ctx.fillRect(gunX + 7.5, gunY + 7, 1, 3)
+    ctx.fillRect(gunX + 16.5, gunY + 7.5, 0.5, 3)
+    ctx.fillRect(gunX + 18, gunY + 7.5, 0.5, 3)
+    // Pistol grip (rear)
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 6, gunY + 7.5, 4, 5)
+    ctx.fillStyle = '#282828'
+    ctx.fillRect(gunX + 6.5, gunY + 8.5, 1, 3)
+    ctx.fillRect(gunX + 8.5, gunY + 8.5, 1, 3)
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.5
     ctx.beginPath()
-    ctx.moveTo(gunX + 6, gunY + 6)
-    ctx.quadraticCurveTo(gunX + 7.5, gunY + 10, gunX + 9, gunY + 6)
+    ctx.moveTo(gunX + 7, gunY + 7.5)
+    ctx.quadraticCurveTo(gunX + 8, gunY + 11, gunX + 10, gunY + 7.5)
     ctx.stroke()
     // Trigger
     ctx.fillStyle = '#555'
-    ctx.fillRect(gunX + 7, gunY + 7, 1, 2)
-    // Barrel (medium length, vented)
-    ctx.fillStyle = '#383838'
-    roundRect(ctx, gunX + 20, gunY + 0.5, 8, 5, 1)
-    ctx.fill()
-    // Barrel vents
-    ctx.fillStyle = '#222'
-    ctx.fillRect(gunX + 21, gunY + 1.5, 5, 0.5)
-    ctx.fillRect(gunX + 21, gunY + 3, 5, 0.5)
-    ctx.fillRect(gunX + 21, gunY + 4.5, 5, 0.5)
-    // Barrel tip glow
-    ctx.fillStyle = '#ff8800'
-    ctx.shadowColor = '#ff8800'
-    ctx.shadowBlur = 3
-    ctx.beginPath()
-    ctx.arc(gunX + 28, gunY + 3, 1.5, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Magazine
+    ctx.fillRect(gunX + 8, gunY + 8.5, 1, 2)
+    // Rear power cell (integrated, no separate magazine)
     ctx.fillStyle = '#1a1a1a'
-    roundRect(ctx, gunX + 3, gunY + 7, 5, 6, 1)
+    roundRect(ctx, gunX - 5, gunY + 0, 5, 7, 1.5)
     ctx.fill()
+    // Power cell energy window
     ctx.fillStyle = '#cc6600'
-    ctx.globalAlpha = 0.5
-    ctx.fillRect(gunX + 4, gunY + 9, 3, 3)
+    ctx.globalAlpha = 0.4
+    ctx.fillRect(gunX - 4, gunY + 2, 3, 3)
     ctx.globalAlpha = 1
-    // Stock
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX - 6, gunY + 0.5, 7, 5, 1.5)
-    ctx.fill()
-    ctx.fillStyle = '#1a1a1a'
-    ctx.fillRect(gunX - 6, gunY + 1, 1.5, 4)
+    // Power cell cap
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX - 5, gunY + 0.5, 5, 1)
   } else {
     // Blastop (default) - assault rifle with scope
     // Gun body / receiver
@@ -3551,94 +3610,140 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#222'
     ctx.fillRect(gunX - 10.5, gunY + 1, 1.2, 6)
   } else if (weapon === 'charger') {
-    // Charger - charge rifle with display panel, orange/amber (zoomed)
-    // Receiver
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX, gunY, 26, 9, 2)
+    // Charger - heavy energy cannon with capacitor coils (zoomed)
+    // Main housing (wide, boxy)
+    ctx.fillStyle = '#1e1e1e'
+    roundRect(ctx, gunX - 3, gunY - 1, 30, 11, 2.5)
     ctx.fill()
-    // Panel line
-    ctx.strokeStyle = '#1a1a1a'
-    ctx.lineWidth = 0.4
+    // Housing top plate (angular)
+    ctx.fillStyle = '#2e2e2e'
     ctx.beginPath()
-    ctx.moveTo(gunX + 2, gunY + 6.5)
-    ctx.lineTo(gunX + 22, gunY + 6.5)
-    ctx.stroke()
-    // Top rail
-    ctx.fillStyle = '#383838'
-    ctx.fillRect(gunX + 2, gunY - 1.5, 20, 2)
-    // Charge display panel
-    ctx.fillStyle = '#111'
-    roundRect(ctx, gunX + 6, gunY - 4.5, 12, 3, 0.8)
+    ctx.moveTo(gunX - 1, gunY - 1)
+    ctx.lineTo(gunX + 25, gunY - 1)
+    ctx.lineTo(gunX + 27, gunY + 1.5)
+    ctx.lineTo(gunX - 1, gunY + 1.5)
+    ctx.closePath()
     ctx.fill()
-    ctx.strokeStyle = '#555'
-    ctx.lineWidth = 0.4
-    roundRect(ctx, gunX + 6, gunY - 4.5, 12, 3, 0.8)
-    ctx.stroke()
-    // Charge bars (empty on home screen)
-    for (let b = 0; b < 3; b++) {
+    // Capacitor coils on top (3 rings)
+    for (let c = 0; c < 3; c++) {
+      const coilX = gunX + 4 + c * 8
+      // Coil housing
+      ctx.fillStyle = '#333'
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 4, 3.2, 0, Math.PI * 2)
+      ctx.fill()
+      // Coil ring
       ctx.strokeStyle = '#444'
-      ctx.lineWidth = 0.3
-      ctx.strokeRect(gunX + 7 + b * 3.5, gunY - 4, 2.8, 2)
+      ctx.lineWidth = 0.6
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 4, 3.2, 0, Math.PI * 2)
+      ctx.stroke()
+      // Coil center dot (uncharged on home screen)
+      ctx.fillStyle = '#222'
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 4, 1, 0, Math.PI * 2)
+      ctx.fill()
     }
-    // Orange accent stripe
-    ctx.fillStyle = '#cc6600'
-    ctx.globalAlpha = 0.6
-    ctx.fillRect(gunX + 3, gunY + 3.5, 20, 1)
+    // Connecting wires between coils
+    ctx.strokeStyle = '#ff8800'
+    ctx.globalAlpha = 0.3
+    ctx.lineWidth = 0.5
+    ctx.beginPath()
+    ctx.moveTo(gunX + 4, gunY - 1)
+    ctx.lineTo(gunX + 12, gunY - 1)
+    ctx.lineTo(gunX + 20, gunY - 1)
+    ctx.stroke()
     ctx.globalAlpha = 1
-    // Energy nodes
+    // Side-mounted charge display (vertical bars)
+    ctx.fillStyle = '#0a0a0a'
+    roundRect(ctx, gunX + 1, gunY + 3, 4, 6, 0.7)
+    ctx.fill()
+    for (let b = 0; b < 3; b++) {
+      const barY = gunY + 7.2 - b * 1.8
+      ctx.strokeStyle = '#333'
+      ctx.lineWidth = 0.3
+      ctx.strokeRect(gunX + 1.5, barY, 3, 1.2)
+    }
+    // Barrel assembly (cylindrical focusing tube)
+    ctx.fillStyle = '#2a2a2a'
+    roundRect(ctx, gunX + 25, gunY + 0, 12, 9, 1.5)
+    ctx.fill()
+    // Focusing rings on barrel (3 orange rings)
+    for (let r = 0; r < 3; r++) {
+      ctx.strokeStyle = '#ff8800'
+      ctx.globalAlpha = 0.4
+      ctx.lineWidth = 0.8
+      ctx.beginPath()
+      ctx.arc(gunX + 28 + r * 3, gunY + 4.5, 3.8, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+    ctx.globalAlpha = 1
+    // Barrel bore
+    ctx.fillStyle = '#111'
+    ctx.beginPath()
+    ctx.arc(gunX + 36, gunY + 4.5, 2.5, 0, Math.PI * 2)
+    ctx.fill()
+    // Barrel tip energy ring
+    ctx.strokeStyle = '#ff8800'
+    ctx.lineWidth = 0.8
+    ctx.beginPath()
+    ctx.arc(gunX + 36, gunY + 4.5, 2.8, 0, Math.PI * 2)
+    ctx.stroke()
+    // Barrel tip glow
     ctx.fillStyle = '#ff8800'
     ctx.shadowColor = '#ff8800'
     ctx.shadowBlur = 3
-    ctx.fillRect(gunX + 7, gunY + 3, 2.5, 1.5)
-    ctx.fillRect(gunX + 14, gunY + 3, 2.5, 1.5)
+    ctx.beginPath()
+    ctx.arc(gunX + 36, gunY + 4.5, 1.5, 0, Math.PI * 2)
+    ctx.fill()
     ctx.shadowBlur = 0
-    // Grip
-    ctx.fillStyle = '#222'
-    ctx.fillRect(gunX + 7, gunY + 8, 6, 7)
+    // Heat sink fins on bottom
+    ctx.fillStyle = '#383838'
+    for (let f = 0; f < 4; f++) {
+      ctx.fillRect(gunX + f * 4, gunY + 9.5, 2.5, 2)
+    }
+    // Heat sink glow
+    ctx.fillStyle = '#cc6600'
+    ctx.globalAlpha = 0.25
+    for (let f = 0; f < 3; f++) {
+      ctx.fillRect(gunX + 2.5 + f * 4, gunY + 10, 1.5, 1.5)
+    }
+    ctx.globalAlpha = 1
+    // Foregrip (under barrel)
+    ctx.fillStyle = '#282828'
+    roundRect(ctx, gunX + 20, gunY + 9, 4, 5, 1)
+    ctx.fill()
     ctx.fillStyle = '#333'
-    ctx.fillRect(gunX + 7.5, gunY + 9.5, 1.2, 4)
-    ctx.fillRect(gunX + 10.5, gunY + 9.5, 1.2, 4)
+    ctx.fillRect(gunX + 20.5, gunY + 10, 0.8, 3.5)
+    ctx.fillRect(gunX + 22.5, gunY + 10, 0.8, 3.5)
+    // Pistol grip (rear)
+    ctx.fillStyle = '#1a1a1a'
+    ctx.fillRect(gunX + 8, gunY + 10, 5, 7)
+    ctx.fillStyle = '#282828'
+    ctx.fillRect(gunX + 8.5, gunY + 11.5, 1.2, 4)
+    ctx.fillRect(gunX + 11, gunY + 11.5, 1.2, 4)
     // Trigger guard
     ctx.strokeStyle = '#444'
     ctx.lineWidth = 0.6
     ctx.beginPath()
-    ctx.moveTo(gunX + 8, gunY + 8)
-    ctx.quadraticCurveTo(gunX + 10, gunY + 14, gunX + 13, gunY + 8)
+    ctx.moveTo(gunX + 9, gunY + 10)
+    ctx.quadraticCurveTo(gunX + 10.5, gunY + 15, gunX + 13, gunY + 10)
     ctx.stroke()
     // Trigger
     ctx.fillStyle = '#555'
-    ctx.fillRect(gunX + 9.5, gunY + 10, 1.5, 3)
-    // Barrel
-    ctx.fillStyle = '#383838'
-    roundRect(ctx, gunX + 24, gunY + 0.5, 10, 7, 1.5)
-    ctx.fill()
-    // Barrel vents
-    ctx.fillStyle = '#222'
-    ctx.fillRect(gunX + 25, gunY + 2, 7, 0.7)
-    ctx.fillRect(gunX + 25, gunY + 4, 7, 0.7)
-    ctx.fillRect(gunX + 25, gunY + 6, 7, 0.7)
-    // Barrel tip glow
-    ctx.fillStyle = '#ff8800'
-    ctx.shadowColor = '#ff8800'
-    ctx.shadowBlur = 4
-    ctx.beginPath()
-    ctx.arc(gunX + 34, gunY + 4, 2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Magazine
+    ctx.fillRect(gunX + 10, gunY + 11.5, 1.5, 2.5)
+    // Rear power cell (integrated)
     ctx.fillStyle = '#1a1a1a'
-    roundRect(ctx, gunX + 4, gunY + 9, 6, 8, 1)
+    roundRect(ctx, gunX - 7, gunY + 0, 6, 9, 2)
     ctx.fill()
+    // Power cell energy window
     ctx.fillStyle = '#cc6600'
-    ctx.globalAlpha = 0.5
-    ctx.fillRect(gunX + 5, gunY + 12, 4, 4)
+    ctx.globalAlpha = 0.4
+    ctx.fillRect(gunX - 5.5, gunY + 3, 3.5, 4)
     ctx.globalAlpha = 1
-    // Stock
-    ctx.fillStyle = '#2a2a2a'
-    roundRect(ctx, gunX - 9, gunY + 0.5, 11, 7, 2)
-    ctx.fill()
-    ctx.fillStyle = '#1a1a1a'
-    ctx.fillRect(gunX - 9, gunY + 1, 2, 6)
+    // Power cell cap
+    ctx.fillStyle = '#333'
+    ctx.fillRect(gunX - 7, gunY + 0.5, 6, 1.5)
   } else {
     // Blastop (default) - assault rifle with scope
     // Receiver
