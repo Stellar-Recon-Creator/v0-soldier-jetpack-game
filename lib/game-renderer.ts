@@ -1797,7 +1797,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
       ctx.arc(gunX + 2 + rv * 5.5, gunY - 0.3, 0.4, 0, Math.PI * 2)
       ctx.fill()
     }
-    // Capacitor coils on top (3 wound coils - unique to charger)
+    // Capacitor coils on top (3 flat 2D coils - unique to charger)
     const chargeT = (player as any).chargeTime || 0
     for (let c = 0; c < 3; c++) {
       const coilX = gunX + 3 + c * 6
@@ -1805,37 +1805,31 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
       // Coil base mount
       ctx.fillStyle = '#2a2a2a'
       ctx.fillRect(coilX - 1.5, gunY - 1.5, 3, 1.5)
-      // Coil windings (stacked rings to look wound)
+      // Coil body (flat rectangle)
+      ctx.fillStyle = '#333'
+      ctx.fillRect(coilX - 2.5, gunY - 5.5, 5, 4)
+      // Coil winding lines (horizontal stripes)
+      ctx.strokeStyle = coilFill > 0 ? '#666' : '#444'
+      ctx.lineWidth = 0.6
       for (let w = 0; w < 3; w++) {
         const windY = gunY - 2.5 - w * 1.2
-        ctx.strokeStyle = coilFill > 0 ? '#666' : '#444'
-        ctx.lineWidth = 0.8
         ctx.beginPath()
-        ctx.ellipse(coilX, windY, 2.5, 0.8, 0, 0, Math.PI * 2)
+        ctx.moveTo(coilX - 2.5, windY)
+        ctx.lineTo(coilX + 2.5, windY)
         ctx.stroke()
-        ctx.fillStyle = '#2a2a2a'
-        ctx.beginPath()
-        ctx.ellipse(coilX, windY, 2, 0.5, 0, 0, Math.PI * 2)
-        ctx.fill()
       }
-      // Coil top cap
-      ctx.fillStyle = '#333'
-      ctx.beginPath()
-      ctx.ellipse(coilX, gunY - 5.2, 2.5, 0.8, 0, 0, Math.PI * 2)
-      ctx.fill()
-      // Coil charge glow (fills between windings)
+      // Coil outline
+      ctx.strokeStyle = '#444'
+      ctx.lineWidth = 0.5
+      ctx.strokeRect(coilX - 2.5, gunY - 5.5, 5, 4)
+      // Coil charge glow
       if (coilFill > 0) {
         const glowColor = c === 2 ? '#ff4400' : c === 1 ? '#ffaa00' : '#ff8800'
         ctx.fillStyle = glowColor
         ctx.shadowColor = glowColor
         ctx.shadowBlur = 4
         ctx.globalAlpha = 0.3 + coilFill * 0.7
-        for (let w = 0; w < 3; w++) {
-          const windY = gunY - 2.5 - w * 1.2
-          ctx.beginPath()
-          ctx.ellipse(coilX, windY, 1.8 * coilFill, 0.5 * coilFill, 0, 0, Math.PI * 2)
-          ctx.fill()
-        }
+        ctx.fillRect(coilX - 2, gunY - 5, 4, 3 * coilFill)
         ctx.globalAlpha = 1
         ctx.shadowBlur = 0
       }
@@ -3710,30 +3704,29 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.lineTo(gunX - 1, gunY + 1.5)
     ctx.closePath()
     ctx.fill()
-    // Capacitor coils on top (3 wound coils)
+    // Capacitor coils on top (3 flat 2D coils)
     for (let c = 0; c < 3; c++) {
       const coilX = gunX + 4 + c * 8
       // Coil base mount
       ctx.fillStyle = '#2a2a2a'
       ctx.fillRect(coilX - 2, gunY - 2, 4, 2)
-      // Coil windings (stacked rings)
+      // Coil body (flat rectangle)
+      ctx.fillStyle = '#333'
+      ctx.fillRect(coilX - 3.2, gunY - 7, 6.4, 5)
+      // Coil winding lines (horizontal stripes)
+      ctx.strokeStyle = '#444'
+      ctx.lineWidth = 0.8
       for (let w = 0; w < 3; w++) {
         const windY = gunY - 3.2 - w * 1.5
-        ctx.strokeStyle = '#444'
-        ctx.lineWidth = 1
         ctx.beginPath()
-        ctx.ellipse(coilX, windY, 3.2, 1, 0, 0, Math.PI * 2)
+        ctx.moveTo(coilX - 3.2, windY)
+        ctx.lineTo(coilX + 3.2, windY)
         ctx.stroke()
-        ctx.fillStyle = '#2a2a2a'
-        ctx.beginPath()
-        ctx.ellipse(coilX, windY, 2.5, 0.6, 0, 0, Math.PI * 2)
-        ctx.fill()
       }
-      // Coil top cap
-      ctx.fillStyle = '#333'
-      ctx.beginPath()
-      ctx.ellipse(coilX, gunY - 7, 3.2, 1, 0, 0, Math.PI * 2)
-      ctx.fill()
+      // Coil outline
+      ctx.strokeStyle = '#444'
+      ctx.lineWidth = 0.6
+      ctx.strokeRect(coilX - 3.2, gunY - 7, 6.4, 5)
     }
     // Connecting wires between coils
     ctx.strokeStyle = '#ff8800'
