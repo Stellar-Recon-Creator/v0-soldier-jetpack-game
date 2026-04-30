@@ -1852,33 +1852,34 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.arc(gunX + 12, gunY - 1.5, 0.5, 0, Math.PI * 2)
     ctx.fill()
     ctx.globalAlpha = 1
-    // Side-mounted charge display (extended left, 3 bars)
-    const dispX = gunX - 7
-    const dispW = 10
-    const dispH = 7
-    ctx.fillStyle = '#0a0a0a'
-    roundRect(ctx, dispX, gunY + 1, dispW, dispH, 1)
-    ctx.fill()
-    // Display border
-    ctx.strokeStyle = '#333'
-    ctx.lineWidth = 0.4
-    roundRect(ctx, dispX, gunY + 1, dispW, dispH, 1)
-    ctx.stroke()
-    // 3 charge bars
+    // Charge bars across gun body (3 vertical bars spanning the housing)
+    const barW = 5
+    const barGap = 2
+    const totalBarsW = 3 * barW + 2 * barGap
+    const barsStartX = gunX + (20 - totalBarsW) / 2
     for (let b = 0; b < 3; b++) {
       const barFill = Math.min(1, Math.max(0, (chargeT - b * 0.3) / 0.3))
-      const barY = gunY + 6 - b * 1.8
+      const bx = barsStartX + b * (barW + barGap)
+      // Bar slot (always visible, dark recess)
+      ctx.fillStyle = '#0a0a0a'
+      ctx.fillRect(bx, gunY + 0, barW, 7)
+      ctx.strokeStyle = '#2a2a2a'
+      ctx.lineWidth = 0.3
+      ctx.strokeRect(bx, gunY + 0, barW, 7)
+      // Unlit bar outline (visible even when not charged)
+      ctx.strokeStyle = '#332200'
+      ctx.lineWidth = 0.4
+      ctx.strokeRect(bx + 0.5, gunY + 0.5, barW - 1, 6)
+      // Lit bar fill (fills bottom-up)
       if (barFill > 0) {
         const barColor = b === 2 ? '#ff2200' : b === 1 ? '#ffaa00' : '#ff9933'
+        const fillH = 6 * barFill
         ctx.fillStyle = barColor
         ctx.shadowColor = barColor
-        ctx.shadowBlur = 2
-        ctx.fillRect(dispX + 1, barY, (dispW - 2) * barFill, 1.2)
+        ctx.shadowBlur = 3
+        ctx.fillRect(bx + 0.5, gunY + 6.5 - fillH, barW - 1, fillH)
         ctx.shadowBlur = 0
       }
-      ctx.strokeStyle = '#2a2a2a'
-      ctx.lineWidth = 0.2
-      ctx.strokeRect(dispX + 1, barY, dispW - 2, 1.2)
     }
     // Barrel assembly (cylindrical focusing tube - totally different from Pulse's flat barrel)
     ctx.fillStyle = '#2a2a2a'
@@ -3731,15 +3732,22 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.lineTo(gunX + 20, gunY - 1)
     ctx.stroke()
     ctx.globalAlpha = 1
-    // Side-mounted charge display (vertical bars)
-    ctx.fillStyle = '#0a0a0a'
-    roundRect(ctx, gunX + 1, gunY + 3, 4, 6, 0.7)
-    ctx.fill()
+    // Charge bars across gun body (3 vertical bars spanning housing - unlit on menu)
+    const zBarW = 6
+    const zBarGap = 2.5
+    const zTotalW = 3 * zBarW + 2 * zBarGap
+    const zBarsX = gunX + (25 - zTotalW) / 2
     for (let b = 0; b < 3; b++) {
-      const barY = gunY + 7.2 - b * 1.8
-      ctx.strokeStyle = '#333'
-      ctx.lineWidth = 0.3
-      ctx.strokeRect(gunX + 1.5, barY, 3, 1.2)
+      const bx = zBarsX + b * (zBarW + zBarGap)
+      ctx.fillStyle = '#0a0a0a'
+      ctx.fillRect(bx, gunY + 0.5, zBarW, 9)
+      ctx.strokeStyle = '#2a2a2a'
+      ctx.lineWidth = 0.4
+      ctx.strokeRect(bx, gunY + 0.5, zBarW, 9)
+      // Unlit bar outline
+      ctx.strokeStyle = '#332200'
+      ctx.lineWidth = 0.5
+      ctx.strokeRect(bx + 0.8, gunY + 1, zBarW - 1.6, 8)
     }
     // Barrel assembly (cylindrical focusing tube)
     ctx.fillStyle = '#2a2a2a'
