@@ -527,8 +527,10 @@ export default function GameCanvas() {
                   if (el) {
                     const ctx = el.getContext('2d')
                     if (ctx) {
-                      el.width = 500
-                      el.height = 200
+                      const dpr = window.devicePixelRatio || 1
+                      el.width = 500 * dpr
+                      el.height = 200 * dpr
+                      ctx.scale(dpr, dpr)
                       ctx.clearRect(0, 0, 500, 200)
                       const jpVis = Math.max(gearLevels.power, gearLevels.fuel)
                       const arVis = Math.max(gearLevels.durability, gearLevels.weight)
@@ -539,7 +541,7 @@ export default function GameCanvas() {
                 key={`${equippedWeapon}-${JSON.stringify(gearLevels)}`}
                 width={500}
                 height={200}
-                style={{ imageRendering: 'pixelated' }}
+                style={{ width: '500px', height: '200px' }}
               />
             </div>
             
