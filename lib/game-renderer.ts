@@ -1260,166 +1260,146 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.arc(gunX - 7, gunY + 5, 0.8, 0, Math.PI * 2)
     ctx.fill()
   } else if (weapon === 'homer') {
-    // HOMER - alien bio-tech: segmented chitin spine, floating sensor orb,
-    // crystalline prong muzzle. Inspired by lerange's range/precision role
-    // but with an organic, asymmetric silhouette instead of a rifle outline.
+    // HOMER - PULSE x LERANGE hybrid: lerange's long-barrel sniper silhouette
+    // with pulse's sleek polymer receiver, energy stripes, vent slits,
+    // and tip ring. Orange-red energy palette.
 
-    // Rear bulb - organic core (replaces stock + receiver)
-    ctx.fillStyle = '#1a3a2a'
-    ctx.beginPath()
-    ctx.ellipse(gunX + 1, gunY + 3, 7, 5, 0, 0, Math.PI * 2)
+    // Receiver - polymer body, pulse-style sleekness but lerange-length
+    ctx.fillStyle = '#2a1a1a'
+    roundRect(ctx, gunX, gunY, 22, 7, 1.5)
     ctx.fill()
-    ctx.fillStyle = '#2a5a3a'
+    // Receiver panel line
+    ctx.strokeStyle = '#1a0a0a'
+    ctx.lineWidth = 0.3
     ctx.beginPath()
-    ctx.ellipse(gunX + 1, gunY + 1.8, 5.5, 2.8, 0, 0, Math.PI * 2)
-    ctx.fill()
-    // Pulsing core inside rear bulb
-    ctx.fillStyle = '#aaff66'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 4
-    ctx.beginPath()
-    ctx.arc(gunX + 1, gunY + 2.8, 1.2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Whisker antenna trailing back-up from rear bulb
-    ctx.strokeStyle = '#3a6a4a'
-    ctx.lineWidth = 0.6
-    ctx.beginPath()
-    ctx.moveTo(gunX - 4, gunY + 1)
-    ctx.quadraticCurveTo(gunX - 8, gunY - 3, gunX - 7, gunY - 6)
+    ctx.moveTo(gunX + 2, gunY + 5)
+    ctx.lineTo(gunX + 18, gunY + 5)
     ctx.stroke()
-    ctx.fillStyle = '#88ff44'
-    ctx.beginPath()
-    ctx.arc(gunX - 7, gunY - 6, 0.7, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Segmented chitin spine - 3 plate segments instead of straight barrel
-    for (let i = 0; i < 3; i++) {
-      const sx = gunX + 8 + i * 5.5
-      // Plate body (oval segment)
-      ctx.fillStyle = '#2a5a3a'
-      ctx.beginPath()
-      ctx.ellipse(sx + 2.5, gunY + 2.5, 3.2, 2.2, 0, 0, Math.PI * 2)
-      ctx.fill()
-      // Plate underside shadow
-      ctx.fillStyle = '#1a3a2a'
-      ctx.beginPath()
-      ctx.ellipse(sx + 2.5, gunY + 3.5, 3.2, 1.3, 0, 0, Math.PI * 2)
-      ctx.fill()
-      // Glow seam between segments
-      ctx.fillStyle = '#88ff44'
-      ctx.shadowColor = '#88ff44'
-      ctx.shadowBlur = 3
-      ctx.fillRect(sx - 0.3, gunY + 1.6, 0.7, 1.8)
-      ctx.shadowBlur = 0
+    // Top rail with notches (pulse-style)
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX + 2, gunY - 1, 16, 1.5)
+    ctx.fillStyle = '#2a1a1a'
+    for (let i = 0; i < 6; i++) {
+      ctx.fillRect(gunX + 3 + i * 2.5, gunY - 1, 0.5, 1.5)
     }
-
-    // Crystalline projector tip - tapered hexagonal crystal
-    ctx.fillStyle = '#1a3a2a'
-    ctx.beginPath()
-    ctx.moveTo(gunX + 25, gunY + 0.8)
-    ctx.lineTo(gunX + 33, gunY + 0.2)
-    ctx.lineTo(gunX + 38, gunY + 2.5)
-    ctx.lineTo(gunX + 33, gunY + 4.8)
-    ctx.lineTo(gunX + 25, gunY + 4.2)
-    ctx.closePath()
+    // Compact sight cluster (lerange-light, mid-rail)
+    ctx.fillStyle = '#3a2222'
+    roundRect(ctx, gunX + 7, gunY - 4, 8, 3, 1)
     ctx.fill()
-    // Crystal facet highlight
-    ctx.fillStyle = '#3a6a4a'
-    ctx.beginPath()
-    ctx.moveTo(gunX + 26, gunY + 1.5)
-    ctx.lineTo(gunX + 32, gunY + 1)
-    ctx.lineTo(gunX + 35, gunY + 2.5)
-    ctx.lineTo(gunX + 32, gunY + 4)
-    ctx.lineTo(gunX + 26, gunY + 3.5)
-    ctx.closePath()
-    ctx.fill()
-    // Glowing aperture at muzzle tip
-    ctx.fillStyle = '#aaff66'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 5
-    ctx.beginPath()
-    ctx.arc(gunX + 35, gunY + 2.5, 1.3, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Split prongs / claws extending past the muzzle
-    ctx.strokeStyle = '#3a6a4a'
-    ctx.lineWidth = 0.7
-    ctx.beginPath()
-    ctx.moveTo(gunX + 36, gunY + 0.8)
-    ctx.quadraticCurveTo(gunX + 39, gunY - 0.5, gunX + 40.5, gunY - 1.2)
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.moveTo(gunX + 36, gunY + 4.2)
-    ctx.quadraticCurveTo(gunX + 39, gunY + 5.5, gunX + 40.5, gunY + 6.2)
-    ctx.stroke()
-    // Glow tips on prongs
-    ctx.fillStyle = '#88ff44'
-    ctx.shadowColor = '#88ff44'
+    ctx.fillStyle = '#ff7733'
+    ctx.shadowColor = '#ff5522'
     ctx.shadowBlur = 3
     ctx.beginPath()
-    ctx.arc(gunX + 40.5, gunY - 1.2, 0.5, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.beginPath()
-    ctx.arc(gunX + 40.5, gunY + 6.2, 0.5, 0, Math.PI * 2)
+    ctx.arc(gunX + 13, gunY - 2.5, 1.2, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
-
-    // Floating sensor orb (replaces scope) - hovers above mid-spine on a tendril
-    ctx.strokeStyle = '#2a5a3a'
-    ctx.lineWidth = 0.9
+    ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
-    ctx.moveTo(gunX + 13, gunY + 1)
-    ctx.quadraticCurveTo(gunX + 13, gunY - 2, gunX + 14, gunY - 4)
+    ctx.arc(gunX + 13, gunY - 2.5, 0.4, 0, Math.PI * 2)
+    ctx.fill()
+    // Energy accent stripe (pulse-style)
+    ctx.fillStyle = '#cc3311'
+    ctx.globalAlpha = 0.6
+    ctx.fillRect(gunX + 3, gunY + 2.5, 16, 0.8)
+    ctx.globalAlpha = 1
+    // Pulsing energy dots along stripe
+    ctx.fillStyle = '#ff5522'
+    ctx.shadowColor = '#ff5522'
+    ctx.shadowBlur = 3
+    ctx.fillRect(gunX + 5, gunY + 2.2, 2, 1.2)
+    ctx.fillRect(gunX + 10, gunY + 2.2, 2, 1.2)
+    ctx.fillRect(gunX + 15, gunY + 2.2, 2.5, 1.2)
+    ctx.shadowBlur = 0
+    // Grip
+    ctx.fillStyle = '#1a0a0a'
+    ctx.fillRect(gunX + 6, gunY + 6, 5, 6)
+    ctx.strokeStyle = '#0a0000'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 6, gunY + 7 + i * 1.5)
+      ctx.lineTo(gunX + 11, gunY + 7 + i * 1.5)
+      ctx.stroke()
+    }
+    // Trigger guard
+    ctx.strokeStyle = '#3a2222'
+    ctx.lineWidth = 0.6
+    ctx.beginPath()
+    ctx.moveTo(gunX + 6, gunY + 6)
+    ctx.quadraticCurveTo(gunX + 8.5, gunY + 11, gunX + 11, gunY + 6)
     ctx.stroke()
-    // Orb shell
-    ctx.fillStyle = '#0a2a1a'
-    ctx.beginPath()
-    ctx.arc(gunX + 14, gunY - 5, 3.4, 0, Math.PI * 2)
+    // Trigger
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX + 7.5, gunY + 7, 1.2, 2.5)
+    // Long sniper barrel (lerange-style length, pulse-style vent slits)
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX + 20, gunY + 1, 16, 5)
+    // Barrel inner top lining
+    ctx.fillStyle = '#1a0a0a'
+    ctx.fillRect(gunX + 20.5, gunY + 1.4, 15, 0.5)
+    // Horizontal vent slits along barrel (pulse vents on a long lerange barrel)
+    ctx.fillStyle = '#1a0a0a'
+    ctx.fillRect(gunX + 21, gunY + 2.4, 14, 0.5)
+    ctx.fillRect(gunX + 21, gunY + 4.2, 14, 0.5)
+    // Vent glow behind slits (orange-red)
+    ctx.fillStyle = '#ff5522'
+    ctx.globalAlpha = 0.35
+    ctx.fillRect(gunX + 21, gunY + 2.4, 14, 0.5)
+    ctx.fillRect(gunX + 21, gunY + 4.2, 14, 0.5)
+    ctx.globalAlpha = 1
+    // Barrel tip ring (pulse-style)
+    ctx.fillStyle = '#3a2222'
+    roundRect(ctx, gunX + 35, gunY + 0, 4, 7, 1)
     ctx.fill()
-    // Orb iris
-    ctx.fillStyle = '#aaff66'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 6
+    ctx.strokeStyle = '#cc3311'
+    ctx.lineWidth = 0.5
     ctx.beginPath()
-    ctx.arc(gunX + 14, gunY - 5, 2.6, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Pupil
-    ctx.fillStyle = '#0a2a0a'
-    ctx.beginPath()
-    ctx.arc(gunX + 14, gunY - 5, 0.9, 0, Math.PI * 2)
-    ctx.fill()
-    // Pupil glint
-    ctx.fillStyle = '#ddffaa'
-    ctx.beginPath()
-    ctx.arc(gunX + 13.4, gunY - 5.5, 0.4, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Asymmetric feeder pod (under-mount, organic)
-    ctx.fillStyle = '#1a2a1a'
-    ctx.beginPath()
-    ctx.ellipse(gunX + 6, gunY + 8, 3, 4, -0.25, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.fillStyle = '#0a1a0a'
-    ctx.beginPath()
-    ctx.ellipse(gunX + 7, gunY + 11, 2.5, 1.4, 0, 0, Math.PI * 2)
-    ctx.fill()
-    // Feeder vein glow
-    ctx.fillStyle = '#44cc88'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 2
-    ctx.beginPath()
-    ctx.arc(gunX + 6, gunY + 7.5, 1, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Connecting tendril from spine to pod
-    ctx.strokeStyle = '#2a4a3a'
-    ctx.lineWidth = 0.7
-    ctx.beginPath()
-    ctx.moveTo(gunX + 6, gunY + 4.5)
-    ctx.lineTo(gunX + 6, gunY + 6)
+    ctx.arc(gunX + 37, gunY + 3.5, 2.2, 0, Math.PI * 2)
     ctx.stroke()
+    // Glowing aperture core
+    ctx.fillStyle = '#ff7733'
+    ctx.shadowColor = '#ff5522'
+    ctx.shadowBlur = 5
+    ctx.beginPath()
+    ctx.arc(gunX + 37, gunY + 3.5, 1.4, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    ctx.fillStyle = '#ffaa44'
+    ctx.beginPath()
+    ctx.arc(gunX + 37, gunY + 3.5, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    // Energy cell magazine (pulse-style)
+    ctx.fillStyle = '#1a0a0a'
+    roundRect(ctx, gunX + 2, gunY + 6, 4, 7, 1)
+    ctx.fill()
+    ctx.strokeStyle = '#3a2222'
+    ctx.lineWidth = 0.3
+    roundRect(ctx, gunX + 2, gunY + 6, 4, 7, 1)
+    ctx.stroke()
+    // Magazine energy fill
+    ctx.fillStyle = '#cc3311'
+    ctx.globalAlpha = 0.55
+    ctx.fillRect(gunX + 2.6, gunY + 8.5, 2.8, 4)
+    ctx.globalAlpha = 1
+    // Magazine glow line
+    ctx.fillStyle = '#ff5522'
+    ctx.globalAlpha = 0.7
+    ctx.fillRect(gunX + 3, gunY + 7.5, 2.2, 0.5)
+    ctx.globalAlpha = 1
+    // Stock - medium length (between pulse stub and lerange long stock)
+    ctx.fillStyle = '#2a1a1a'
+    roundRect(ctx, gunX - 9, gunY + 0.5, 11, 6, 1.5)
+    ctx.fill()
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX - 7, gunY + 1.5, 7, 2.5)
+    // Stock energy accent (pulse stripe carried into the stock)
+    ctx.fillStyle = '#cc3311'
+    ctx.globalAlpha = 0.5
+    ctx.fillRect(gunX - 7, gunY + 4.5, 7, 0.6)
+    ctx.globalAlpha = 1
+    // Butt plate
+    ctx.fillStyle = '#0a0000'
+    ctx.fillRect(gunX - 9, gunY + 1, 1.5, 5)
   } else if (weapon === 'hypershot') {
     // Hypershot - wide big barrel, no scope
     // Receiver (wide)
@@ -2327,16 +2307,16 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     const isEnergy = weapon === 'plasma' || weapon === 'pulse'
     const isCharger = weapon === 'charger'
     const isHomer = weapon === 'homer'
-    flashGrad.addColorStop(0.2, isHomer ? '#ddffaa' : isCharger ? '#ffff88' : isEnergy ? (weapon === 'pulse' ? '#8899ff' : '#ddaaff') : '#ffffaa')
-    flashGrad.addColorStop(0.4, isHomer ? '#88ff44' : isCharger ? '#ffdd00' : isEnergy ? (weapon === 'pulse' ? '#3355ff' : '#aa66ff') : '#ffaa00')
-    flashGrad.addColorStop(0.7, isHomer ? '#44aa22' : isCharger ? '#ccaa00' : isEnergy ? (weapon === 'pulse' ? '#1a33aa' : '#6622aa') : '#ff6600')
-    flashGrad.addColorStop(1, isHomer ? 'rgba(68,170,34,0)' : isCharger ? 'rgba(204,102,0,0)' : isEnergy ? (weapon === 'pulse' ? 'rgba(26,51,170,0)' : 'rgba(102,34,170,0)') : 'rgba(255,100,0,0)')
+    flashGrad.addColorStop(0.2, isHomer ? '#ffcc88' : isCharger ? '#ffff88' : isEnergy ? (weapon === 'pulse' ? '#8899ff' : '#ddaaff') : '#ffffaa')
+    flashGrad.addColorStop(0.4, isHomer ? '#ff7733' : isCharger ? '#ffdd00' : isEnergy ? (weapon === 'pulse' ? '#3355ff' : '#aa66ff') : '#ffaa00')
+    flashGrad.addColorStop(0.7, isHomer ? '#cc3311' : isCharger ? '#ccaa00' : isEnergy ? (weapon === 'pulse' ? '#1a33aa' : '#6622aa') : '#ff6600')
+    flashGrad.addColorStop(1, isHomer ? 'rgba(204,51,17,0)' : isCharger ? 'rgba(204,102,0,0)' : isEnergy ? (weapon === 'pulse' ? 'rgba(26,51,170,0)' : 'rgba(102,34,170,0)') : 'rgba(255,100,0,0)')
     ctx.fillStyle = flashGrad
     ctx.beginPath()
     ctx.arc(muzzleX, gunY + 2, 12, 0, Math.PI * 2)
     ctx.fill()
     // Flash spikes
-    ctx.strokeStyle = weapon === 'homer' ? '#aaff66' : weapon === 'charger' ? '#ffee44' : weapon === 'pulse' ? '#5588ff' : weapon === 'plasma' ? '#cc88ff' : '#ffdd44'
+    ctx.strokeStyle = weapon === 'homer' ? '#ff7733' : weapon === 'charger' ? '#ffee44' : weapon === 'pulse' ? '#5588ff' : weapon === 'plasma' ? '#cc88ff' : '#ffdd44'
     ctx.lineWidth = 1.5
     ctx.globalAlpha = 0.6
     for (let i = 0; i < 4; i++) {
@@ -3351,245 +3331,180 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.arc(gunX - 10, gunY + 8, 1, 0, Math.PI * 2)
     ctx.fill()
   } else if (weapon === 'homer') {
-    // HOMER - alien bio-tech sniper, inspired by LERANGE (range/precision role)
-    // but with a wholly organic silhouette: segmented chitin spine, hovering
-    // sensor orb, crystal prong muzzle, asymmetric feeder pod, no rifle stock.
+    // HOMER - PULSE x LERANGE hybrid (zoomed): lerange's long-barrel sniper
+    // length with pulse's sleek polymer receiver, energy stripes, vent slits,
+    // and tip ring. Orange-red energy palette.
 
-    // Rear bulb / core - replaces stock + receiver as one organic mass
-    ctx.fillStyle = '#1a3a2a'
-    ctx.beginPath()
-    ctx.ellipse(gunX - 2, gunY + 4, 12, 8, 0, 0, Math.PI * 2)
+    // Receiver - long sleek polymer body
+    ctx.fillStyle = '#2a1a1a'
+    roundRect(ctx, gunX, gunY, 30, 9, 2)
     ctx.fill()
-    // Bulb plate highlight
-    ctx.fillStyle = '#2a5a3a'
+    // Receiver panel line
+    ctx.strokeStyle = '#1a0a0a'
+    ctx.lineWidth = 0.4
     ctx.beginPath()
-    ctx.ellipse(gunX - 2, gunY + 1.5, 9, 4.5, 0, 0, Math.PI * 2)
+    ctx.moveTo(gunX + 2, gunY + 6.5)
+    ctx.lineTo(gunX + 26, gunY + 6.5)
+    ctx.stroke()
+    // Top rail with notches (pulse-style)
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX + 2, gunY - 1.5, 22, 2)
+    ctx.fillStyle = '#2a1a1a'
+    for (let i = 0; i < 8; i++) {
+      ctx.fillRect(gunX + 3 + i * 2.5, gunY - 1.5, 0.6, 2)
+    }
+    // Mid-mount sight cluster (lerange-light, no full scope tube)
+    ctx.fillStyle = '#3a2222'
+    roundRect(ctx, gunX + 9, gunY - 5, 12, 4, 1.5)
     ctx.fill()
-    // Bulb glow vein - traces along underside
-    ctx.strokeStyle = '#88ff44'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 4
+    ctx.fillStyle = '#2a1a1a'
+    ctx.fillRect(gunX + 10, gunY - 4.5, 10, 1)
+    // Sight outer lens
+    ctx.fillStyle = '#cc3311'
+    ctx.globalAlpha = 0.6
+    ctx.beginPath()
+    ctx.arc(gunX + 18, gunY - 3, 2, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Sight inner glow
+    ctx.fillStyle = '#ff7733'
+    ctx.shadowColor = '#ff5522'
+    ctx.shadowBlur = 5
+    ctx.beginPath()
+    ctx.arc(gunX + 18, gunY - 3, 1.4, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    // Sight pupil
+    ctx.fillStyle = '#1a0a0a'
+    ctx.beginPath()
+    ctx.arc(gunX + 18, gunY - 3, 0.5, 0, Math.PI * 2)
+    ctx.fill()
+    // Sight glint
+    ctx.fillStyle = '#ffaa44'
+    ctx.beginPath()
+    ctx.arc(gunX + 17.5, gunY - 3.5, 0.4, 0, Math.PI * 2)
+    ctx.fill()
+    // Energy accent stripe along receiver
+    ctx.fillStyle = '#cc3311'
+    ctx.globalAlpha = 0.6
+    ctx.fillRect(gunX + 3, gunY + 3.5, 22, 1)
+    ctx.globalAlpha = 1
+    // Pulsing energy dots along stripe
+    ctx.fillStyle = '#ff5522'
+    ctx.shadowColor = '#ff5522'
+    ctx.shadowBlur = 5
+    ctx.fillRect(gunX + 6, gunY + 3, 3, 1.5)
+    ctx.fillRect(gunX + 13, gunY + 3, 3, 1.5)
+    ctx.fillRect(gunX + 20, gunY + 3, 3, 1.5)
+    ctx.shadowBlur = 0
+    // Ejection port
+    ctx.fillStyle = '#1a0a0a'
+    ctx.fillRect(gunX + 22, gunY + 0.5, 3, 2.5)
+    // Grip
+    ctx.fillStyle = '#1a0a0a'
+    ctx.fillRect(gunX + 10, gunY + 8, 5, 7)
+    ctx.strokeStyle = '#0a0000'
+    ctx.lineWidth = 0.3
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.moveTo(gunX + 10, gunY + 9 + i * 1.5)
+      ctx.lineTo(gunX + 15, gunY + 9 + i * 1.5)
+      ctx.stroke()
+    }
+    // Trigger guard
+    ctx.strokeStyle = '#3a2222'
     ctx.lineWidth = 0.8
     ctx.beginPath()
-    ctx.moveTo(gunX - 12, gunY + 6)
-    ctx.quadraticCurveTo(gunX - 2, gunY + 9, gunX + 8, gunY + 5)
+    ctx.moveTo(gunX + 10, gunY + 8)
+    ctx.quadraticCurveTo(gunX + 12.5, gunY + 14, gunX + 15, gunY + 8)
     ctx.stroke()
-    ctx.shadowBlur = 0
-    // Pulsing core inside bulb
-    ctx.fillStyle = '#aaff66'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 6
-    ctx.beginPath()
-    ctx.arc(gunX - 2, gunY + 4, 2, 0, Math.PI * 2)
+    // Trigger
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX + 12, gunY + 9.5, 1.4, 3)
+    // Long sniper barrel (lerange length)
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX + 28, gunY + 1.5, 22, 6)
+    // Barrel inner top lining
+    ctx.fillStyle = '#1a0a0a'
+    ctx.fillRect(gunX + 28.5, gunY + 2, 21, 0.6)
+    // Horizontal vent slits along barrel (pulse vents on a lerange barrel)
+    ctx.fillStyle = '#1a0a0a'
+    ctx.fillRect(gunX + 29, gunY + 3.2, 20, 0.6)
+    ctx.fillRect(gunX + 29, gunY + 5.2, 20, 0.6)
+    // Vent glow behind slits
+    ctx.fillStyle = '#ff5522'
+    ctx.globalAlpha = 0.4
+    ctx.fillRect(gunX + 29, gunY + 3.2, 20, 0.6)
+    ctx.fillRect(gunX + 29, gunY + 5.2, 20, 0.6)
+    ctx.globalAlpha = 1
+    // Barrel mid-band reinforcement
+    ctx.fillStyle = '#2a1a1a'
+    ctx.fillRect(gunX + 38, gunY + 1.5, 1.5, 6)
+    // Barrel tip housing
+    ctx.fillStyle = '#3a2222'
+    roundRect(ctx, gunX + 49, gunY + 0.5, 5, 8, 1.5)
     ctx.fill()
-    ctx.shadowBlur = 0
-    ctx.fillStyle = '#0a2a0a'
+    // Tip ring (pulse-style)
+    ctx.strokeStyle = '#cc3311'
+    ctx.lineWidth = 0.7
     ctx.beginPath()
-    ctx.arc(gunX - 2, gunY + 4, 0.7, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Trailing whisker antenna - back-up curve from rear of bulb
-    ctx.strokeStyle = '#3a6a4a'
-    ctx.lineWidth = 0.9
-    ctx.beginPath()
-    ctx.moveTo(gunX - 11, gunY + 1)
-    ctx.quadraticCurveTo(gunX - 16, gunY - 5, gunX - 13, gunY - 11)
+    ctx.arc(gunX + 51.5, gunY + 4.5, 2.8, 0, Math.PI * 2)
     ctx.stroke()
-    ctx.fillStyle = '#88ff44'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 3
-    ctx.beginPath()
-    ctx.arc(gunX - 13, gunY - 11, 1, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-
-    // Segmented chitin spine - 4 overlapping plate segments instead of barrel
-    for (let i = 0; i < 4; i++) {
-      const sx = gunX + 8 + i * 6.5
-      // Plate top (raised)
-      ctx.fillStyle = '#2a5a3a'
-      ctx.beginPath()
-      ctx.ellipse(sx + 3, gunY + 3, 4, 3, 0, 0, Math.PI * 2)
-      ctx.fill()
-      // Plate underside / belly
-      ctx.fillStyle = '#1a3a2a'
-      ctx.beginPath()
-      ctx.ellipse(sx + 3, gunY + 4.5, 4, 1.8, 0, 0, Math.PI * 2)
-      ctx.fill()
-      // Plate edge highlight
-      ctx.strokeStyle = '#3a6a4a'
-      ctx.lineWidth = 0.4
-      ctx.beginPath()
-      ctx.ellipse(sx + 3, gunY + 3, 4, 3, 0, Math.PI, Math.PI * 2)
-      ctx.stroke()
-      // Glow seam between segments
-      ctx.fillStyle = '#88ff44'
-      ctx.shadowColor = '#88ff44'
-      ctx.shadowBlur = 4
-      ctx.fillRect(sx - 0.4, gunY + 1.5, 0.9, 3)
-      ctx.shadowBlur = 0
-    }
-
-    // Crystalline projector tip - hexagonal crystal replacing muzzle brake
-    ctx.fillStyle = '#1a3a2a'
-    ctx.beginPath()
-    ctx.moveTo(gunX + 36, gunY + 0.5)
-    ctx.lineTo(gunX + 47, gunY - 0.5)
-    ctx.lineTo(gunX + 53, gunY + 3.5)
-    ctx.lineTo(gunX + 47, gunY + 7.5)
-    ctx.lineTo(gunX + 36, gunY + 6.5)
-    ctx.closePath()
-    ctx.fill()
-    // Inner facet
-    ctx.fillStyle = '#3a6a4a'
-    ctx.beginPath()
-    ctx.moveTo(gunX + 38, gunY + 1.5)
-    ctx.lineTo(gunX + 45, gunY + 0.8)
-    ctx.lineTo(gunX + 49, gunY + 3.5)
-    ctx.lineTo(gunX + 45, gunY + 6.2)
-    ctx.lineTo(gunX + 38, gunY + 5.5)
-    ctx.closePath()
-    ctx.fill()
-    // Crystal facet seam highlights
-    ctx.strokeStyle = '#88ff44'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 3
-    ctx.lineWidth = 0.5
-    ctx.beginPath()
-    ctx.moveTo(gunX + 38, gunY + 3.5)
-    ctx.lineTo(gunX + 49, gunY + 3.5)
-    ctx.stroke()
-    ctx.shadowBlur = 0
-    // Glowing aperture core at muzzle
-    ctx.fillStyle = '#aaff66'
-    ctx.shadowColor = '#88ff44'
+    // Glowing aperture core
+    ctx.fillStyle = '#ff7733'
+    ctx.shadowColor = '#ff5522'
     ctx.shadowBlur = 7
     ctx.beginPath()
-    ctx.arc(gunX + 49, gunY + 3.5, 1.8, 0, Math.PI * 2)
+    ctx.arc(gunX + 51.5, gunY + 4.5, 2, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
-    ctx.fillStyle = '#ddffaa'
+    ctx.fillStyle = '#ffaa44'
     ctx.beginPath()
-    ctx.arc(gunX + 49, gunY + 3.5, 0.7, 0, Math.PI * 2)
+    ctx.arc(gunX + 51.5, gunY + 4.5, 0.9, 0, Math.PI * 2)
     ctx.fill()
-
-    // Split prong claws extending past the muzzle
-    ctx.strokeStyle = '#3a6a4a'
-    ctx.lineWidth = 1
-    // Top prong
-    ctx.beginPath()
-    ctx.moveTo(gunX + 51, gunY + 0)
-    ctx.quadraticCurveTo(gunX + 55, gunY - 3, gunX + 57, gunY - 4.5)
+    // Energy cell magazine (pulse-style, taller)
+    ctx.fillStyle = '#1a0a0a'
+    roundRect(ctx, gunX + 4, gunY + 9, 6, 9, 1)
+    ctx.fill()
+    ctx.strokeStyle = '#3a2222'
+    ctx.lineWidth = 0.4
+    roundRect(ctx, gunX + 4, gunY + 9, 6, 9, 1)
     ctx.stroke()
-    // Bottom prong
-    ctx.beginPath()
-    ctx.moveTo(gunX + 51, gunY + 7)
-    ctx.quadraticCurveTo(gunX + 55, gunY + 10, gunX + 57, gunY + 11.5)
-    ctx.stroke()
-    // Center prong
-    ctx.beginPath()
-    ctx.moveTo(gunX + 53, gunY + 3.5)
-    ctx.lineTo(gunX + 58, gunY + 3.5)
-    ctx.stroke()
-    // Prong tip glows
-    ctx.fillStyle = '#88ff44'
-    ctx.shadowColor = '#88ff44'
+    // Magazine energy fill
+    ctx.fillStyle = '#cc3311'
+    ctx.globalAlpha = 0.55
+    ctx.fillRect(gunX + 4.8, gunY + 12, 4.4, 5.5)
+    ctx.globalAlpha = 1
+    // Magazine glow line
+    ctx.fillStyle = '#ff5522'
+    ctx.globalAlpha = 0.7
+    ctx.fillRect(gunX + 5.3, gunY + 10.5, 3.4, 0.7)
+    ctx.globalAlpha = 1
+    // Magazine release
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX + 10, gunY + 9.5, 1.5, 2)
+    // Stock - medium length
+    ctx.fillStyle = '#2a1a1a'
+    roundRect(ctx, gunX - 12, gunY, 14, 8, 2)
+    ctx.fill()
+    ctx.fillStyle = '#3a2222'
+    ctx.fillRect(gunX - 9, gunY + 1.5, 9, 3)
+    // Stock energy stripe (carries pulse accent into the stock)
+    ctx.fillStyle = '#cc3311'
+    ctx.globalAlpha = 0.55
+    ctx.fillRect(gunX - 9, gunY + 5, 9, 0.8)
+    ctx.globalAlpha = 1
+    // Stock glow node
+    ctx.fillStyle = '#ff5522'
+    ctx.shadowColor = '#ff5522'
     ctx.shadowBlur = 4
     ctx.beginPath()
-    ctx.arc(gunX + 57, gunY - 4.5, 0.7, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.beginPath()
-    ctx.arc(gunX + 57, gunY + 11.5, 0.7, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.beginPath()
-    ctx.arc(gunX + 58, gunY + 3.5, 0.7, 0, Math.PI * 2)
+    ctx.arc(gunX - 6, gunY + 5.4, 0.7, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
-
-    // Floating sensor orb (replaces scope) - tendril-suspended above mid-spine
-    ctx.strokeStyle = '#2a5a3a'
-    ctx.lineWidth = 1.2
-    ctx.beginPath()
-    ctx.moveTo(gunX + 16, gunY + 1)
-    ctx.quadraticCurveTo(gunX + 17, gunY - 4, gunX + 18, gunY - 7)
-    ctx.stroke()
-    // Secondary tendril
-    ctx.lineWidth = 0.7
-    ctx.beginPath()
-    ctx.moveTo(gunX + 22, gunY + 1)
-    ctx.quadraticCurveTo(gunX + 21, gunY - 4, gunX + 20, gunY - 7)
-    ctx.stroke()
-    // Orb shell (dark)
-    ctx.fillStyle = '#0a2a1a'
-    ctx.beginPath()
-    ctx.arc(gunX + 19, gunY - 9, 5, 0, Math.PI * 2)
-    ctx.fill()
-    // Orb shell highlight
-    ctx.fillStyle = '#1a3a2a'
-    ctx.beginPath()
-    ctx.arc(gunX + 19, gunY - 9, 4.4, 0, Math.PI * 2)
-    ctx.fill()
-    // Iris (glowing)
-    ctx.fillStyle = '#aaff66'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 8
-    ctx.beginPath()
-    ctx.arc(gunX + 19, gunY - 9, 3.4, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Inner iris ring
-    ctx.fillStyle = '#88ff44'
-    ctx.beginPath()
-    ctx.arc(gunX + 19, gunY - 9, 2.3, 0, Math.PI * 2)
-    ctx.fill()
-    // Pupil
-    ctx.fillStyle = '#0a2a0a'
-    ctx.beginPath()
-    ctx.arc(gunX + 19, gunY - 9, 1.2, 0, Math.PI * 2)
-    ctx.fill()
-    // Pupil glint
-    ctx.fillStyle = '#ddffaa'
-    ctx.beginPath()
-    ctx.arc(gunX + 18.2, gunY - 9.7, 0.6, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Asymmetric feeder pod - leans below and forward of bulb
-    ctx.fillStyle = '#1a2a1a'
-    ctx.beginPath()
-    ctx.ellipse(gunX + 6, gunY + 13, 5, 6, -0.25, 0, Math.PI * 2)
-    ctx.fill()
-    // Pod cap
-    ctx.fillStyle = '#0a1a0a'
-    ctx.beginPath()
-    ctx.ellipse(gunX + 9, gunY + 18, 3.5, 1.8, 0.1, 0, Math.PI * 2)
-    ctx.fill()
-    // Pod glow vein - vertical pulse line
-    ctx.strokeStyle = '#44cc88'
-    ctx.shadowColor = '#88ff44'
-    ctx.shadowBlur = 3
-    ctx.lineWidth = 0.7
-    ctx.beginPath()
-    ctx.moveTo(gunX + 4, gunY + 8)
-    ctx.lineTo(gunX + 7, gunY + 16)
-    ctx.stroke()
-    ctx.shadowBlur = 0
-    // Pod nodule (alien knob)
-    ctx.fillStyle = '#3a6a4a'
-    ctx.beginPath()
-    ctx.arc(gunX + 4, gunY + 9, 1.4, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.fillStyle = '#88ff44'
-    ctx.beginPath()
-    ctx.arc(gunX + 4, gunY + 9, 0.6, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Connecting tendril from spine down to feeder pod
-    ctx.strokeStyle = '#2a4a3a'
-    ctx.lineWidth = 0.9
-    ctx.beginPath()
-    ctx.moveTo(gunX + 7, gunY + 6)
-    ctx.lineTo(gunX + 6, gunY + 9)
-    ctx.stroke()
+    // Butt plate
+    ctx.fillStyle = '#0a0000'
+    ctx.fillRect(gunX - 12, gunY + 0.5, 1.8, 7)
   } else if (weapon === 'hypershot') {
     // Wide receiver
     ctx.fillStyle = '#2a2a2a'
@@ -5301,21 +5216,21 @@ export function drawBullet(ctx: CanvasRenderingContext2D, bullet: Bullet, camera
   const isChargerBullet = bullet.fromPlayer && bullet.weaponType === 'charger'
   const isHomer = bullet.fromPlayer && bullet.weaponType === 'homer'
 
-  ctx.shadowColor = bullet.fromPlayer ? (isHomer ? '#88ff44' : isChargerBullet ? '#ff8800' : isPulse ? '#3355ff' : isPlasma ? '#aa66ff' : isHypershot ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
+  ctx.shadowColor = bullet.fromPlayer ? (isHomer ? '#ff5522' : isChargerBullet ? '#ff8800' : isPulse ? '#3355ff' : isPlasma ? '#aa66ff' : isHypershot ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
   ctx.shadowBlur = isHomer ? 14 : 10
 
   // Outer glow
-  ctx.fillStyle = bullet.fromPlayer ? (isHomer ? '#88ff44' : isChargerBullet ? '#ff8800' : isPulse ? '#3355ff' : isPlasma ? '#aa66ff' : isHypershot ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
+  ctx.fillStyle = bullet.fromPlayer ? (isHomer ? '#ff5522' : isChargerBullet ? '#ff8800' : isPulse ? '#3355ff' : isPlasma ? '#aa66ff' : isHypershot ? '#ff4444' : COLORS.bullet.playerGlow) : COLORS.bullet.enemyGlow
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 1.5, 0, Math.PI * 2)
   ctx.fill()
   // Main bullet
-  ctx.fillStyle = bullet.fromPlayer ? (isHomer ? '#44aa22' : isChargerBullet ? '#cc6600' : isPulse ? '#1a33aa' : isPlasma ? '#6644aa' : isHypershot ? '#cc2222' : COLORS.bullet.player) : COLORS.bullet.enemy
+  ctx.fillStyle = bullet.fromPlayer ? (isHomer ? '#cc3311' : isChargerBullet ? '#cc6600' : isPulse ? '#1a33aa' : isPlasma ? '#6644aa' : isHypershot ? '#cc2222' : COLORS.bullet.player) : COLORS.bullet.enemy
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius, 0, Math.PI * 2)
   ctx.fill()
   // Core
-  ctx.fillStyle = bullet.fromPlayer ? (isHomer ? '#ddffaa' : isChargerBullet ? '#ffcc66' : isPulse ? '#8899ff' : isPlasma ? '#cc88ff' : isHypershot ? '#ffaa88' : COLORS.bullet.playerCore) : COLORS.bullet.enemyCore
+  ctx.fillStyle = bullet.fromPlayer ? (isHomer ? '#ffcc66' : isChargerBullet ? '#ffcc66' : isPulse ? '#8899ff' : isPlasma ? '#cc88ff' : isHypershot ? '#ffaa88' : COLORS.bullet.playerCore) : COLORS.bullet.enemyCore
   ctx.beginPath()
   ctx.arc(bx, by, bullet.radius * 0.4, 0, Math.PI * 2)
   ctx.fill()
@@ -5402,7 +5317,7 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
 
   // Current weapon
   const weaponNames: Record<string, string> = { blastop: 'BLASTOP', relav: 'RELAV', spalmer: 'SPALMER', lerange: 'LERANGE', plasma: 'PLASMA', hypershot: 'HYPERSHOT', pulse: 'PULSE', charger: 'CHARGER', homer: 'HOMER' }
-  const weaponColors: Record<string, string> = { blastop: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', pulse: '#3355ff', charger: '#ff8800', homer: '#88ff44' }
+  const weaponColors: Record<string, string> = { blastop: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', pulse: '#3355ff', charger: '#ff8800', homer: '#ff5522' }
   ctx.fillStyle = weaponColors[player.weapon] || COLORS.hud.text
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)

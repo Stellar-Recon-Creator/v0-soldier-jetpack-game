@@ -747,7 +747,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             : bullet.weaponType === 'hypershot'
             ? ['#ff2222', '#ff4444', '#dd0000', '#ff6644']
             : bullet.weaponType === 'homer'
-            ? ['#88ff44', '#aaff66', '#44aa22', '#ddffaa']
+            ? ['#ff5522', '#ff7733', '#cc3311', '#ffaa44']
             : alienColors[enemy.type] || ['#44ffaa']
 
           for (let i = 0; i < 5; i++) {
@@ -771,7 +771,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
               : bullet.weaponType === 'hypershot'
               ? ['#ff2222', '#ff4444', '#dd0000', '#ff6644']
               : bullet.weaponType === 'homer'
-              ? ['#88ff44', '#aaff66', '#44aa22', '#ddffaa', '#ffffff']
+              ? ['#ff5522', '#ff7733', '#cc3311', '#ffaa44', '#ffffff']
               : [...(alienColors[enemy.type] || ['#44ffaa']), '#ffffff']
             for (let i = 0; i < 15; i++) {
               particles.push(createParticle(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, deathColors[Math.floor(Math.random() * deathColors.length)]))
