@@ -5,7 +5,7 @@ export interface Vector2 {
   y: number
 }
 
-export type WeaponType = 'blastop' | 'spalmer' | 'plasma' | 'relav' | 'lerange' | 'hypershot' | 'pulse' | 'charger'
+export type WeaponType = 'blastop' | 'spalmer' | 'plasma' | 'relav' | 'lerange' | 'hypershot' | 'pulse' | 'charger' | 'homer'
 
 export interface Player {
   x: number

@@ -20,7 +20,10 @@ const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; dama
   hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8 },
   pulse:     { speed: 556,  cooldown: 0.092, damage: 1.012, count: 1, spread: 0, radius: 4,  ammoCost: 0.8 },
   charger:   { speed: 700,  cooldown: 0.3,  damage: 0.88, count: 1, spread: 0, radius: 5,  ammoCost: 2 },
+  homer:     { speed: 960,  cooldown: 1.14, damage: 7.6, count: 1, spread: 0, radius: 3,  ammoCost: 9.2 },
 }
+// Maximum turn rate for HOMER homing bullets (radians per second)
+const HOMER_TURN_RATE = (20 * Math.PI) / 180
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
 export const GROUND_Y = 500
@@ -317,7 +320,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
 
       // Fire charger bullet (uses same muzzle position logic below)
       const bulletAngle = player.aimAngle
-      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31, pulse: 26, charger: 28 }
+      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31, pulse: 26, charger: 28, homer: 38 }
       const tipLocal = muzzleTipX[player.weapon] ?? 30
       const hw = player.width / 2
       const hh = player.height / 2
@@ -376,7 +379,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       const angle = bulletAngle + (i - (weaponCfg.count - 1) / 2) * weaponCfg.spread
 
       // Muzzle tip offsets in arm-local space (matches renderer gunX/muzzleX, gunY+2)
-      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31, pulse: 26, charger: 28 }
+      const muzzleTipX: Record<string, number> = { blastop: 30, relav: 22, lerange: 38, hypershot: 29, spalmer: 26, plasma: 31, pulse: 26, charger: 28, homer: 38 }
       const tipLocal = muzzleTipX[player.weapon] ?? 30
 
       // Reconstruct world-space muzzle position matching the renderer transforms:
@@ -677,6 +680,35 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   // ─ Bullet Update ─
   for (const bullet of bullets) {
     if (!bullet.active) continue
+
+    // HOMER homing: gently steer toward closest active enemy, capped at HOMER_TURN_RATE
+    if (bullet.fromPlayer && bullet.weaponType === 'homer') {
+      let closest: Enemy | null = null
+      let closestDist = Infinity
+      for (const e of enemies) {
+        if (!e.active) continue
+        const dx = (e.x + e.width / 2) - bullet.x
+        const dy = (e.y + e.height / 2) - bullet.y
+        const d = dx * dx + dy * dy
+        if (d < closestDist) { closestDist = d; closest = e }
+      }
+      if (closest) {
+        const tx = closest.x + closest.width / 2
+        const ty = closest.y + closest.height / 2
+        const desired = Math.atan2(ty - bullet.y, tx - bullet.x)
+        const current = Math.atan2(bullet.vy, bullet.vx)
+        let delta = desired - current
+        while (delta > Math.PI) delta -= 2 * Math.PI
+        while (delta < -Math.PI) delta += 2 * Math.PI
+        const maxTurn = HOMER_TURN_RATE * dt
+        const turn = Math.max(-maxTurn, Math.min(maxTurn, delta))
+        const newAngle = current + turn
+        const speed = Math.hypot(bullet.vx, bullet.vy)
+        bullet.vx = Math.cos(newAngle) * speed
+        bullet.vy = Math.sin(newAngle) * speed
+      }
+    }
+
     bullet.x += bullet.vx * dt
     bullet.y += bullet.vy * dt
 
@@ -714,6 +746,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
             : bullet.weaponType === 'hypershot'
             ? ['#ff2222', '#ff4444', '#dd0000', '#ff6644']
+            : bullet.weaponType === 'homer'
+            ? ['#88ff44', '#aaff66', '#44aa22', '#ddffaa']
             : alienColors[enemy.type] || ['#44ffaa']
 
           for (let i = 0; i < 5; i++) {
@@ -736,6 +770,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
               ? ['#aa66ff', '#8833dd', '#cc88ff', '#7722cc']
               : bullet.weaponType === 'hypershot'
               ? ['#ff2222', '#ff4444', '#dd0000', '#ff6644']
+              : bullet.weaponType === 'homer'
+              ? ['#88ff44', '#aaff66', '#44aa22', '#ddffaa', '#ffffff']
               : [...(alienColors[enemy.type] || ['#44ffaa']), '#ffffff']
             for (let i = 0; i < 15; i++) {
               particles.push(createParticle(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, deathColors[Math.floor(Math.random() * deathColors.length)]))
