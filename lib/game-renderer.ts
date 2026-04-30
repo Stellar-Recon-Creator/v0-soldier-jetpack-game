@@ -1797,55 +1797,40 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
       ctx.arc(gunX + 2 + rv * 5.5, gunY - 0.3, 0.4, 0, Math.PI * 2)
       ctx.fill()
     }
-    // Capacitor coils on top (3 spiral coils - side view helix)
+    // Capacitor coils on top (3 visible rings - unique to charger)
     const chargeT = (player as any).chargeTime || 0
     for (let c = 0; c < 3; c++) {
       const coilX = gunX + 3 + c * 6
       const coilFill = Math.min(1, Math.max(0, (chargeT - c * 0.3) / 0.3))
-      // Coil base post
-      ctx.fillStyle = '#2a2a2a'
-      ctx.fillRect(coilX - 0.5, gunY - 6, 1, 5)
-      // Spiral windings (alternating left-right curves going up)
-      const turns = 4
-      const coilW = 2.5
-      const coilTop = gunY - 6
-      const coilBot = gunY - 1.5
-      const turnH = (coilBot - coilTop) / turns
-      ctx.strokeStyle = coilFill > 0 ? '#777' : '#555'
-      ctx.lineWidth = 0.7
-      for (let t = 0; t < turns; t++) {
-        const ty = coilBot - t * turnH
-        ctx.beginPath()
-        ctx.moveTo(coilX, ty)
-        ctx.quadraticCurveTo(coilX + coilW, ty - turnH * 0.5, coilX, ty - turnH)
-        ctx.stroke()
-        ctx.beginPath()
-        ctx.moveTo(coilX, ty)
-        ctx.quadraticCurveTo(coilX - coilW, ty - turnH * 0.5, coilX, ty - turnH)
-        ctx.stroke()
-      }
-      // Coil charge glow (inner glow along the coil)
+      // Coil housing
+      ctx.fillStyle = '#333'
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 3, 2.5, 0, Math.PI * 2)
+      ctx.fill()
+      // Coil ring
+      ctx.strokeStyle = '#444'
+      ctx.lineWidth = 0.5
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 3, 2.5, 0, Math.PI * 2)
+      ctx.stroke()
+      // Coil charge glow
       if (coilFill > 0) {
         const glowColor = c === 2 ? '#ff4400' : c === 1 ? '#ffaa00' : '#ff8800'
-        ctx.strokeStyle = glowColor
+        ctx.fillStyle = glowColor
         ctx.shadowColor = glowColor
         ctx.shadowBlur = 4
-        ctx.lineWidth = 0.5
         ctx.globalAlpha = 0.3 + coilFill * 0.7
-        for (let t = 0; t < turns; t++) {
-          const ty = coilBot - t * turnH
-          ctx.beginPath()
-          ctx.moveTo(coilX, ty)
-          ctx.quadraticCurveTo(coilX + coilW * 0.7, ty - turnH * 0.5, coilX, ty - turnH)
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.moveTo(coilX, ty)
-          ctx.quadraticCurveTo(coilX - coilW * 0.7, ty - turnH * 0.5, coilX, ty - turnH)
-          ctx.stroke()
-        }
+        ctx.beginPath()
+        ctx.arc(coilX, gunY - 3, 2 * coilFill, 0, Math.PI * 2)
+        ctx.fill()
         ctx.globalAlpha = 1
         ctx.shadowBlur = 0
       }
+      // Coil center dot
+      ctx.fillStyle = coilFill > 0.5 ? '#ffcc66' : '#222'
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 3, 0.8, 0, Math.PI * 2)
+      ctx.fill()
     }
     // Connecting wires between coils (curved conduits)
     ctx.strokeStyle = '#ff8800'
@@ -3717,31 +3702,25 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.lineTo(gunX - 1, gunY + 1.5)
     ctx.closePath()
     ctx.fill()
-    // Capacitor coils on top (3 spiral coils - side view helix)
+    // Capacitor coils on top (3 rings)
     for (let c = 0; c < 3; c++) {
       const coilX = gunX + 4 + c * 8
-      // Coil base post
-      ctx.fillStyle = '#2a2a2a'
-      ctx.fillRect(coilX - 0.6, gunY - 8, 1.2, 6.5)
-      // Spiral windings (alternating left-right curves going up)
-      const turns = 4
-      const coilW = 3.2
-      const coilTop = gunY - 7.5
-      const coilBot = gunY - 2
-      const turnH = (coilBot - coilTop) / turns
-      ctx.strokeStyle = '#555'
-      ctx.lineWidth = 0.9
-      for (let t = 0; t < turns; t++) {
-        const ty = coilBot - t * turnH
-        ctx.beginPath()
-        ctx.moveTo(coilX, ty)
-        ctx.quadraticCurveTo(coilX + coilW, ty - turnH * 0.5, coilX, ty - turnH)
-        ctx.stroke()
-        ctx.beginPath()
-        ctx.moveTo(coilX, ty)
-        ctx.quadraticCurveTo(coilX - coilW, ty - turnH * 0.5, coilX, ty - turnH)
-        ctx.stroke()
-      }
+      // Coil housing
+      ctx.fillStyle = '#333'
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 4, 3.2, 0, Math.PI * 2)
+      ctx.fill()
+      // Coil ring
+      ctx.strokeStyle = '#444'
+      ctx.lineWidth = 0.6
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 4, 3.2, 0, Math.PI * 2)
+      ctx.stroke()
+      // Coil center dot (uncharged on home screen)
+      ctx.fillStyle = '#222'
+      ctx.beginPath()
+      ctx.arc(coilX, gunY - 4, 1, 0, Math.PI * 2)
+      ctx.fill()
     }
     // Connecting wires between coils
     ctx.strokeStyle = '#ff8800'
