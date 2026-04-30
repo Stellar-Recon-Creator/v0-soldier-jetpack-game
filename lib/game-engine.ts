@@ -23,7 +23,7 @@ const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; dama
   homer:     { speed: 960,  cooldown: 1.14, damage: 7.6, count: 1, spread: 0, radius: 3,  ammoCost: 9.2 },
 }
 // Maximum turn rate for HOMER homing bullets (radians per second)
-const HOMER_TURN_RATE = (20 * Math.PI) / 180
+const HOMER_TURN_RATE = (40 * Math.PI) / 180
 const PLAYER_MAX_HEALTH = 100
 const PLAYER_MAX_FUEL = 100
 export const GROUND_Y = 500
