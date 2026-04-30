@@ -1852,7 +1852,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.arc(gunX + 12, gunY - 1.5, 0.5, 0, Math.PI * 2)
     ctx.fill()
     ctx.globalAlpha = 1
-    // Side-mounted charge display (extended left, 5 bars)
+    // Side-mounted charge display (extended left, 3 bars)
     const dispX = gunX - 7
     const dispW = 10
     const dispH = 7
@@ -1864,21 +1864,21 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.lineWidth = 0.4
     roundRect(ctx, dispX, gunY + 1, dispW, dispH, 1)
     ctx.stroke()
-    // 5 charge bars
-    for (let b = 0; b < 5; b++) {
-      const barFill = Math.min(1, Math.max(0, (chargeT - b * 0.18) / 0.18))
-      const barY = gunY + 6.5 - b * 1.2
+    // 3 charge bars
+    for (let b = 0; b < 3; b++) {
+      const barFill = Math.min(1, Math.max(0, (chargeT - b * 0.3) / 0.3))
+      const barY = gunY + 6 - b * 1.8
       if (barFill > 0) {
-        const barColor = b >= 4 ? '#ff2200' : b >= 3 ? '#ff4400' : b >= 2 ? '#ffaa00' : b >= 1 ? '#ff8800' : '#ff9933'
+        const barColor = b === 2 ? '#ff2200' : b === 1 ? '#ffaa00' : '#ff9933'
         ctx.fillStyle = barColor
         ctx.shadowColor = barColor
         ctx.shadowBlur = 2
-        ctx.fillRect(dispX + 1, barY, (dispW - 2) * barFill, 0.8)
+        ctx.fillRect(dispX + 1, barY, (dispW - 2) * barFill, 1.2)
         ctx.shadowBlur = 0
       }
       ctx.strokeStyle = '#2a2a2a'
       ctx.lineWidth = 0.2
-      ctx.strokeRect(dispX + 1, barY, dispW - 2, 0.8)
+      ctx.strokeRect(dispX + 1, barY, dispW - 2, 1.2)
     }
     // Barrel assembly (cylindrical focusing tube - totally different from Pulse's flat barrel)
     ctx.fillStyle = '#2a2a2a'
