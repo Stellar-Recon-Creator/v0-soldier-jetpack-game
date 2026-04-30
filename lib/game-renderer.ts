@@ -1781,6 +1781,22 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.lineTo(gunX - 1, gunY + 1)
     ctx.closePath()
     ctx.fill()
+    // Housing panel lines (etched detail on body)
+    ctx.strokeStyle = '#161616'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX + 4, gunY + 0)
+    ctx.lineTo(gunX + 4, gunY + 7)
+    ctx.moveTo(gunX + 14, gunY + 0)
+    ctx.lineTo(gunX + 14, gunY + 7)
+    ctx.stroke()
+    // Housing rivets (small dots along top edge)
+    ctx.fillStyle = '#444'
+    for (let rv = 0; rv < 4; rv++) {
+      ctx.beginPath()
+      ctx.arc(gunX + 2 + rv * 5.5, gunY - 0.3, 0.4, 0, Math.PI * 2)
+      ctx.fill()
+    }
     // Capacitor coils on top (3 visible rings - unique to charger)
     const chargeT = (player as any).chargeTime || 0
     for (let c = 0; c < 3; c++) {
@@ -1816,15 +1832,25 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
       ctx.arc(coilX, gunY - 3, 0.8, 0, Math.PI * 2)
       ctx.fill()
     }
-    // Connecting wires between coils
+    // Connecting wires between coils (curved conduits)
     ctx.strokeStyle = '#ff8800'
     ctx.globalAlpha = 0.3
     ctx.lineWidth = 0.4
     ctx.beginPath()
     ctx.moveTo(gunX + 3, gunY - 1)
-    ctx.lineTo(gunX + 9, gunY - 1)
-    ctx.lineTo(gunX + 15, gunY - 1)
+    ctx.quadraticCurveTo(gunX + 6, gunY - 2, gunX + 9, gunY - 1)
     ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(gunX + 9, gunY - 1)
+    ctx.quadraticCurveTo(gunX + 12, gunY - 2, gunX + 15, gunY - 1)
+    ctx.stroke()
+    // Wire insulation dots
+    ctx.fillStyle = '#553300'
+    ctx.globalAlpha = 0.5
+    ctx.beginPath()
+    ctx.arc(gunX + 6, gunY - 1.5, 0.5, 0, Math.PI * 2)
+    ctx.arc(gunX + 12, gunY - 1.5, 0.5, 0, Math.PI * 2)
+    ctx.fill()
     ctx.globalAlpha = 1
     // Side-mounted charge display (vertical bars on the side of body)
     ctx.fillStyle = '#0a0a0a'
@@ -1859,16 +1885,38 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
       ctx.stroke()
     }
     ctx.globalAlpha = 1
+    // Barrel venting slots (between focusing rings)
+    ctx.fillStyle = '#0a0a0a'
+    for (let v = 0; v < 2; v++) {
+      ctx.fillRect(gunX + 23 + v * 2.5, gunY + 0.5, 1, 1.2)
+      ctx.fillRect(gunX + 23 + v * 2.5, gunY + 5.8, 1, 1.2)
+    }
     // Barrel bore (dark center)
     ctx.fillStyle = '#111'
     ctx.beginPath()
     ctx.arc(gunX + 28, gunY + 3.5, 2, 0, Math.PI * 2)
     ctx.fill()
-    // Barrel tip energy ring
+    // Barrel bore rifling lines
+    ctx.strokeStyle = '#222'
+    ctx.lineWidth = 0.3
+    for (let rl = 0; rl < 4; rl++) {
+      const rAngle = rl * (Math.PI / 2)
+      ctx.beginPath()
+      ctx.moveTo(gunX + 28, gunY + 3.5)
+      ctx.lineTo(gunX + 28 + Math.cos(rAngle) * 1.8, gunY + 3.5 + Math.sin(rAngle) * 1.8)
+      ctx.stroke()
+    }
+    // Barrel tip energy ring (outer)
     ctx.strokeStyle = '#ff8800'
     ctx.lineWidth = 0.6
     ctx.beginPath()
     ctx.arc(gunX + 28, gunY + 3.5, 2.2, 0, Math.PI * 2)
+    ctx.stroke()
+    // Barrel tip inner ring
+    ctx.strokeStyle = '#cc5500'
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.arc(gunX + 28, gunY + 3.5, 1.6, 0, Math.PI * 2)
     ctx.stroke()
     // Barrel tip glow
     ctx.fillStyle = '#ff8800'
@@ -1882,10 +1930,15 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#383838'
     for (let f = 0; f < 4; f++) {
       ctx.fillRect(gunX + f * 3, gunY + 7.5, 2, 1.5)
+      // Fin edge highlight
+      ctx.fillStyle = '#444'
+      ctx.fillRect(gunX + f * 3, gunY + 7.5, 2, 0.3)
+      ctx.fillStyle = '#383838'
     }
-    // Heat sink glow between fins
+    // Heat sink glow between fins (pulsing when charging)
+    const heatGlowAlpha = chargeT > 0 ? 0.25 + chargeT * 0.4 : 0.25
     ctx.fillStyle = '#cc6600'
-    ctx.globalAlpha = 0.25
+    ctx.globalAlpha = heatGlowAlpha
     for (let f = 0; f < 3; f++) {
       ctx.fillRect(gunX + 2 + f * 3, gunY + 8, 1, 1)
     }
@@ -1917,14 +1970,29 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.fillStyle = '#1a1a1a'
     roundRect(ctx, gunX - 5, gunY + 0, 5, 7, 1.5)
     ctx.fill()
-    // Power cell energy window
+    // Power cell energy window (glows brighter when charging)
     ctx.fillStyle = '#cc6600'
-    ctx.globalAlpha = 0.4
+    ctx.globalAlpha = 0.4 + (chargeT > 0 ? chargeT * 0.4 : 0)
     ctx.fillRect(gunX - 4, gunY + 2, 3, 3)
+    // Energy window grid lines
+    ctx.strokeStyle = '#1a1a1a'
+    ctx.globalAlpha = 0.3
+    ctx.lineWidth = 0.3
+    ctx.beginPath()
+    ctx.moveTo(gunX - 4, gunY + 3.5)
+    ctx.lineTo(gunX - 1, gunY + 3.5)
+    ctx.moveTo(gunX - 2.5, gunY + 2)
+    ctx.lineTo(gunX - 2.5, gunY + 5)
+    ctx.stroke()
     ctx.globalAlpha = 1
     // Power cell cap
     ctx.fillStyle = '#333'
     ctx.fillRect(gunX - 5, gunY + 0.5, 5, 1)
+    // Power cell cap bolt
+    ctx.fillStyle = '#555'
+    ctx.beginPath()
+    ctx.arc(gunX - 2.5, gunY + 1, 0.5, 0, Math.PI * 2)
+    ctx.fill()
   } else {
     // Blastop (default) - assault rifle with scope
     // Gun body / receiver
