@@ -20,7 +20,7 @@ const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; dama
   hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8 },
   pulse:     { speed: 556,  cooldown: 0.092, damage: 1.012, count: 1, spread: 0, radius: 4,  ammoCost: 0.8 },
   charger:   { speed: 700,  cooldown: 0.3,  damage: 0.88, count: 1, spread: 0, radius: 5,  ammoCost: 2 },
-  homer:     { speed: 960,  cooldown: 1.14, damage: 7.6, count: 1, spread: 0, radius: 3,  ammoCost: 9.2 },
+  homer:     { speed: 960,  cooldown: 1.14, damage: 7.6, count: 1, spread: 0, radius: 3,  ammoCost: 7.6 },
 }
 // Maximum turn rate for HOMER homing bullets (radians per second)
 const HOMER_TURN_RATE = (40 * Math.PI) / 180

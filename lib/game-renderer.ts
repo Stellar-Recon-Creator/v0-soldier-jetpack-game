@@ -1282,20 +1282,39 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     for (let i = 0; i < 6; i++) {
       ctx.fillRect(gunX + 3 + i * 2.5, gunY - 1, 0.5, 1.5)
     }
-    // Compact sight cluster (lerange-light, mid-rail)
-    ctx.fillStyle = '#3a2222'
-    roundRect(ctx, gunX + 7, gunY - 4, 8, 3, 1)
-    ctx.fill()
-    ctx.fillStyle = '#ff7733'
-    ctx.shadowColor = '#ff5522'
-    ctx.shadowBlur = 3
-    ctx.beginPath()
-    ctx.arc(gunX + 13, gunY - 2.5, 1.2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
+    // Hovering targeting orb (replaces scope) - floats slightly above the rail
+    // Orb shell
     ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
-    ctx.arc(gunX + 13, gunY - 2.5, 0.4, 0, Math.PI * 2)
+    ctx.arc(gunX + 12, gunY - 5, 3, 0, Math.PI * 2)
+    ctx.fill()
+    // Orb mid-ring
+    ctx.fillStyle = '#3a2222'
+    ctx.beginPath()
+    ctx.arc(gunX + 12, gunY - 5, 2.5, 0, Math.PI * 2)
+    ctx.fill()
+    // Glowing iris
+    ctx.fillStyle = '#ff7733'
+    ctx.shadowColor = '#ff5522'
+    ctx.shadowBlur = 6
+    ctx.beginPath()
+    ctx.arc(gunX + 12, gunY - 5, 1.8, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    // Pupil
+    ctx.fillStyle = '#1a0a0a'
+    ctx.beginPath()
+    ctx.arc(gunX + 12, gunY - 5, 0.7, 0, Math.PI * 2)
+    ctx.fill()
+    // Glint
+    ctx.fillStyle = '#ffcc88'
+    ctx.beginPath()
+    ctx.arc(gunX + 11.5, gunY - 5.5, 0.4, 0, Math.PI * 2)
+    ctx.fill()
+    // Subtle shadow on rail under orb (sells the float)
+    ctx.fillStyle = 'rgba(0,0,0,0.35)'
+    ctx.beginPath()
+    ctx.ellipse(gunX + 12, gunY - 1.5, 2.2, 0.5, 0, 0, Math.PI * 2)
     ctx.fill()
     // Energy accent stripe (pulse-style)
     ctx.fillStyle = '#cc3311'
@@ -3353,36 +3372,49 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     for (let i = 0; i < 8; i++) {
       ctx.fillRect(gunX + 3 + i * 2.5, gunY - 1.5, 0.6, 2)
     }
-    // Mid-mount sight cluster (lerange-light, no full scope tube)
-    ctx.fillStyle = '#3a2222'
-    roundRect(ctx, gunX + 9, gunY - 5, 12, 4, 1.5)
-    ctx.fill()
-    ctx.fillStyle = '#2a1a1a'
-    ctx.fillRect(gunX + 10, gunY - 4.5, 10, 1)
-    // Sight outer lens
-    ctx.fillStyle = '#cc3311'
-    ctx.globalAlpha = 0.6
-    ctx.beginPath()
-    ctx.arc(gunX + 18, gunY - 3, 2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-    // Sight inner glow
-    ctx.fillStyle = '#ff7733'
-    ctx.shadowColor = '#ff5522'
-    ctx.shadowBlur = 5
-    ctx.beginPath()
-    ctx.arc(gunX + 18, gunY - 3, 1.4, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.shadowBlur = 0
-    // Sight pupil
+    // Hovering targeting orb (replaces scope) - floats slightly above the rail
+    // Outer shell
     ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
-    ctx.arc(gunX + 18, gunY - 3, 0.5, 0, Math.PI * 2)
+    ctx.arc(gunX + 17, gunY - 8, 4.6, 0, Math.PI * 2)
     ctx.fill()
-    // Sight glint
+    // Mid shell highlight
+    ctx.fillStyle = '#3a2222'
+    ctx.beginPath()
+    ctx.arc(gunX + 17, gunY - 8, 4, 0, Math.PI * 2)
+    ctx.fill()
+    // Outer iris ring
+    ctx.fillStyle = '#cc3311'
+    ctx.beginPath()
+    ctx.arc(gunX + 17, gunY - 8, 3.2, 0, Math.PI * 2)
+    ctx.fill()
+    // Glowing iris core
+    ctx.fillStyle = '#ff7733'
+    ctx.shadowColor = '#ff5522'
+    ctx.shadowBlur = 8
+    ctx.beginPath()
+    ctx.arc(gunX + 17, gunY - 8, 2.3, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    // Inner glow
     ctx.fillStyle = '#ffaa44'
     ctx.beginPath()
-    ctx.arc(gunX + 17.5, gunY - 3.5, 0.4, 0, Math.PI * 2)
+    ctx.arc(gunX + 17, gunY - 8, 1.2, 0, Math.PI * 2)
+    ctx.fill()
+    // Pupil
+    ctx.fillStyle = '#1a0a0a'
+    ctx.beginPath()
+    ctx.arc(gunX + 17, gunY - 8, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    // Glint
+    ctx.fillStyle = '#ffcc88'
+    ctx.beginPath()
+    ctx.arc(gunX + 16.2, gunY - 8.7, 0.6, 0, Math.PI * 2)
+    ctx.fill()
+    // Soft shadow on rail under the floating orb
+    ctx.fillStyle = 'rgba(0,0,0,0.35)'
+    ctx.beginPath()
+    ctx.ellipse(gunX + 17, gunY - 2, 3.2, 0.7, 0, 0, Math.PI * 2)
     ctx.fill()
     // Energy accent stripe along receiver
     ctx.fillStyle = '#cc3311'
@@ -5317,7 +5349,7 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
 
   // Current weapon
   const weaponNames: Record<string, string> = { blastop: 'BLASTOP', relav: 'RELAV', spalmer: 'SPALMER', lerange: 'LERANGE', plasma: 'PLASMA', hypershot: 'HYPERSHOT', pulse: 'PULSE', charger: 'CHARGER', homer: 'HOMER' }
-  const weaponColors: Record<string, string> = { blastop: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', pulse: '#3355ff', charger: '#ff8800', homer: '#ff5522' }
+  const weaponColors: Record<string, string> = { blastop: '#ffcc22', relav: '#44ddff', spalmer: '#ff8844', lerange: '#ff4488', plasma: '#aa66ff', hypershot: '#ff2222', pulse: '#3355ff', charger: '#ffdd00', homer: '#ff5522' }
   ctx.fillStyle = weaponColors[player.weapon] || COLORS.hud.text
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)
