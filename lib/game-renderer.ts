@@ -1391,14 +1391,7 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.arc(gunX + 37, gunY + 3, 0.5, 0, Math.PI * 2)
     ctx.fill()
 
-    // Hovering targeting orb - now over the REAR of the body
-    // Connector strut from rear top to orb
-    ctx.strokeStyle = '#3a2222'
-    ctx.lineWidth = 0.7
-    ctx.beginPath()
-    ctx.moveTo(gunX - 2, gunY - 1)
-    ctx.lineTo(gunX - 2, gunY - 3)
-    ctx.stroke()
+    // Hovering targeting orb - over the REAR of the body, fully floating
     // Orb shell
     ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
@@ -3473,21 +3466,21 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#3a2222'
     ctx.beginPath()
     ctx.moveTo(gunX + 26, gunY + 1.5)
-    ctx.lineTo(gunX + 49, gunY + 2.3)
-    ctx.lineTo(gunX + 49, gunY + 6.7)
+    ctx.lineTo(gunX + 46, gunY + 2.3)
+    ctx.lineTo(gunX + 46, gunY + 6.7)
     ctx.lineTo(gunX + 26, gunY + 7)
     ctx.closePath()
     ctx.fill()
     // Barrel center channel (single bore)
     ctx.fillStyle = '#1a0a0a'
-    ctx.fillRect(gunX + 27, gunY + 4, 22, 0.9)
+    ctx.fillRect(gunX + 27, gunY + 4, 19, 0.9)
     ctx.fillStyle = '#ff5522'
     ctx.globalAlpha = 0.45
-    ctx.fillRect(gunX + 27, gunY + 4, 22, 0.9)
+    ctx.fillRect(gunX + 27, gunY + 4, 19, 0.9)
     ctx.globalAlpha = 1
     // Barrel cooling notches (top + bottom, sparse)
     ctx.fillStyle = '#1a0a0a'
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       ctx.fillRect(gunX + 30 + i * 5, gunY + 2.6, 1.2, 0.6)
       ctx.fillRect(gunX + 30 + i * 5, gunY + 6, 1.2, 0.6)
     }
@@ -3496,8 +3489,8 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.fillStyle = '#3a2222'
     ctx.beginPath()
     ctx.moveTo(gunX + 28, gunY + 7)
-    ctx.lineTo(gunX + 45, gunY + 7)
-    ctx.lineTo(gunX + 42, gunY + 11)
+    ctx.lineTo(gunX + 43, gunY + 7)
+    ctx.lineTo(gunX + 40, gunY + 11)
     ctx.lineTo(gunX + 31, gunY + 11)
     ctx.closePath()
     ctx.fill()
@@ -3506,8 +3499,8 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.globalAlpha = 0.55
     ctx.beginPath()
     ctx.moveTo(gunX + 32, gunY + 8.2)
-    ctx.lineTo(gunX + 41, gunY + 8.2)
-    ctx.lineTo(gunX + 40.5, gunY + 9.5)
+    ctx.lineTo(gunX + 39, gunY + 8.2)
+    ctx.lineTo(gunX + 38.5, gunY + 9.5)
     ctx.lineTo(gunX + 32.5, gunY + 9.5)
     ctx.closePath()
     ctx.fill()
@@ -3517,67 +3510,55 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.shadowColor = '#ff5522'
     ctx.shadowBlur = 4
     ctx.beginPath()
-    ctx.arc(gunX + 35, gunY + 8.8, 0.9, 0, Math.PI * 2)
+    ctx.arc(gunX + 33.5, gunY + 8.8, 0.9, 0, Math.PI * 2)
     ctx.fill()
     ctx.beginPath()
-    ctx.arc(gunX + 39, gunY + 8.8, 0.9, 0, Math.PI * 2)
+    ctx.arc(gunX + 37.5, gunY + 8.8, 0.9, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
 
     // Muzzle housing - hexagonal launcher shroud
     ctx.fillStyle = '#3a2222'
     ctx.beginPath()
-    ctx.moveTo(gunX + 49, gunY + 0.5)
-    ctx.lineTo(gunX + 53, gunY)
-    ctx.lineTo(gunX + 56, gunY + 2)
-    ctx.lineTo(gunX + 56, gunY + 7)
-    ctx.lineTo(gunX + 53, gunY + 9)
-    ctx.lineTo(gunX + 49, gunY + 8.5)
+    ctx.moveTo(gunX + 46, gunY + 0.5)
+    ctx.lineTo(gunX + 50, gunY)
+    ctx.lineTo(gunX + 53, gunY + 2)
+    ctx.lineTo(gunX + 53, gunY + 7)
+    ctx.lineTo(gunX + 50, gunY + 9)
+    ctx.lineTo(gunX + 46, gunY + 8.5)
     ctx.closePath()
     ctx.fill()
     // Housing facet
     ctx.fillStyle = '#2a1a1a'
     ctx.beginPath()
-    ctx.moveTo(gunX + 50, gunY + 1.5)
-    ctx.lineTo(gunX + 53, gunY + 1)
-    ctx.lineTo(gunX + 55, gunY + 2.5)
-    ctx.lineTo(gunX + 55, gunY + 6.5)
-    ctx.lineTo(gunX + 53, gunY + 8)
-    ctx.lineTo(gunX + 50, gunY + 7.5)
+    ctx.moveTo(gunX + 47, gunY + 1.5)
+    ctx.lineTo(gunX + 50, gunY + 1)
+    ctx.lineTo(gunX + 52, gunY + 2.5)
+    ctx.lineTo(gunX + 52, gunY + 6.5)
+    ctx.lineTo(gunX + 50, gunY + 8)
+    ctx.lineTo(gunX + 47, gunY + 7.5)
     ctx.closePath()
     ctx.fill()
     // Tip ring
     ctx.strokeStyle = '#cc3311'
     ctx.lineWidth = 0.7
     ctx.beginPath()
-    ctx.arc(gunX + 52.5, gunY + 4.5, 2.6, 0, Math.PI * 2)
+    ctx.arc(gunX + 49.5, gunY + 4.5, 2.6, 0, Math.PI * 2)
     ctx.stroke()
     // Glowing aperture core
     ctx.fillStyle = '#ff7733'
     ctx.shadowColor = '#ff5522'
     ctx.shadowBlur = 7
     ctx.beginPath()
-    ctx.arc(gunX + 52.5, gunY + 4.5, 1.9, 0, Math.PI * 2)
+    ctx.arc(gunX + 49.5, gunY + 4.5, 1.9, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
     ctx.fillStyle = '#ffaa44'
     ctx.beginPath()
-    ctx.arc(gunX + 52.5, gunY + 4.5, 0.8, 0, Math.PI * 2)
+    ctx.arc(gunX + 49.5, gunY + 4.5, 0.8, 0, Math.PI * 2)
     ctx.fill()
 
-    // Hovering targeting orb - over the REAR of the body
-    // Connector strut (forks slightly)
-    ctx.strokeStyle = '#3a2222'
-    ctx.lineWidth = 1.1
-    ctx.beginPath()
-    ctx.moveTo(gunX - 3, gunY - 2)
-    ctx.lineTo(gunX - 2.5, gunY - 5)
-    ctx.stroke()
-    ctx.lineWidth = 0.7
-    ctx.beginPath()
-    ctx.moveTo(gunX + 1, gunY - 2)
-    ctx.lineTo(gunX + 0, gunY - 5)
-    ctx.stroke()
+    // Hovering targeting orb - over the REAR of the body, fully floating
     // Orb shell
     ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
