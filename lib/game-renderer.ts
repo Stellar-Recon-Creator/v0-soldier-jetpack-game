@@ -1391,38 +1391,38 @@ export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, camera
     ctx.arc(gunX + 37, gunY + 3, 0.5, 0, Math.PI * 2)
     ctx.fill()
 
-    // Hovering targeting orb - over the REAR of the body, fully floating
+    // Hovering targeting orb - fully floating, shifted slightly forward
     // Orb shell
     ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 5.5, 3.2, 0, Math.PI * 2)
+    ctx.arc(gunX + 3, gunY - 5.5, 3.2, 0, Math.PI * 2)
     ctx.fill()
     ctx.fillStyle = '#3a2222'
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 5.5, 2.6, 0, Math.PI * 2)
+    ctx.arc(gunX + 3, gunY - 5.5, 2.6, 0, Math.PI * 2)
     ctx.fill()
     // Glowing iris
     ctx.fillStyle = '#ff7733'
     ctx.shadowColor = '#ff5522'
     ctx.shadowBlur = 6
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 5.5, 1.9, 0, Math.PI * 2)
+    ctx.arc(gunX + 3, gunY - 5.5, 1.9, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
     // Pupil
     ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 5.5, 0.7, 0, Math.PI * 2)
+    ctx.arc(gunX + 3, gunY - 5.5, 0.7, 0, Math.PI * 2)
     ctx.fill()
     // Glint
     ctx.fillStyle = '#ffcc88'
     ctx.beginPath()
-    ctx.arc(gunX - 1.6, gunY - 6.1, 0.4, 0, Math.PI * 2)
+    ctx.arc(gunX + 2.4, gunY - 6.1, 0.4, 0, Math.PI * 2)
     ctx.fill()
     // Float shadow
     ctx.fillStyle = 'rgba(0,0,0,0.35)'
     ctx.beginPath()
-    ctx.ellipse(gunX - 1, gunY - 1.6, 2.3, 0.45, 0, 0, Math.PI * 2)
+    ctx.ellipse(gunX + 3, gunY - 1.6, 2.3, 0.45, 0, 0, Math.PI * 2)
     ctx.fill()
 
     // Pistol grip - forward of mid (bullpup style)
@@ -3558,48 +3558,48 @@ export function drawPlayerZoomed(ctx: CanvasRenderingContext2D, x: number, y: nu
     ctx.arc(gunX + 49.5, gunY + 4.5, 0.8, 0, Math.PI * 2)
     ctx.fill()
 
-    // Hovering targeting orb - over the REAR of the body, fully floating
+    // Hovering targeting orb - fully floating, shifted slightly forward
     // Orb shell
     ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 8, 4.6, 0, Math.PI * 2)
+    ctx.arc(gunX + 4, gunY - 8, 4.6, 0, Math.PI * 2)
     ctx.fill()
     ctx.fillStyle = '#3a2222'
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 8, 4, 0, Math.PI * 2)
+    ctx.arc(gunX + 4, gunY - 8, 4, 0, Math.PI * 2)
     ctx.fill()
     // Outer iris ring
     ctx.fillStyle = '#cc3311'
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 8, 3.2, 0, Math.PI * 2)
+    ctx.arc(gunX + 4, gunY - 8, 3.2, 0, Math.PI * 2)
     ctx.fill()
     // Glowing iris
     ctx.fillStyle = '#ff7733'
     ctx.shadowColor = '#ff5522'
     ctx.shadowBlur = 8
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 8, 2.3, 0, Math.PI * 2)
+    ctx.arc(gunX + 4, gunY - 8, 2.3, 0, Math.PI * 2)
     ctx.fill()
     ctx.shadowBlur = 0
     // Inner glow
     ctx.fillStyle = '#ffaa44'
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 8, 1.2, 0, Math.PI * 2)
+    ctx.arc(gunX + 4, gunY - 8, 1.2, 0, Math.PI * 2)
     ctx.fill()
     // Pupil
     ctx.fillStyle = '#1a0a0a'
     ctx.beginPath()
-    ctx.arc(gunX - 1, gunY - 8, 0.6, 0, Math.PI * 2)
+    ctx.arc(gunX + 4, gunY - 8, 0.6, 0, Math.PI * 2)
     ctx.fill()
     // Glint
     ctx.fillStyle = '#ffcc88'
     ctx.beginPath()
-    ctx.arc(gunX - 1.8, gunY - 8.7, 0.6, 0, Math.PI * 2)
+    ctx.arc(gunX + 3.2, gunY - 8.7, 0.6, 0, Math.PI * 2)
     ctx.fill()
     // Float shadow on body top
     ctx.fillStyle = 'rgba(0,0,0,0.35)'
     ctx.beginPath()
-    ctx.ellipse(gunX - 1, gunY - 2.4, 3.2, 0.7, 0, 0, Math.PI * 2)
+    ctx.ellipse(gunX + 4, gunY - 2.4, 3.2, 0.7, 0, 0, Math.PI * 2)
     ctx.fill()
 
     // Pistol grip - bullpup style, forward of the rear
