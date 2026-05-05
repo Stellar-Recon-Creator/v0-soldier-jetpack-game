@@ -1,4 +1,4 @@
-import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star } from './game-types'
+import type { GameState, Player, Platform, Obstacle, Enemy, Bullet, Particle, Star, Biome } from './game-types'
 
 // ─── Colors ───
 const COLORS = {
@@ -96,38 +96,51 @@ const COLORS = {
 
 // ─── Background ───
 export function drawBackground(ctx: CanvasRenderingContext2D, state: GameState, canvasW: number, canvasH: number) {
+  const isJungle = state.biome === 'jungle'
   const grad = ctx.createLinearGradient(0, 0, 0, canvasH)
-  grad.addColorStop(0, COLORS.sky.top)
-  grad.addColorStop(0.35, COLORS.sky.mid)
-  grad.addColorStop(0.7, COLORS.sky.bottom)
-  grad.addColorStop(1, COLORS.sky.horizon)
+  if (isJungle) {
+    grad.addColorStop(0, '#3a6a4a')
+    grad.addColorStop(0.35, '#5a9a72')
+    grad.addColorStop(0.7, '#8ab68a')
+    grad.addColorStop(1, '#b6cfa0')
+  } else {
+    grad.addColorStop(0, COLORS.sky.top)
+    grad.addColorStop(0.35, COLORS.sky.mid)
+    grad.addColorStop(0.7, COLORS.sky.bottom)
+    grad.addColorStop(1, COLORS.sky.horizon)
+  }
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, canvasW, canvasH)
 
-  // Sun with rays
+  // Sun (dimmed and yellower in jungle = filtered through canopy)
   const sunX = canvasW * 0.82
   const sunY = 70
+  const sunCol = isJungle ? '#fff2b8' : COLORS.sun
+  const glowOuter = isJungle ? 'rgba(255,238,170,0.18)' : 'rgba(255,244,200,0.3)'
+  const glowOuterMid = isJungle ? 'rgba(255,238,170,0.05)' : 'rgba(255,244,200,0.08)'
+  const glowInner = isJungle ? 'rgba(255,244,180,0.32)' : 'rgba(255,248,220,0.5)'
+  const glowInnerMid = isJungle ? 'rgba(255,240,170,0.1)' : 'rgba(255,244,200,0.15)'
   // Outer glow
   const glowGrad2 = ctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, 180)
-  glowGrad2.addColorStop(0, 'rgba(255,244,200,0.3)')
-  glowGrad2.addColorStop(0.4, 'rgba(255,244,200,0.08)')
+  glowGrad2.addColorStop(0, glowOuter)
+  glowGrad2.addColorStop(0.4, glowOuterMid)
   glowGrad2.addColorStop(1, 'rgba(255,244,200,0)')
   ctx.fillStyle = glowGrad2
   ctx.fillRect(sunX - 180, sunY - 180, 360, 360)
   // Inner glow
   const glowGrad = ctx.createRadialGradient(sunX, sunY, 15, sunX, sunY, 80)
-  glowGrad.addColorStop(0, 'rgba(255,248,220,0.5)')
-  glowGrad.addColorStop(0.5, 'rgba(255,244,200,0.15)')
+  glowGrad.addColorStop(0, glowInner)
+  glowGrad.addColorStop(0.5, glowInnerMid)
   glowGrad.addColorStop(1, 'rgba(255,244,200,0)')
   ctx.fillStyle = glowGrad
   ctx.fillRect(sunX - 80, sunY - 80, 160, 160)
   // Sun disc
-  ctx.fillStyle = COLORS.sun
+  ctx.fillStyle = sunCol
   ctx.beginPath()
   ctx.arc(sunX, sunY, 28, 0, Math.PI * 2)
   ctx.fill()
   // Sun core
-  ctx.fillStyle = '#fffef5'
+  ctx.fillStyle = isJungle ? '#fff8d0' : '#fffef5'
   ctx.beginPath()
   ctx.arc(sunX, sunY, 18, 0, Math.PI * 2)
   ctx.fill()
@@ -166,7 +179,23 @@ export function drawStars(ctx: CanvasRenderingContext2D, stars: Star[], cameraX:
   ctx.globalAlpha = 1
 }
 
-export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: number, canvasW: number, canvasH: number) {
+export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: number, canvasW: number, canvasH: number, biome: Biome = 'default') {
+  if (biome === 'jungle') {
+    // Far jungle haze ridge (very pale, blends with sky)
+    drawHillLayer(ctx, cameraX * 0.05, canvasW, canvasH, 0.5, 50, 110, '#7aa886', '#90bc9a')
+    ctx.fillStyle = 'rgba(180,210,170,0.25)'
+    ctx.fillRect(0, canvasH * 0.45, canvasW, canvasH * 0.15)
+    // Mid jungle ridge (darker green canopy hills)
+    drawHillLayer(ctx, cameraX * 0.10, canvasW, canvasH, 0.6, 60, 130, '#456e3a', '#588a4a')
+    // Distant tall jungle trees (silhouette layer)
+    drawJungleTreeline(ctx, cameraX * 0.18, canvasW, canvasH, 0.62, 45, 90, '#2e5a2a', '#3a6a36')
+    // Closer rolling jungle hills
+    drawHillLayer(ctx, cameraX * 0.22, canvasW, canvasH, 0.76, 30, 70, '#1f4a1c', '#2e5a26')
+    // Foreground jungle treeline (taller, fuller, vine-draped)
+    drawJungleTreeline(ctx, cameraX * 0.30, canvasW, canvasH, 0.80, 38, 78, '#1a3a18', '#284a26')
+    return
+  }
+  // Default biome
   // Layer 1: Far distant mountains (blue/hazy)
   drawDetailedMountainLayer(ctx, cameraX * 0.04, canvasW, canvasH, 0.5, 90, 170, '#8aaace', '#a0bede', true)
   // Atmospheric haze between layers
@@ -180,6 +209,56 @@ export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: nu
   drawHillLayer(ctx, cameraX * 0.22, canvasW, canvasH, 0.76, 30, 70, '#3a7a2a', '#4a8a3a')
   // Layer 5: Treeline with detailed trees
   drawDetailedTreeline(ctx, cameraX * 0.28, canvasW, canvasH, 0.80)
+}
+
+// Tall jungle trees: thick rounded canopies on slim trunks, with hanging vines
+function drawJungleTreeline(
+  ctx: CanvasRenderingContext2D, offset: number, w: number, h: number,
+  yRatio: number, minH: number, maxH: number,
+  trunkColor: string, canopyColor: string,
+) {
+  const baseY = h * yRatio
+  const step = 28
+  const startX = -(offset % step) - step
+
+  for (let x = startX; x < w + 40; x += step) {
+    const seed = Math.abs(Math.sin((x + offset) * 0.041) * 1000)
+    const seed2 = Math.abs(Math.cos((x + offset) * 0.073) * 1000)
+    const treeH = minH + (seed % (maxH - minH))
+    const trunkW = 3 + (seed2 % 3)
+    const canopyR = 11 + (seed % 8)
+    const cx = x + canopyR
+    // Trunk
+    ctx.fillStyle = trunkColor
+    ctx.fillRect(cx - trunkW / 2, baseY - treeH * 0.55, trunkW, treeH * 0.55 + 3)
+    // Canopy - 3 overlapping ellipses for a fluffy jungle silhouette
+    ctx.fillStyle = canopyColor
+    ctx.beginPath()
+    ctx.ellipse(cx, baseY - treeH + canopyR * 0.3, canopyR, canopyR * 0.85, 0, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.ellipse(cx - canopyR * 0.5, baseY - treeH + canopyR * 0.7, canopyR * 0.75, canopyR * 0.7, 0, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.ellipse(cx + canopyR * 0.55, baseY - treeH + canopyR * 0.6, canopyR * 0.78, canopyR * 0.7, 0, 0, Math.PI * 2)
+    ctx.fill()
+    // Hanging vines (a few drooping strands from canopy)
+    if ((seed % 3) < 2) {
+      ctx.strokeStyle = trunkColor
+      ctx.globalAlpha = 0.55
+      ctx.lineWidth = 0.7
+      const vineCount = 1 + (seed2 % 2)
+      for (let v = 0; v < vineCount; v++) {
+        const vx = cx + (seed2 % (canopyR * 1.4)) - canopyR * 0.7 + v * 4
+        const vy = baseY - treeH + canopyR * 0.9
+        ctx.beginPath()
+        ctx.moveTo(vx, vy)
+        ctx.quadraticCurveTo(vx - 1, vy + 6, vx + 1, vy + 12 + (seed % 8))
+        ctx.stroke()
+      }
+      ctx.globalAlpha = 1
+    }
+  }
 }
 
 function drawDetailedMountainLayer(
@@ -450,6 +529,118 @@ export function drawPlatform(ctx: CanvasRenderingContext2D, platform: Platform, 
   }
 
   ctx.shadowBlur = 0
+}
+
+// ─── Obstacles (Jungle Rocks) ───
+export function drawObstacle(ctx: CanvasRenderingContext2D, ob: Obstacle, cameraX: number, cameraY: number) {
+  const x = ob.x - cameraX
+  const y = ob.y - cameraY
+  const w = ob.width
+  const h = ob.height
+  const isTall = ob.type === 'rock-tall'
+
+  // Stable pseudo-random helpers from rock seed
+  const rnd = (n: number) => {
+    const v = Math.sin((ob.seed + n) * 12.9898) * 43758.5453
+    return v - Math.floor(v)
+  }
+
+  // Drop shadow on ground
+  ctx.fillStyle = 'rgba(0,0,0,0.3)'
+  ctx.beginPath()
+  ctx.ellipse(x + w / 2, y + h - 2, w * 0.55, 4, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Build rock silhouette as a rounded asymmetric polygon
+  ctx.beginPath()
+  ctx.moveTo(x, y + h)
+  // Left face up
+  ctx.lineTo(x - 2, y + h * 0.7)
+  ctx.lineTo(x + w * 0.12, y + h * 0.32 + rnd(1) * 4)
+  // Top profile (a few jagged points)
+  if (isTall) {
+    ctx.lineTo(x + w * 0.32, y + 4 + rnd(2) * 3)
+    ctx.lineTo(x + w * 0.55, y - 1)
+    ctx.lineTo(x + w * 0.78, y + 6 + rnd(3) * 4)
+  } else {
+    ctx.lineTo(x + w * 0.4, y + 2 + rnd(2) * 2)
+    ctx.lineTo(x + w * 0.7, y + 6 + rnd(3) * 3)
+  }
+  ctx.lineTo(x + w * 0.92, y + h * 0.35 + rnd(4) * 4)
+  // Right face down
+  ctx.lineTo(x + w + 2, y + h * 0.72)
+  ctx.lineTo(x + w, y + h)
+  ctx.closePath()
+  // Fill - rocky gray-green for jungle
+  const rockGrad = ctx.createLinearGradient(x, y, x, y + h)
+  rockGrad.addColorStop(0, '#6f7064')
+  rockGrad.addColorStop(0.55, '#56564a')
+  rockGrad.addColorStop(1, '#3a3a30')
+  ctx.fillStyle = rockGrad
+  ctx.fill()
+
+  // Subtle face shading on the right side
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'
+  ctx.beginPath()
+  ctx.moveTo(x + w * 0.55, y + 2)
+  ctx.lineTo(x + w + 2, y + h * 0.72)
+  ctx.lineTo(x + w, y + h)
+  ctx.lineTo(x + w * 0.5, y + h)
+  ctx.closePath()
+  ctx.fill()
+
+  // Cracks
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)'
+  ctx.lineWidth = 0.7
+  const crackCount = isTall ? 3 : 2
+  for (let i = 0; i < crackCount; i++) {
+    const cx0 = x + w * (0.2 + rnd(10 + i) * 0.6)
+    const cy0 = y + h * (0.25 + rnd(20 + i) * 0.4)
+    ctx.beginPath()
+    ctx.moveTo(cx0, cy0)
+    ctx.lineTo(cx0 + (rnd(30 + i) - 0.5) * w * 0.25, cy0 + 6 + rnd(40 + i) * 12)
+    ctx.lineTo(cx0 + (rnd(50 + i) - 0.5) * w * 0.3, cy0 + 14 + rnd(60 + i) * 16)
+    ctx.stroke()
+  }
+
+  // Mossy patches on top (jungle character)
+  ctx.fillStyle = '#3a6a2a'
+  for (let i = 0; i < (isTall ? 4 : 3); i++) {
+    const mx = x + w * (0.15 + rnd(70 + i) * 0.7)
+    const my = y + 2 + rnd(80 + i) * 6
+    const mw = 4 + rnd(90 + i) * 7
+    ctx.beginPath()
+    ctx.ellipse(mx, my, mw, 1.8, 0, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  // Moss highlight
+  ctx.fillStyle = '#5a9a3a'
+  for (let i = 0; i < (isTall ? 3 : 2); i++) {
+    const mx = x + w * (0.2 + rnd(100 + i) * 0.6)
+    ctx.fillRect(mx, y + 2 + rnd(110 + i) * 4, 3, 1)
+  }
+
+  // Tall rocks get a few hanging vines on the side
+  if (isTall) {
+    ctx.strokeStyle = '#3a6a2a'
+    ctx.lineWidth = 1
+    const vineCount = 2 + Math.floor(rnd(120) * 2)
+    for (let i = 0; i < vineCount; i++) {
+      const sideLeft = rnd(130 + i) < 0.5
+      const vx = sideLeft ? x + 3 + rnd(140 + i) * 4 : x + w - 3 - rnd(140 + i) * 4
+      const vyTop = y + 4 + rnd(150 + i) * 6
+      const vLen = 18 + rnd(160 + i) * 16
+      ctx.beginPath()
+      ctx.moveTo(vx, vyTop)
+      ctx.quadraticCurveTo(vx + (sideLeft ? -1 : 1), vyTop + vLen * 0.5, vx + (sideLeft ? -2 : 2), vyTop + vLen)
+      ctx.stroke()
+      // Leaf
+      ctx.fillStyle = '#4a8a3a'
+      ctx.beginPath()
+      ctx.ellipse(vx + (sideLeft ? -2 : 2), vyTop + vLen, 2.2, 1, sideLeft ? -0.4 : 0.4, 0, Math.PI * 2)
+      ctx.fill()
+    }
+  }
 }
 
 // ─── Player (Detailed Human Soldier) ───
@@ -4652,6 +4843,11 @@ export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy, cameraX: 
 
   ctx.restore()
 
+  // Vine overlay (jungle biome variant - drawn in world space on top of body)
+  if (enemy.vines) {
+    drawVineOverlay(ctx, ex, ey, enemy.width, enemy.height, enemy.x)
+  }
+
   // Health bar for all enemies
   {
     const barW = enemy.width
@@ -4664,6 +4860,70 @@ export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy, cameraX: 
     roundRect(ctx, ex, ey - 10, barW * hpRatio, barH, 2)
     ctx.fill()
   }
+}
+
+// Vine overlay drawn over the enemy body. worldX is used as a stable seed
+// so each enemy gets a deterministic vine layout that doesn't shimmer.
+function drawVineOverlay(ctx: CanvasRenderingContext2D, ex: number, ey: number, w: number, h: number, worldX: number) {
+  const rnd = (n: number) => {
+    const v = Math.sin((worldX + n) * 91.7) * 43758.5453
+    return v - Math.floor(v)
+  }
+  ctx.save()
+  // Vine across the body diagonally
+  ctx.strokeStyle = '#2e6a26'
+  ctx.lineWidth = 1.4
+  ctx.beginPath()
+  ctx.moveTo(ex - 1, ey + h * 0.3)
+  ctx.quadraticCurveTo(ex + w * 0.4, ey + h * 0.55, ex + w + 1, ey + h * 0.4)
+  ctx.stroke()
+  // Second vine
+  ctx.lineWidth = 1.1
+  ctx.beginPath()
+  ctx.moveTo(ex + w * 0.2, ey - 1)
+  ctx.quadraticCurveTo(ex + w * 0.55, ey + h * 0.4, ex + w * 0.35, ey + h + 2)
+  ctx.stroke()
+
+  // Leaves dotted along the vines
+  ctx.fillStyle = '#4a8a3a'
+  const leafSpots = [
+    { x: ex + w * 0.15, y: ey + h * 0.38, a: -0.4 },
+    { x: ex + w * 0.5, y: ey + h * 0.55, a: 0.2 },
+    { x: ex + w * 0.85, y: ey + h * 0.42, a: 0.5 },
+    { x: ex + w * 0.32, y: ey + h * 0.18, a: -0.6 },
+    { x: ex + w * 0.45, y: ey + h * 0.85, a: 0.3 },
+  ]
+  for (const s of leafSpots) {
+    ctx.beginPath()
+    ctx.ellipse(s.x, s.y, 2.6, 1.2, s.a, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  // Highlights on a couple of leaves
+  ctx.fillStyle = '#7acc5a'
+  ctx.beginPath()
+  ctx.ellipse(leafSpots[0].x - 0.2, leafSpots[0].y - 0.2, 0.8, 0.4, leafSpots[0].a, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.ellipse(leafSpots[2].x - 0.2, leafSpots[2].y - 0.2, 0.8, 0.4, leafSpots[2].a, 0, Math.PI * 2)
+  ctx.fill()
+
+  // A small dangling vine off the bottom (sells the "overgrown" look)
+  if (rnd(1) > 0.3) {
+    ctx.strokeStyle = '#2e6a26'
+    ctx.lineWidth = 0.9
+    const dx = ex + w * (0.3 + rnd(2) * 0.4)
+    const dy = ey + h - 1
+    const dropLen = 5 + rnd(3) * 6
+    ctx.beginPath()
+    ctx.moveTo(dx, dy)
+    ctx.quadraticCurveTo(dx + 1, dy + dropLen * 0.6, dx - 1, dy + dropLen)
+    ctx.stroke()
+    ctx.fillStyle = '#4a8a3a'
+    ctx.beginPath()
+    ctx.ellipse(dx - 1, dy + dropLen, 1.7, 0.9, 0.3, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  ctx.restore()
 }
 
 function drawGrunt(ctx: CanvasRenderingContext2D, enemy: Enemy) {

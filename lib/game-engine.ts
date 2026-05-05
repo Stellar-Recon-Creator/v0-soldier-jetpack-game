@@ -1,4 +1,4 @@
-import type { GameState, Player, Platform, Enemy, Bullet, Particle, Star, Keys, EnemyType, SoundEvents, WeaponType, GearUpgrades } from './game-types'
+import type { GameState, Player, Platform, Obstacle, Enemy, Bullet, Particle, Star, Keys, EnemyType, SoundEvents, WeaponType, GearUpgrades, Biome } from './game-types'
 
 // ─── Constants ───
 const GRAVITY = 1400
@@ -31,8 +31,9 @@ export const MAX_ALTITUDE_Y = -100 // y below this triggers low oxygen
 
 // ─── Level Generation ───
 // difficultyMultiplier: 1.0 = easy (default), 1.3 = medium, 1.65 = hard
-export function generateLevel(level: number, difficultyMultiplier: number = 1.0): Pick<GameState, 'platforms' | 'enemies' | 'levelLength'> {
+export function generateLevel(level: number, difficultyMultiplier: number = 1.0, biome: Biome = 'default'): Pick<GameState, 'platforms' | 'obstacles' | 'enemies' | 'levelLength'> {
   const platforms: Platform[] = []
+  const obstacles: Obstacle[] = []
   const enemies: Enemy[] = []
   const levelLength = 6000 + level * 2000
 
@@ -111,7 +112,40 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0)
     enemy.maxHealth = Math.ceil(enemy.maxHealth * difficultyMultiplier)
   }
 
-  return { platforms, enemies, levelLength }
+  // ─── Jungle biome additions ───
+  if (biome === 'jungle') {
+    // Ground rock obstacles, spaced so you can react and pick a path.
+    // Avoid the spawn area and the boss arena.
+    const ROCK_MIN_GAP = 240
+    let lastRockEnd = 350
+    while (lastRockEnd < levelLength - 600) {
+      const gap = ROCK_MIN_GAP + Math.random() * 320
+      const rx = lastRockEnd + gap
+      if (rx > levelLength - 600) break
+      // ~45% small (jumpable), ~55% tall (must fly over)
+      const isTall = Math.random() < 0.55
+      const w = isTall ? 38 + Math.floor(Math.random() * 14) : 32 + Math.floor(Math.random() * 18)
+      const h = isTall ? 78 + Math.floor(Math.random() * 22) : 26 + Math.floor(Math.random() * 10)
+      obstacles.push({
+        x: rx,
+        y: GROUND_Y - h,
+        width: w,
+        height: h,
+        type: isTall ? 'rock-tall' : 'rock-small',
+        seed: Math.floor(Math.random() * 100000),
+      })
+      lastRockEnd = rx + w
+    }
+
+    // Mark ~40% of non-boss enemies as vine-overgrown (visual only).
+    for (const enemy of enemies) {
+      if (enemy.type !== 'boss' && Math.random() < 0.4) {
+        enemy.vines = true
+      }
+    }
+  }
+
+  return { platforms, obstacles, enemies, levelLength }
 }
 
 function getEnemySize(type: EnemyType) {
@@ -514,6 +548,47 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     }
   }
 
+  // ─ Obstacle Collision (jungle rocks - solid AABB push-out on all sides) ─
+  for (const ob of state.obstacles) {
+    if (
+      player.x + player.width <= ob.x ||
+      player.x >= ob.x + ob.width ||
+      player.y + player.height <= ob.y ||
+      player.y >= ob.y + ob.height
+    ) continue
+
+    // Smallest overlap axis decides push direction
+    const overlapL = (player.x + player.width) - ob.x
+    const overlapR = (ob.x + ob.width) - player.x
+    const overlapT = (player.y + player.height) - ob.y
+    const overlapB = (ob.y + ob.height) - player.y
+    const minH = Math.min(overlapL, overlapR)
+    const minV = Math.min(overlapT, overlapB)
+
+    if (minV < minH) {
+      if (overlapT < overlapB) {
+        // Landed on top
+        player.y = ob.y - player.height
+        if (player.vy > 0) player.vy = 0
+        player.onGround = true
+      } else {
+        // Hit ceiling
+        player.y = ob.y + ob.height
+        if (player.vy < 0) player.vy = 0
+      }
+    } else {
+      if (overlapL < overlapR) {
+        // Hit left face
+        player.x = ob.x - player.width
+        if (player.vx > 0) player.vx = 0
+      } else {
+        // Hit right face
+        player.x = ob.x + ob.width
+        if (player.vx < 0) player.vx = 0
+      }
+    }
+  }
+
   // Fall death (shouldn't happen with continuous ground but safety net)
   if (player.y > 800) {
     player.health = 0
@@ -831,6 +906,21 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           particles.push(createParticle(bullet.x, bullet.y, '#888888'))
         }
         break
+      }
+    }
+    // Bullets hit rock obstacles
+    if (bullet.active) {
+      for (const ob of state.obstacles) {
+        if (
+          bullet.x > ob.x && bullet.x < ob.x + ob.width &&
+          bullet.y > ob.y && bullet.y < ob.y + ob.height
+        ) {
+          bullet.active = false
+          for (let i = 0; i < 4; i++) {
+            particles.push(createParticle(bullet.x, bullet.y, '#6a5642'))
+          }
+          break
+        }
       }
     }
   }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import type { GameState, Keys, WeaponType } from '@/lib/game-types'
+import type { GameState, Keys, WeaponType, Biome } from '@/lib/game-types'
 import { generateLevel, generateStars, createPlayer, updateGame, GROUND_Y } from '@/lib/game-engine'
 import {
   initAudio,
@@ -22,6 +22,7 @@ import {
   drawParallaxMountains,
   drawGround,
   drawPlatform,
+  drawObstacle,
   drawPlayer,
   drawPlayerZoomed,
   drawEnemy,
@@ -53,6 +54,9 @@ export default function GameCanvas() {
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
+  const [biome, setBiome] = useState<Biome>('default')
+  const biomeRef = useRef<Biome>('default')
+  useEffect(() => { biomeRef.current = biome }, [biome])
   const [equippedWeapon, setEquippedWeapon] = useState<WeaponType>('blastop')
   const [starCurrency, setStarCurrency] = useState(100000)
   const [ownedWeapons, setOwnedWeapons] = useState<WeaponType[]>(['blastop'])
@@ -118,13 +122,14 @@ export default function GameCanvas() {
     setGearLevels(prev => ({ ...prev, [stat]: prev[stat] + 1 }))
   }
 
-  const initGame = useCallback((lvl: number, diff: 'easy' | 'medium' | 'hard' = 'easy') => {
+  const initGame = useCallback((lvl: number, diff: 'easy' | 'medium' | 'hard' = 'easy', biomeArg?: Biome) => {
     const canvas = canvasRef.current
     if (!canvas) return
 
     const diffMultiplier = diff === 'easy' ? 1.0 : diff === 'medium' ? 1.3 : 1.65
     const startingAmmo = diff === 'easy' ? 200 : diff === 'medium' ? 250 : 300
-    const { platforms, enemies, levelLength } = generateLevel(lvl, diffMultiplier)
+    const chosenBiome: Biome = biomeArg ?? biomeRef.current
+    const { platforms, obstacles, enemies, levelLength } = generateLevel(lvl, diffMultiplier, chosenBiome)
     const initDpr = window.devicePixelRatio || 1
     const stars = generateStars(200, canvas.width / initDpr, canvas.height / initDpr)
 
@@ -144,6 +149,7 @@ export default function GameCanvas() {
     stateRef.current = {
       player,
       platforms,
+      obstacles,
       enemies,
       bullets: [],
       particles: [],
@@ -156,6 +162,7 @@ export default function GameCanvas() {
       started: true,
       paused: false,
       level: lvl,
+      biome: chosenBiome,
       backgroundLayers: [],
     }
 
@@ -246,7 +253,7 @@ export default function GameCanvas() {
     // Background
     drawBackground(ctx, newState, zw, zh)
     drawStars(ctx, newState.stars, newState.cameraX)
-    drawParallaxMountains(ctx, newState.cameraX, zw, zh)
+    drawParallaxMountains(ctx, newState.cameraX, zw, zh, newState.biome)
 
     // Continuous ground
     drawGround(ctx, newState.cameraX, adjCamY, zw, zh, GROUND_Y)
@@ -255,6 +262,12 @@ export default function GameCanvas() {
     for (const plat of newState.platforms) {
       if (plat.x - newState.cameraX > zw + 50 || plat.x + plat.width - newState.cameraX < -50) continue
       drawPlatform(ctx, plat, newState.cameraX, adjCamY)
+    }
+
+    // Obstacles (rocks)
+    for (const ob of newState.obstacles) {
+      if (ob.x - newState.cameraX > zw + 50 || ob.x + ob.width - newState.cameraX < -50) continue
+      drawObstacle(ctx, ob, newState.cameraX, adjCamY)
     }
 
     // Enemies
@@ -1071,6 +1084,32 @@ export default function GameCanvas() {
                         }}
                       >
                         {w.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm font-bold font-sans uppercase tracking-widest" style={{ color: 'rgba(140,212,255,0.8)' }}>Select Biome</p>
+                <div className="flex justify-center">
+                  <div className="flex items-center gap-3 px-4 py-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.4)' }}>
+                    {([
+                      { key: 'default' as const, label: 'STANDARD', color: '#8cd4ff' },
+                      { key: 'jungle' as const, label: 'JUNGLE', color: '#7acc5a' },
+                    ]).map(b => (
+                      <button
+                        key={b.key}
+                        onClick={() => setBiome(b.key)}
+                        className="text-xs font-bold font-sans px-3 py-1.5 rounded transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        style={{
+                          color: b.color,
+                          background: biome === b.key ? `${b.color}33` : 'rgba(255,255,255,0.08)',
+                          border: biome === b.key ? `1px solid ${b.color}` : '1px solid transparent',
+                          boxShadow: biome === b.key ? `0 0 10px ${b.color}66` : 'none',
+                        }}
+                      >
+                        {b.label}
                       </button>
                     ))}
                   </div>

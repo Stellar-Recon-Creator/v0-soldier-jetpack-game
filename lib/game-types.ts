@@ -49,6 +49,19 @@ export interface Platform {
   floatSpeed?: number
 }
 
+export type Biome = 'default' | 'jungle'
+
+// Solid ground-mounted obstacle (e.g. jungle rock). Full AABB collision.
+// Small variant is jumpable; tall must be flown over.
+export interface Obstacle {
+  x: number
+  y: number
+  width: number
+  height: number
+  type: 'rock-small' | 'rock-tall'
+  seed: number  // for stable visual variation
+}
+
 export type EnemyType = 'grunt' | 'spitter' | 'flyer' | 'brute' | 'boss'
 
 export interface Enemy {
@@ -67,6 +80,7 @@ export interface Enemy {
   active: boolean
   facing: 1 | -1
   floatAngle?: number
+  vines?: boolean  // jungle biome: enemy is overgrown with vines
 }
 
 export interface Bullet {
@@ -104,6 +118,7 @@ export interface Star {
 export interface GameState {
   player: Player
   platforms: Platform[]
+  obstacles: Obstacle[]
   enemies: Enemy[]
   bullets: Bullet[]
   particles: Particle[]
@@ -116,6 +131,7 @@ export interface GameState {
   started: boolean
   paused: boolean
   level: number
+  biome: Biome
   backgroundLayers: BackgroundLayer[]
 }
 
