@@ -5470,6 +5470,28 @@ export function drawHUD(ctx: CanvasRenderingContext2D, player: Player, canvasW: 
   ctx.font = 'bold 14px Geist, sans-serif'
   ctx.fillText(`WEAPON: ${weaponNames[player.weapon] || player.weapon.toUpperCase()}`, 20, 112)
 
+  // LOW HEALTH edge vignette - fades in below 50% HP, stronger as HP drops
+  const hpRatioForVignette = Math.max(0, player.health / player.maxHealth)
+  if (hpRatioForVignette < 0.5) {
+    // 0 at 50% HP, 1 at 0% HP
+    const dangerFactor = (0.5 - hpRatioForVignette) / 0.5
+    // Subtle heartbeat pulse only when critically low (<25%)
+    const critPulse = hpRatioForVignette < 0.25
+      ? 0.15 * (0.5 + 0.5 * Math.sin(Date.now() * 0.006))
+      : 0
+    const edgeAlpha = Math.min(0.55, 0.5 * dangerFactor + critPulse)
+    ctx.save()
+    const vignette = ctx.createRadialGradient(
+      canvasW / 2, canvasH / 2, canvasH * 0.45,
+      canvasW / 2, canvasH / 2, canvasH * 0.95,
+    )
+    vignette.addColorStop(0, 'rgba(180,0,0,0)')
+    vignette.addColorStop(1, `rgba(180,0,0,${edgeAlpha.toFixed(3)})`)
+    ctx.fillStyle = vignette
+    ctx.fillRect(0, 0, canvasW, canvasH)
+    ctx.restore()
+  }
+
   // LOW OXYGEN warning
   if (player.lowOxygen) {
     const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.008)
