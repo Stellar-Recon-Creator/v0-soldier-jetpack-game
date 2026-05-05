@@ -187,12 +187,12 @@ export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: nu
     ctx.fillRect(0, canvasH * 0.45, canvasW, canvasH * 0.15)
     // Mid jungle ridge (darker green canopy hills)
     drawHillLayer(ctx, cameraX * 0.10, canvasW, canvasH, 0.6, 60, 130, '#456e3a', '#588a4a')
-    // Distant tall jungle trees (silhouette layer)
-    drawJungleTreeline(ctx, cameraX * 0.18, canvasW, canvasH, 0.62, 45, 90, '#2e5a2a', '#3a6a36')
+    // Mid-distance jungle trees (larger, slightly closer than before)
+    drawJungleTreeline(ctx, cameraX * 0.32, canvasW, canvasH, 0.66, 70, 120, '#2e5a2a', '#3a6a36')
     // Closer rolling jungle hills
-    drawHillLayer(ctx, cameraX * 0.22, canvasW, canvasH, 0.76, 30, 70, '#1f4a1c', '#2e5a26')
-    // Foreground jungle treeline (taller, fuller, vine-draped)
-    drawJungleTreeline(ctx, cameraX * 0.30, canvasW, canvasH, 0.80, 38, 78, '#1a3a18', '#284a26')
+    drawHillLayer(ctx, cameraX * 0.40, canvasW, canvasH, 0.78, 30, 70, '#1f4a1c', '#2e5a26')
+    // Foreground jungle treeline - moved much closer (faster parallax, taller, fuller)
+    drawJungleTreeline(ctx, cameraX * 0.62, canvasW, canvasH, 0.86, 95, 160, '#13310f', '#1f4220')
     return
   }
   // Default biome
@@ -225,8 +225,9 @@ function drawJungleTreeline(
     const seed = Math.abs(Math.sin((x + offset) * 0.041) * 1000)
     const seed2 = Math.abs(Math.cos((x + offset) * 0.073) * 1000)
     const treeH = minH + (seed % (maxH - minH))
-    const trunkW = 3 + (seed2 % 3)
-    const canopyR = 11 + (seed % 8)
+    const trunkW = Math.max(3, Math.round(treeH * 0.05)) + (seed2 % 3)
+    // Canopy scales with tree height so big trees don't get pinhead foliage
+    const canopyR = treeH * 0.22 + 6 + (seed % 4)
     const cx = x + canopyR
     // Trunk
     ctx.fillStyle = trunkColor

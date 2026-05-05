@@ -124,7 +124,10 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0,
       if (rx > levelLength - 600) break
       // ~45% small (jumpable), ~55% tall (must fly over)
       const isTall = Math.random() < 0.55
-      const w = isTall ? 38 + Math.floor(Math.random() * 14) : 32 + Math.floor(Math.random() * 18)
+      // ~30% chance the rock is an extra-wide boulder
+      const isWide = Math.random() < 0.3
+      const baseW = isTall ? 38 + Math.floor(Math.random() * 14) : 32 + Math.floor(Math.random() * 18)
+      const w = isWide ? baseW + 30 + Math.floor(Math.random() * 30) : baseW
       const h = isTall ? 78 + Math.floor(Math.random() * 22) : 26 + Math.floor(Math.random() * 10)
       obstacles.push({
         x: rx,
@@ -137,9 +140,10 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0,
       lastRockEnd = rx + w
     }
 
-    // Mark ~40% of non-boss enemies as vine-overgrown (visual only).
+    // Mark ~40% of non-boss, non-flyer enemies as vine-overgrown (visual only).
+    // Flyers stay airborne so vine overgrowth wouldn't make sense on them.
     for (const enemy of enemies) {
-      if (enemy.type !== 'boss' && Math.random() < 0.4) {
+      if (enemy.type !== 'boss' && enemy.type !== 'flyer' && Math.random() < 0.4) {
         enemy.vines = true
       }
     }
