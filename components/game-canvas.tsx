@@ -253,7 +253,7 @@ export default function GameCanvas() {
     // Background
     drawBackground(ctx, newState, zw, zh)
     drawStars(ctx, newState.stars, newState.cameraX)
-    drawParallaxMountains(ctx, newState.cameraX, zw, zh, newState.biome)
+    drawParallaxMountains(ctx, newState.cameraX, zw, zh, newState.biome, adjCamY)
 
     // Continuous ground
     drawGround(ctx, newState.cameraX, adjCamY, zw, zh, GROUND_Y)

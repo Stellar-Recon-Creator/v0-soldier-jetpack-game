@@ -179,7 +179,7 @@ export function drawStars(ctx: CanvasRenderingContext2D, stars: Star[], cameraX:
   ctx.globalAlpha = 1
 }
 
-export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: number, canvasW: number, canvasH: number, biome: Biome = 'default') {
+export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: number, canvasW: number, canvasH: number, biome: Biome = 'default', cameraY: number = 0) {
   if (biome === 'jungle') {
     // Far jungle haze ridge (very pale, blends with sky)
     drawHillLayer(ctx, cameraX * 0.05, canvasW, canvasH, 0.5, 50, 110, '#7aa886', '#90bc9a')
@@ -187,12 +187,12 @@ export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: nu
     ctx.fillRect(0, canvasH * 0.45, canvasW, canvasH * 0.15)
     // Mid jungle ridge (darker green canopy hills)
     drawHillLayer(ctx, cameraX * 0.10, canvasW, canvasH, 0.6, 60, 130, '#456e3a', '#588a4a')
-    // Mid-distance jungle trees
-    drawJungleTreeline(ctx, cameraX * 0.45, canvasW, canvasH, 0.72, 170, 280, '#2e5a2a', '#3a6a36')
+    // Mid-distance jungle trees - subtle vertical parallax so they shift slightly with flight
+    drawJungleTreeline(ctx, cameraX * 0.45, canvasW, canvasH, 0.72, 170, 280, '#2e5a2a', '#3a6a36', cameraY * 0.5)
     // Closer rolling jungle hills
     drawHillLayer(ctx, cameraX * 0.55, canvasW, canvasH, 0.82, 30, 70, '#1f4a1c', '#2e5a26')
-    // Foreground jungle treeline - towering and right up against the action
-    drawJungleTreeline(ctx, cameraX * 0.88, canvasW, canvasH, 0.94, 290, 440, '#13310f', '#1f4220')
+    // Foreground jungle treeline - tracks camera Y fully so flight doesn't expose more tree
+    drawJungleTreeline(ctx, cameraX * 0.88, canvasW, canvasH, 0.94, 290, 440, '#13310f', '#1f4220', cameraY)
     return
   }
   // Default biome
@@ -217,12 +217,19 @@ function drawJungleTreeline(
   ctx: CanvasRenderingContext2D, offset: number, w: number, h: number,
   yRatio: number, minH: number, maxH: number,
   trunkColor: string, canopyColor: string,
+  verticalOffset: number = 0,
 ) {
-  const baseY = h * yRatio
+  // verticalOffset shifts the planting line so foreground trees track the
+  // camera (player flying up moves the trees down with the world).
+  const baseY = h * yRatio - verticalOffset
   const step = 28
-  const startX = -(offset % step) - step
+  // Extend loop bounds horizontally so trees whose trunks are off-screen
+  // but whose canopies overlap the visible area still get drawn.
+  const maxCanopyR = maxH * 0.22 + 10
+  const buffer = Math.ceil(maxCanopyR * 2) + step
+  const startX = -(offset % step) - buffer
 
-  for (let x = startX; x < w + 40; x += step) {
+  for (let x = startX; x < w + buffer; x += step) {
     const seed = Math.abs(Math.sin((x + offset) * 0.041) * 1000)
     const seed2 = Math.abs(Math.cos((x + offset) * 0.073) * 1000)
     const seed3 = Math.abs(Math.sin((x + offset) * 0.137) * 1000)
