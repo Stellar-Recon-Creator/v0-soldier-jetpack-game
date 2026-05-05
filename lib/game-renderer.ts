@@ -188,11 +188,11 @@ export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: nu
     // Mid jungle ridge (darker green canopy hills)
     drawHillLayer(ctx, cameraX * 0.10, canvasW, canvasH, 0.6, 60, 130, '#456e3a', '#588a4a')
     // Mid-distance jungle trees
-    drawJungleTreeline(ctx, cameraX * 0.45, canvasW, canvasH, 0.72, 120, 200, '#2e5a2a', '#3a6a36')
+    drawJungleTreeline(ctx, cameraX * 0.45, canvasW, canvasH, 0.72, 170, 280, '#2e5a2a', '#3a6a36')
     // Closer rolling jungle hills
     drawHillLayer(ctx, cameraX * 0.55, canvasW, canvasH, 0.82, 30, 70, '#1f4a1c', '#2e5a26')
     // Foreground jungle treeline - towering and right up against the action
-    drawJungleTreeline(ctx, cameraX * 0.88, canvasW, canvasH, 0.94, 200, 310, '#13310f', '#1f4220')
+    drawJungleTreeline(ctx, cameraX * 0.88, canvasW, canvasH, 0.94, 290, 440, '#13310f', '#1f4220')
     return
   }
   // Default biome
@@ -211,7 +211,8 @@ export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: nu
   drawDetailedTreeline(ctx, cameraX * 0.28, canvasW, canvasH, 0.80)
 }
 
-// Tall jungle trees: thick rounded canopies on slim trunks, with hanging vines
+// Tall jungle trees: layered canopy clusters, shaded trunks with bark texture,
+// stub branches, buttress roots, hanging vines with leaves, and base ferns
 function drawJungleTreeline(
   ctx: CanvasRenderingContext2D, offset: number, w: number, h: number,
   yRatio: number, minH: number, maxH: number,
@@ -224,40 +225,169 @@ function drawJungleTreeline(
   for (let x = startX; x < w + 40; x += step) {
     const seed = Math.abs(Math.sin((x + offset) * 0.041) * 1000)
     const seed2 = Math.abs(Math.cos((x + offset) * 0.073) * 1000)
+    const seed3 = Math.abs(Math.sin((x + offset) * 0.137) * 1000)
     const treeH = minH + (seed % (maxH - minH))
     const trunkW = Math.max(3, Math.round(treeH * 0.05)) + (seed2 % 3)
-    // Canopy scales with tree height so big trees don't get pinhead foliage
     const canopyR = treeH * 0.22 + 6 + (seed % 4)
     const cx = x + canopyR
-    // Trunk
+    const trunkTopY = baseY - treeH * 0.55
+    const canopyCY = baseY - treeH + canopyR * 0.4
+
+    // ─ Buttress roots (only on big trees) ─
+    if (treeH > minH + (maxH - minH) * 0.45) {
+      ctx.fillStyle = trunkColor
+      const rootW = trunkW * 1.6
+      const rootH = trunkW * 1.4
+      // Left root
+      ctx.beginPath()
+      ctx.moveTo(cx - trunkW / 2, baseY - rootH)
+      ctx.lineTo(cx - trunkW / 2 - rootW, baseY + 2)
+      ctx.lineTo(cx - trunkW / 2, baseY + 2)
+      ctx.closePath()
+      ctx.fill()
+      // Right root
+      ctx.beginPath()
+      ctx.moveTo(cx + trunkW / 2, baseY - rootH)
+      ctx.lineTo(cx + trunkW / 2 + rootW, baseY + 2)
+      ctx.lineTo(cx + trunkW / 2, baseY + 2)
+      ctx.closePath()
+      ctx.fill()
+    }
+
+    // ─ Trunk (with shading) ─
     ctx.fillStyle = trunkColor
-    ctx.fillRect(cx - trunkW / 2, baseY - treeH * 0.55, trunkW, treeH * 0.55 + 3)
-    // Canopy - 3 overlapping ellipses for a fluffy jungle silhouette
+    ctx.fillRect(cx - trunkW / 2, trunkTopY, trunkW, treeH * 0.55 + 3)
+    // Right side shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.28)'
+    ctx.fillRect(cx + trunkW / 2 - Math.max(1, trunkW * 0.3), trunkTopY, Math.max(1, trunkW * 0.3), treeH * 0.55 + 3)
+    // Left side highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.12)'
+    ctx.fillRect(cx - trunkW / 2, trunkTopY, Math.max(0.8, trunkW * 0.22), treeH * 0.55 + 3)
+
+    // Bark texture - horizontal cracks
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)'
+    ctx.lineWidth = 0.5
+    const barkCount = 2 + (seed2 % 3)
+    for (let b = 0; b < barkCount; b++) {
+      const bY = trunkTopY + ((b + 1) / (barkCount + 1)) * treeH * 0.55 + ((seed3 + b * 17) % 6) - 3
+      const bOff = ((seed + b * 11) % Math.max(1, trunkW)) - trunkW / 2
+      ctx.beginPath()
+      ctx.moveTo(cx - trunkW / 2 + 0.5, bY)
+      ctx.lineTo(cx + trunkW / 2 - 0.5, bY + bOff * 0.15)
+      ctx.stroke()
+    }
+
+    // ─ Stub branches between trunk and canopy ─
+    const branchY = trunkTopY + treeH * 0.18
+    const branchLen = canopyR * 0.55
+    ctx.strokeStyle = trunkColor
+    ctx.lineWidth = Math.max(1.2, trunkW * 0.45)
+    ctx.beginPath()
+    ctx.moveTo(cx - trunkW / 2, branchY)
+    ctx.quadraticCurveTo(cx - branchLen * 0.6, branchY - 2, cx - branchLen, branchY - branchLen * 0.4)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(cx + trunkW / 2, branchY + 6)
+    ctx.quadraticCurveTo(cx + branchLen * 0.6, branchY + 4, cx + branchLen, branchY - branchLen * 0.3 + 2)
+    ctx.stroke()
+
+    // ─ Canopy underside shadow (drawn first, deep beneath) ─
+    ctx.fillStyle = 'rgba(0,0,0,0.25)'
+    ctx.beginPath()
+    ctx.ellipse(cx, canopyCY + canopyR * 0.5, canopyR * 1.05, canopyR * 0.55, 0, 0, Math.PI * 2)
+    ctx.fill()
+
+    // ─ Canopy - 7 overlapping ellipses for a dense layered cluster ─
     ctx.fillStyle = canopyColor
+    const canopyClusters = [
+      { dx: 0,                dy: -canopyR * 0.1,  rx: canopyR * 1.05, ry: canopyR * 0.85 },
+      { dx: -canopyR * 0.6,   dy: canopyR * 0.3,   rx: canopyR * 0.78, ry: canopyR * 0.75 },
+      { dx: canopyR * 0.65,   dy: canopyR * 0.25,  rx: canopyR * 0.82, ry: canopyR * 0.78 },
+      { dx: -canopyR * 0.35,  dy: -canopyR * 0.55, rx: canopyR * 0.65, ry: canopyR * 0.6 },
+      { dx: canopyR * 0.4,    dy: -canopyR * 0.5,  rx: canopyR * 0.7,  ry: canopyR * 0.62 },
+      { dx: -canopyR * 0.85,  dy: -canopyR * 0.05, rx: canopyR * 0.55, ry: canopyR * 0.5 },
+      { dx: canopyR * 0.88,   dy: -canopyR * 0.1,  rx: canopyR * 0.55, ry: canopyR * 0.5 },
+    ]
+    for (const cl of canopyClusters) {
+      ctx.beginPath()
+      ctx.ellipse(cx + cl.dx, canopyCY + cl.dy, cl.rx, cl.ry, 0, 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    // ─ Canopy highlights (lit from upper-left) ─
+    ctx.fillStyle = 'rgba(255,255,255,0.18)'
     ctx.beginPath()
-    ctx.ellipse(cx, baseY - treeH + canopyR * 0.3, canopyR, canopyR * 0.85, 0, 0, Math.PI * 2)
+    ctx.ellipse(cx - canopyR * 0.3, canopyCY - canopyR * 0.55, canopyR * 0.55, canopyR * 0.3, -0.3, 0, Math.PI * 2)
     ctx.fill()
     ctx.beginPath()
-    ctx.ellipse(cx - canopyR * 0.5, baseY - treeH + canopyR * 0.7, canopyR * 0.75, canopyR * 0.7, 0, 0, Math.PI * 2)
+    ctx.ellipse(cx + canopyR * 0.45, canopyCY - canopyR * 0.45, canopyR * 0.4, canopyR * 0.22, 0.2, 0, Math.PI * 2)
     ctx.fill()
-    ctx.beginPath()
-    ctx.ellipse(cx + canopyR * 0.55, baseY - treeH + canopyR * 0.6, canopyR * 0.78, canopyR * 0.7, 0, 0, Math.PI * 2)
-    ctx.fill()
-    // Hanging vines (a few drooping strands from canopy)
+
+    // ─ Canopy speckle (small darker dots for leaf detail) ─
+    ctx.fillStyle = 'rgba(0,0,0,0.18)'
+    const speckCount = 4 + (seed2 % 3)
+    for (let s = 0; s < speckCount; s++) {
+      const ax = (seed3 + s * 53) % canopyR * 1.6 - canopyR * 0.8
+      const ay = (seed + s * 29) % canopyR - canopyR * 0.5
+      ctx.beginPath()
+      ctx.arc(cx + ax, canopyCY + ay, 1.2 + (s % 2), 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    // ─ Hanging vines with leaf shapes ─
     if ((seed % 3) < 2) {
-      ctx.strokeStyle = trunkColor
-      ctx.globalAlpha = 0.55
-      ctx.lineWidth = 0.7
-      const vineCount = 1 + (seed2 % 2)
+      const vineCount = 2 + (seed2 % 3)
       for (let v = 0; v < vineCount; v++) {
-        const vx = cx + (seed2 % (canopyR * 1.4)) - canopyR * 0.7 + v * 4
-        const vy = baseY - treeH + canopyR * 0.9
+        const baseOffset = (seed2 % canopyR) - canopyR * 0.5 + v * (canopyR * 0.35) - canopyR * 0.3
+        const vx = cx + baseOffset
+        const vy = canopyCY + canopyR * 0.55
+        const vLen = 14 + ((seed + v * 7) % 22)
+        // Vine
+        ctx.strokeStyle = '#244022'
+        ctx.lineWidth = 0.9
         ctx.beginPath()
         ctx.moveTo(vx, vy)
-        ctx.quadraticCurveTo(vx - 1, vy + 6, vx + 1, vy + 12 + (seed % 8))
+        ctx.quadraticCurveTo(vx + (v % 2 === 0 ? -2 : 2), vy + vLen * 0.5, vx + (v % 2 === 0 ? -3 : 3), vy + vLen)
         ctx.stroke()
+        // Tiny leaves along the vine
+        ctx.fillStyle = '#3d7a32'
+        for (let lf = 0; lf < 2; lf++) {
+          const lt = 0.4 + lf * 0.45
+          const lx = vx + (v % 2 === 0 ? -2 : 2) * lt - (v % 2 === 0 ? 1 : -1) * lt
+          const ly = vy + vLen * lt
+          ctx.beginPath()
+          ctx.ellipse(lx, ly, 2.2, 1, v % 2 === 0 ? -0.4 : 0.4, 0, Math.PI * 2)
+          ctx.fill()
+        }
+        // Leaf tip at end of vine
+        ctx.fillStyle = '#4a8a3a'
+        ctx.beginPath()
+        ctx.ellipse(vx + (v % 2 === 0 ? -3 : 3), vy + vLen + 1, 2.6, 1.3, v % 2 === 0 ? -0.3 : 0.3, 0, Math.PI * 2)
+        ctx.fill()
       }
-      ctx.globalAlpha = 1
+    }
+
+    // ─ Base ferns / undergrowth ─
+    if ((seed3 % 3) < 2) {
+      const fernCount = 2 + (seed3 % 2)
+      ctx.fillStyle = '#2a5a26'
+      for (let f = 0; f < fernCount; f++) {
+        const fx = cx + (f - (fernCount - 1) / 2) * 3.5 + ((seed + f * 13) % 4) - 2
+        const fH = 4 + ((seed2 + f * 11) % 5)
+        ctx.beginPath()
+        ctx.moveTo(fx - 2, baseY + 1)
+        ctx.lineTo(fx, baseY - fH)
+        ctx.lineTo(fx + 2, baseY + 1)
+        ctx.closePath()
+        ctx.fill()
+      }
+      // Highlight tips
+      ctx.fillStyle = '#4a8a3a'
+      for (let f = 0; f < fernCount; f++) {
+        const fx = cx + (f - (fernCount - 1) / 2) * 3.5 + ((seed + f * 13) % 4) - 2
+        const fH = 4 + ((seed2 + f * 11) % 5)
+        ctx.fillRect(fx - 0.4, baseY - fH, 0.8, 1.5)
+      }
     }
   }
 }
