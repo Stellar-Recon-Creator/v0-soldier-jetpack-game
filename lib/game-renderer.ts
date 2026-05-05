@@ -187,12 +187,12 @@ export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: nu
     ctx.fillRect(0, canvasH * 0.45, canvasW, canvasH * 0.15)
     // Mid jungle ridge (darker green canopy hills)
     drawHillLayer(ctx, cameraX * 0.10, canvasW, canvasH, 0.6, 60, 130, '#456e3a', '#588a4a')
-    // Mid-distance jungle trees (larger, slightly closer than before)
-    drawJungleTreeline(ctx, cameraX * 0.32, canvasW, canvasH, 0.66, 70, 120, '#2e5a2a', '#3a6a36')
+    // Mid-distance jungle trees
+    drawJungleTreeline(ctx, cameraX * 0.45, canvasW, canvasH, 0.72, 120, 200, '#2e5a2a', '#3a6a36')
     // Closer rolling jungle hills
-    drawHillLayer(ctx, cameraX * 0.40, canvasW, canvasH, 0.78, 30, 70, '#1f4a1c', '#2e5a26')
-    // Foreground jungle treeline - moved much closer (faster parallax, taller, fuller)
-    drawJungleTreeline(ctx, cameraX * 0.62, canvasW, canvasH, 0.86, 95, 160, '#13310f', '#1f4220')
+    drawHillLayer(ctx, cameraX * 0.55, canvasW, canvasH, 0.82, 30, 70, '#1f4a1c', '#2e5a26')
+    // Foreground jungle treeline - towering and right up against the action
+    drawJungleTreeline(ctx, cameraX * 0.88, canvasW, canvasH, 0.94, 200, 310, '#13310f', '#1f4220')
     return
   }
   // Default biome
