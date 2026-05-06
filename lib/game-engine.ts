@@ -114,9 +114,20 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0,
 
   // ─── Jungle biome additions ───
   if (biome === 'jungle') {
-    // Lift all platforms 15% higher above the ground (more aerial traversal)
-    for (const plat of platforms) {
-      plat.y = GROUND_Y - (GROUND_Y - plat.y) * 1.15
+    // Lift all platforms by a uniform amount: the average of how much the
+    // highest and lowest platforms would have moved under a 15% lift.
+    if (platforms.length > 0) {
+      let maxMove = 0
+      let minMove = Infinity
+      for (const plat of platforms) {
+        const move = (GROUND_Y - plat.y) * 0.15
+        if (move > maxMove) maxMove = move
+        if (move < minMove) minMove = move
+      }
+      const uniformLift = (maxMove + minMove) / 2
+      for (const plat of platforms) {
+        plat.y -= uniformLift
+      }
     }
 
     // Ground rock obstacles, spaced so you can react and pick a path.
