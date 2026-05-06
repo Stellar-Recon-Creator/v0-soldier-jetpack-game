@@ -529,8 +529,10 @@ export default function GameCanvas() {
             </h1>
           </div>
 
-          {/* Sky area - spacer (jungle backdrop overlays at the bottom) */}
-          <div className="flex-1 relative overflow-hidden">
+          {/* Sky area - spacer (jungle backdrop overlays at the bottom).
+              No overflow-hidden so tall trees can extend above the sky area;
+              the title (z-10) stays in front. */}
+          <div className="flex-1 relative">
             {biome === 'jungle' && (
               <canvas
                 key={`menu-treeline-${biome}`}
