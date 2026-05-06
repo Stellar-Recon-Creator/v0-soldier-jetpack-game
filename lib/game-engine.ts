@@ -91,10 +91,10 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0,
   for (let ex = 400; ex < levelLength - 200; ex += 200 + Math.random() * 300 / enemyDensity) {
     const roll = Math.random()
     let type: EnemyType
-    if (roll < 0.30) type = 'grunt'
-    else if (roll < 0.50) type = 'spitter'
-    else if (roll < 0.68) type = 'flyer'
-    else if (roll < 0.82) type = 'brute'
+    if (roll < 0.25) type = 'grunt'
+    else if (roll < 0.42) type = 'spitter'
+    else if (roll < 0.55) type = 'flyer'
+    else if (roll < 0.68) type = 'brute'
     else if (roll < 0.95) type = 'shielder'
     else type = 'grunt'
 
