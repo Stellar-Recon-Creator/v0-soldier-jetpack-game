@@ -1,4 +1,4 @@
-import type { GameState, Player, Platform, Obstacle, Enemy, Bullet, Particle, Star, Keys, EnemyType, SoundEvents, WeaponType, GearUpgrades, Biome } from './game-types'
+import type { GameState, Player, Platform, Obstacle, Enemy, Bullet, Pickup, Particle, Star, Keys, EnemyType, SoundEvents, WeaponType, GearUpgrades, Biome } from './game-types'
 
 // ─── Constants ───
 const GRAVITY = 1400
@@ -12,15 +12,16 @@ const SHOOT_COOLDOWN = 0.18
 
 // Weapon configs
 const WEAPON_CONFIGS: Record<WeaponType, { speed: number; cooldown: number; damage: number; count: number; spread: number; radius: number; ammoCost: number }> = {
-  blastop:  { speed: 700,  cooldown: 0.18, damage: 0.8, count: 1, spread: 0,    radius: 4,  ammoCost: 1 },
-  relav:    { speed: 650,  cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3,  ammoCost: 0.2 },
-  spalmer:  { speed: 500,  cooldown: 0.72, damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2 },
-  lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 6 },
-  plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4 },
-  hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8 },
-  pulse:     { speed: 556,  cooldown: 0.092, damage: 1.012, count: 1, spread: 0, radius: 4,  ammoCost: 0.8 },
-  charger:   { speed: 700,  cooldown: 0.3,  damage: 0.88, count: 1, spread: 0, radius: 5,  ammoCost: 2 },
-  homer:     { speed: 960,  cooldown: 1.14, damage: 7.6, count: 1, spread: 0, radius: 3,  ammoCost: 7.6 },
+  // Ammo costs increased 10% to compensate for ammo pickup drops
+  blastop:  { speed: 700,  cooldown: 0.18, damage: 0.8, count: 1, spread: 0,    radius: 4,  ammoCost: 1.1 },
+  relav:    { speed: 650,  cooldown: 0.08, damage: 0.2, count: 1, spread: 0.08, radius: 3,  ammoCost: 0.22 },
+  spalmer:  { speed: 500,  cooldown: 0.72, damage: 1,  count: 5, spread: 0.15, radius: 3,  ammoCost: 2.2 },
+  lerange:  { speed: 1200, cooldown: 1.2,  damage: 8,  count: 1, spread: 0,    radius: 3,  ammoCost: 6.6 },
+  plasma:   { speed: 400,  cooldown: 0.8,  damage: 4,  count: 1, spread: 0,    radius: 7,  ammoCost: 4.4 },
+  hypershot: { speed: 350,  cooldown: 1.5,  damage: 10, count: 1, spread: 0,    radius: 10, ammoCost: 8.8 },
+  pulse:     { speed: 556,  cooldown: 0.092, damage: 1.012, count: 1, spread: 0, radius: 4,  ammoCost: 0.88 },
+  charger:   { speed: 700,  cooldown: 0.3,  damage: 0.88, count: 1, spread: 0, radius: 5,  ammoCost: 2.2 },
+  homer:     { speed: 960,  cooldown: 1.14, damage: 7.6, count: 1, spread: 0, radius: 3,  ammoCost: 8.36 },
 }
 // Maximum turn rate for HOMER homing bullets (radians per second)
 const HOMER_TURN_RATE = (40 * Math.PI) / 180
@@ -297,6 +298,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
   const player = { ...state.player }
   let bullets = [...state.bullets]
   let enemies = state.enemies.map(e => ({ ...e }))
+  let pickups = [...state.pickups]
   let particles = [...state.particles]
 
   // ─ Player Movement ─
@@ -378,7 +380,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
       const chargeCooldown = chargeLevel === 3 ? 0.9 : chargeLevel === 2 ? 0.65 : 0.3
       const chargeRadius = chargeLevel === 3 ? 8 : chargeLevel === 2 ? 6 : 5
       const chargeSpeed = chargeLevel === 3 ? 500 : chargeLevel === 2 ? 600 : 700
-      const chargeAmmo = chargeLevel === 3 ? 5 : chargeLevel === 2 ? 3 : 2
+      const chargeAmmo = chargeLevel === 3 ? 5.5 : chargeLevel === 2 ? 3.3 : 2.2
       player.shootCooldown = chargeCooldown
       player.shooting = true
       soundEvents.playerShoot = true
@@ -936,6 +938,22 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             const scoreMap: Record<EnemyType, number> = { grunt: 100, spitter: 200, flyer: 250, brute: 500, boss: 2000, shielder: 400 }
             player.score += scoreMap[enemy.type]
 
+            // Ammo pickup drop chance per enemy type
+            const ammoDropChance: Record<EnemyType, number> = {
+              grunt: 0.15, spitter: 0.15, flyer: 0.25, shielder: 0.30, brute: 0.30, boss: 0,
+            }
+            if (Math.random() < ammoDropChance[enemy.type]) {
+              pickups.push({
+                x: enemy.x + enemy.width / 2,
+                y: enemy.y + enemy.height / 2,
+                vy: -120,           // small initial pop upward
+                type: 'ammo',
+                active: true,
+                bobPhase: Math.random() * Math.PI * 2,
+                spawnTime: 0,
+              })
+            }
+
             // Death particles: plasma=purple, hypershot=red, otherwise alien body colors
             const deathColors = bullet.weaponType === 'charger'
               ? ['#ff8800', '#ffaa33', '#cc6600', '#ffcc66']
@@ -958,6 +976,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
                 player,
                 bullets,
                 enemies,
+                pickups,
                 particles,
                 gameWon: true,
                 soundEvents,
@@ -1049,6 +1068,43 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     }
   }
 
+  // ─ Pickup Update (gravity-fall, rest on ground, AABB collect) ─
+  for (const pk of pickups) {
+    if (!pk.active) continue
+    pk.spawnTime += dt
+    pk.bobPhase += dt
+    // Fall toward ground until landed
+    if (pk.y < GROUND_Y - 8) {
+      pk.vy += GRAVITY * dt
+      pk.y += pk.vy * dt
+      if (pk.y >= GROUND_Y - 8) {
+        pk.y = GROUND_Y - 8
+        pk.vy = 0
+      }
+    }
+    // Player collection (slightly generous AABB)
+    const pkW = 18, pkH = 18
+    const pkLeft = pk.x - pkW / 2
+    const pkTop = pk.y - pkH / 2
+    if (
+      player.x + player.width > pkLeft &&
+      player.x < pkLeft + pkW &&
+      player.y + player.height > pkTop &&
+      player.y < pkTop + pkH
+    ) {
+      if (pk.type === 'ammo') {
+        const refill = player.bulletsMax * 0.05
+        player.bulletsRemaining = Math.min(player.bulletsMax, player.bulletsRemaining + refill)
+      }
+      pk.active = false
+      // Sparkle particles on pickup
+      for (let i = 0; i < 8; i++) {
+        particles.push(createParticle(pk.x, pk.y, ['#ffdd44', '#ffeeaa', '#ffaa22'][Math.floor(Math.random() * 3)]))
+      }
+    }
+  }
+  pickups = pickups.filter(p => p.active)
+
   // ─ Particle Update ─
   particles = particles.filter(p => {
     p.x += p.vx * dt
@@ -1075,6 +1131,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
     player,
     bullets,
     enemies,
+    pickups,
     particles,
     cameraX: camX,
     cameraY: camY,

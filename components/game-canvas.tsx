@@ -28,6 +28,7 @@ import {
   drawPlayerZoomed,
   drawEnemy,
   drawBullet,
+  drawPickup,
   drawParticle,
   drawHUD,
   drawJetpackFlame,
@@ -153,6 +154,7 @@ export default function GameCanvas() {
       obstacles,
       enemies,
       bullets: [],
+      pickups: [],
       particles: [],
       stars,
       cameraX: 0,
@@ -282,6 +284,13 @@ export default function GameCanvas() {
     for (const bullet of newState.bullets) {
       if (!bullet.active) continue
       drawBullet(ctx, bullet, newState.cameraX, adjCamY)
+    }
+
+    // Pickups (ammo drops)
+    for (const pk of newState.pickups) {
+      if (!pk.active) continue
+      if (pk.x - newState.cameraX > zw + 50 || pk.x - newState.cameraX < -50) continue
+      drawPickup(ctx, pk, newState.cameraX, adjCamY)
     }
 
     // Player

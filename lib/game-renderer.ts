@@ -1,4 +1,4 @@
-import type { GameState, Player, Platform, Obstacle, Enemy, Bullet, Particle, Star, Biome } from './game-types'
+import type { GameState, Player, Platform, Obstacle, Enemy, Bullet, Pickup, Particle, Star, Biome } from './game-types'
 
 // ─── Colors ───
 const COLORS = {
@@ -6059,6 +6059,73 @@ export function drawBullet(ctx: CanvasRenderingContext2D, bullet: Bullet, camera
   ctx.globalAlpha = 1
 
   ctx.shadowBlur = 0
+}
+
+// ─── Pickups ───
+export function drawPickup(ctx: CanvasRenderingContext2D, pk: Pickup, cameraX: number, cameraY: number) {
+  const px = pk.x - cameraX
+  // Idle bob once landed
+  const onGround = pk.vy === 0 && pk.y >= 491
+  const bob = onGround ? Math.sin(pk.bobPhase * 3) * 1.5 : 0
+  const py = pk.y - cameraY + bob
+
+  // Spawn flourish: scale up briefly when first dropped
+  const spawnScale = Math.min(1, pk.spawnTime * 4)
+  const size = 14 * spawnScale
+  const half = size / 2
+
+  ctx.save()
+
+  // Shadow on ground (only when on ground)
+  if (onGround) {
+    ctx.fillStyle = 'rgba(0,0,0,0.35)'
+    ctx.beginPath()
+    ctx.ellipse(px, pk.y - cameraY + 9, half * 0.9, 2.2, 0, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  // Outer glow halo
+  const haloPulse = 0.6 + 0.4 * Math.sin(pk.bobPhase * 2)
+  const halo = ctx.createRadialGradient(px, py, 2, px, py, size * 1.4)
+  halo.addColorStop(0, `rgba(255,220,80,${0.4 * haloPulse})`)
+  halo.addColorStop(0.5, `rgba(255,180,50,${0.18 * haloPulse})`)
+  halo.addColorStop(1, 'rgba(255,180,50,0)')
+  ctx.fillStyle = halo
+  ctx.beginPath()
+  ctx.arc(px, py, size * 1.4, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Main canister body (rounded rect)
+  ctx.fillStyle = '#3a2810'
+  roundRect(ctx, px - half, py - half, size, size, 2)
+  ctx.fill()
+  // Inner panel
+  ctx.fillStyle = '#5a3a18'
+  roundRect(ctx, px - half + 1.2, py - half + 1.2, size - 2.4, size - 2.4, 1.5)
+  ctx.fill()
+  // Glowing core (ammo cell)
+  ctx.fillStyle = '#ffdd44'
+  ctx.shadowColor = '#ffaa22'
+  ctx.shadowBlur = 6
+  roundRect(ctx, px - half + 3, py - half + 3, size - 6, size - 6, 1)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  // Inner highlight
+  ctx.fillStyle = '#ffeeaa'
+  ctx.fillRect(px - half + 3.5, py - half + 3.5, size - 7, 1.5)
+
+  // "AMMO" plus icon
+  ctx.fillStyle = '#3a2008'
+  ctx.fillRect(px - 0.8, py - 3, 1.6, 6)  // vertical bar
+  ctx.fillRect(px - 3, py - 0.8, 6, 1.6)  // horizontal bar
+
+  // Top trim band
+  ctx.fillStyle = '#1a1208'
+  ctx.fillRect(px - half + 1, py - half + 0.5, size - 2, 1.2)
+  // Bottom trim band
+  ctx.fillRect(px - half + 1, py + half - 1.7, size - 2, 1.2)
+
+  ctx.restore()
 }
 
 // ─── Particles ───

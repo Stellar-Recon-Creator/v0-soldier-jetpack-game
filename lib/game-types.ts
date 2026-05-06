@@ -121,12 +121,25 @@ export interface Star {
   brightness: number
 }
 
+export type PickupType = 'ammo'
+
+export interface Pickup {
+  x: number
+  y: number
+  vy: number
+  type: PickupType
+  active: boolean
+  bobPhase: number      // for idle bob animation
+  spawnTime: number     // ms since first frame, for spawn flourish
+}
+
 export interface GameState {
   player: Player
   platforms: Platform[]
   obstacles: Obstacle[]
   enemies: Enemy[]
   bullets: Bullet[]
+  pickups: Pickup[]
   particles: Particle[]
   stars: Star[]
   cameraX: number
