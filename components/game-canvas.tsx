@@ -23,6 +23,7 @@ import {
   drawGround,
   drawPlatform,
   drawObstacle,
+  drawJungleTreeline,
   drawPlayer,
   drawPlayerZoomed,
   drawEnemy,
@@ -529,7 +530,7 @@ export default function GameCanvas() {
           </div>
 
           {/* Sky area - spacer (jungle backdrop overlays at the bottom) */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative overflow-hidden">
             {biome === 'jungle' && (
               <canvas
                 key={`menu-treeline-${biome}`}
@@ -539,7 +540,7 @@ export default function GameCanvas() {
                     if (ctx) {
                       const dpr = window.devicePixelRatio || 1
                       const cssW = window.innerWidth
-                      const cssH = 280
+                      const cssH = 560
                       el.width = cssW * dpr
                       el.height = cssH * dpr
                       ctx.scale(dpr, dpr)
@@ -553,59 +554,20 @@ export default function GameCanvas() {
                       ctx.fillStyle = grad
                       ctx.fillRect(0, 0, cssW, cssH)
 
-                      // Tree silhouettes spanning the width, planted near the bottom
-                      const baseY = cssH - 4
-                      const step = 38
-                      for (let x = -step; x < cssW + step; x += step) {
-                        const seed = Math.abs(Math.sin(x * 0.07) * 1000)
-                        const seed2 = Math.abs(Math.cos(x * 0.13) * 1000)
-                        const treeH = 130 + (seed % 110)
-                        const trunkW = Math.max(4, Math.round(treeH * 0.05)) + (seed2 % 3)
-                        const canopyR = treeH * 0.24 + 8 + (seed % 5)
-                        const cx = x + canopyR
-                        const canopyCY = baseY - treeH + canopyR * 0.4
-                        const trunkTopY = canopyCY + canopyR * 0.3
-                        const trunkH = baseY + 3 - trunkTopY
-
-                        // Trunk
-                        ctx.fillStyle = '#1a3a18'
-                        ctx.fillRect(cx - trunkW / 2, trunkTopY, trunkW, trunkH)
-                        ctx.fillStyle = 'rgba(0,0,0,0.28)'
-                        ctx.fillRect(cx + trunkW / 2 - Math.max(1, trunkW * 0.3), trunkTopY, Math.max(1, trunkW * 0.3), trunkH)
-                        ctx.fillStyle = 'rgba(255,255,255,0.1)'
-                        ctx.fillRect(cx - trunkW / 2, trunkTopY, Math.max(0.8, trunkW * 0.22), trunkH)
-
-                        // Canopy underside shadow
-                        ctx.fillStyle = 'rgba(0,0,0,0.25)'
-                        ctx.beginPath()
-                        ctx.ellipse(cx, canopyCY + canopyR * 0.5, canopyR * 1.05, canopyR * 0.55, 0, 0, Math.PI * 2)
-                        ctx.fill()
-
-                        // Canopy clusters
-                        ctx.fillStyle = '#284a26'
-                        const clusters = [
-                          { dx: 0, dy: -canopyR * 0.1, rx: canopyR * 1.05, ry: canopyR * 0.85 },
-                          { dx: -canopyR * 0.6, dy: canopyR * 0.3, rx: canopyR * 0.78, ry: canopyR * 0.75 },
-                          { dx: canopyR * 0.65, dy: canopyR * 0.25, rx: canopyR * 0.82, ry: canopyR * 0.78 },
-                          { dx: -canopyR * 0.35, dy: -canopyR * 0.55, rx: canopyR * 0.65, ry: canopyR * 0.6 },
-                          { dx: canopyR * 0.4, dy: -canopyR * 0.5, rx: canopyR * 0.7, ry: canopyR * 0.62 },
-                        ]
-                        for (const cl of clusters) {
-                          ctx.beginPath()
-                          ctx.ellipse(cx + cl.dx, canopyCY + cl.dy, cl.rx, cl.ry, 0, 0, Math.PI * 2)
-                          ctx.fill()
-                        }
-                        // Canopy highlights
-                        ctx.fillStyle = 'rgba(255,255,255,0.15)'
-                        ctx.beginPath()
-                        ctx.ellipse(cx - canopyR * 0.3, canopyCY - canopyR * 0.55, canopyR * 0.55, canopyR * 0.3, -0.3, 0, Math.PI * 2)
-                        ctx.fill()
-                      }
+                      // Use the same drawing function as in-game, with bigger heights.
+                      // yRatio puts the planting line near the bottom of the canvas.
+                      drawJungleTreeline(
+                        ctx, 0, cssW, cssH,
+                        0.99,         // plant trunks at the very bottom
+                        340, 490,     // bigger than in-game foreground (290-440)
+                        '#13310f', '#1f4220',
+                        0,
+                      )
                     }
                   }
                 }}
                 className="absolute bottom-0 left-0"
-                style={{ width: '100%', height: '280px', pointerEvents: 'none' }}
+                style={{ width: '100%', height: '560px', pointerEvents: 'none' }}
               />
             )}
           </div>

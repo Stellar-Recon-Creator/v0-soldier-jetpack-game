@@ -213,7 +213,7 @@ export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: nu
 
 // Tall jungle trees: layered canopy clusters, shaded trunks with bark texture,
 // stub branches, buttress roots, hanging vines with leaves, and base ferns
-function drawJungleTreeline(
+export function drawJungleTreeline(
   ctx: CanvasRenderingContext2D, offset: number, w: number, h: number,
   yRatio: number, minH: number, maxH: number,
   trunkColor: string, canopyColor: string,
