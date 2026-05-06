@@ -93,9 +93,9 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0,
     let type: EnemyType
     if (roll < 0.25) type = 'grunt'
     else if (roll < 0.42) type = 'spitter'
-    else if (roll < 0.55) type = 'flyer'
-    else if (roll < 0.68) type = 'brute'
-    else if (roll < 0.95) type = 'shielder'
+    else if (roll < 0.65) type = 'flyer'
+    else if (roll < 0.77) type = 'brute'
+    else if (roll < 0.97) type = 'shielder'
     else type = 'grunt'
 
     const eSize = getEnemySize(type)
