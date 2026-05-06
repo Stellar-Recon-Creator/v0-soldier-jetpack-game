@@ -189,8 +189,8 @@ export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: nu
     drawHillLayer(ctx, cameraX * 0.10, canvasW, canvasH, 0.6, 60, 130, '#456e3a', '#588a4a')
     // Mid-distance jungle trees - subtle vertical parallax so they shift slightly with flight
     drawJungleTreeline(ctx, cameraX * 0.45, canvasW, canvasH, 0.72, 170, 280, '#2e5a2a', '#3a6a36', cameraY * 0.5)
-    // Closer rolling jungle hills
-    drawHillLayer(ctx, cameraX * 0.55, canvasW, canvasH, 0.82, 30, 70, '#1f4a1c', '#2e5a26')
+    // Closer rolling jungle hills - track camera so they don't block mid trees when flying
+    drawHillLayer(ctx, cameraX * 0.55, canvasW, canvasH, 0.82, 30, 70, '#1f4a1c', '#2e5a26', cameraY * 0.7)
     // Foreground jungle treeline - tracks camera Y fully so flight doesn't expose more tree
     drawJungleTreeline(ctx, cameraX * 0.88, canvasW, canvasH, 0.94, 290, 440, '#13310f', '#1f4220', cameraY)
     return
@@ -237,8 +237,11 @@ function drawJungleTreeline(
     const trunkW = Math.max(3, Math.round(treeH * 0.05)) + (seed2 % 3)
     const canopyR = treeH * 0.22 + 6 + (seed % 4)
     const cx = x + canopyR
-    const trunkTopY = baseY - treeH * 0.55
     const canopyCY = baseY - treeH + canopyR * 0.4
+    // Trunk extends from the ground up INTO the canopy so it visibly connects
+    // (top is anchored a third of the way into the canopy from its bottom)
+    const trunkTopY = canopyCY + canopyR * 0.3
+    const trunkH = baseY + 3 - trunkTopY
 
     // ─ Buttress roots (only on big trees) ─
     if (treeH > minH + (maxH - minH) * 0.45) {
@@ -261,22 +264,24 @@ function drawJungleTreeline(
       ctx.fill()
     }
 
-    // ─ Trunk (with shading) ─
+    // ─ Trunk (with shading) - drawn from the ground up into the canopy ─
     ctx.fillStyle = trunkColor
-    ctx.fillRect(cx - trunkW / 2, trunkTopY, trunkW, treeH * 0.55 + 3)
+    ctx.fillRect(cx - trunkW / 2, trunkTopY, trunkW, trunkH)
     // Right side shadow
     ctx.fillStyle = 'rgba(0,0,0,0.28)'
-    ctx.fillRect(cx + trunkW / 2 - Math.max(1, trunkW * 0.3), trunkTopY, Math.max(1, trunkW * 0.3), treeH * 0.55 + 3)
+    ctx.fillRect(cx + trunkW / 2 - Math.max(1, trunkW * 0.3), trunkTopY, Math.max(1, trunkW * 0.3), trunkH)
     // Left side highlight
     ctx.fillStyle = 'rgba(255,255,255,0.12)'
-    ctx.fillRect(cx - trunkW / 2, trunkTopY, Math.max(0.8, trunkW * 0.22), treeH * 0.55 + 3)
+    ctx.fillRect(cx - trunkW / 2, trunkTopY, Math.max(0.8, trunkW * 0.22), trunkH)
 
-    // Bark texture - horizontal cracks
+    // Bark texture - horizontal cracks (only on the visible trunk below canopy)
+    const barkRangeStart = canopyCY + canopyR * 0.85  // start cracks below canopy
+    const barkRangeH = Math.max(0, baseY - barkRangeStart)
     ctx.strokeStyle = 'rgba(0,0,0,0.35)'
     ctx.lineWidth = 0.5
     const barkCount = 2 + (seed2 % 3)
     for (let b = 0; b < barkCount; b++) {
-      const bY = trunkTopY + ((b + 1) / (barkCount + 1)) * treeH * 0.55 + ((seed3 + b * 17) % 6) - 3
+      const bY = barkRangeStart + ((b + 1) / (barkCount + 1)) * barkRangeH + ((seed3 + b * 17) % 6) - 3
       const bOff = ((seed + b * 11) % Math.max(1, trunkW)) - trunkW / 2
       ctx.beginPath()
       ctx.moveTo(cx - trunkW / 2 + 0.5, bY)
@@ -284,8 +289,8 @@ function drawJungleTreeline(
       ctx.stroke()
     }
 
-    // ─ Stub branches between trunk and canopy ─
-    const branchY = trunkTopY + treeH * 0.18
+    // ─ Stub branches just below the canopy ─
+    const branchY = canopyCY + canopyR * 0.7
     const branchLen = canopyR * 0.55
     ctx.strokeStyle = trunkColor
     ctx.lineWidth = Math.max(1.2, trunkW * 0.45)
@@ -464,17 +469,19 @@ function drawDetailedMountainLayer(
 
 function drawHillLayer(
   ctx: CanvasRenderingContext2D, offset: number, w: number, h: number,
-  yRatio: number, minH: number, maxH: number, color: string, lightColor: string
+  yRatio: number, minH: number, maxH: number, color: string, lightColor: string,
+  verticalOffset: number = 0,
 ) {
-  const baseY = h * yRatio
+  const baseY = h * yRatio - verticalOffset
   ctx.beginPath()
-  ctx.moveTo(-10, h)
+  // Bottom edge follows the same vertical offset so the fill closes off-screen
+  ctx.moveTo(-10, h - verticalOffset + 200)
   for (let x = -(offset % 90) - 90; x < w + 100; x += 45) {
     const seed = Math.sin((x + offset) * 0.015) * 0.5 + Math.sin((x + offset) * 0.008) * 0.5
     const hillY = baseY - minH - (seed * 0.5 + 0.5) * (maxH - minH)
     ctx.lineTo(x, hillY)
   }
-  ctx.lineTo(w + 100, h)
+  ctx.lineTo(w + 100, h - verticalOffset + 200)
   ctx.closePath()
   ctx.fillStyle = color
   ctx.fill()
