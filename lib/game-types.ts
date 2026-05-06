@@ -62,7 +62,7 @@ export interface Obstacle {
   seed: number  // for stable visual variation
 }
 
-export type EnemyType = 'grunt' | 'spitter' | 'flyer' | 'brute' | 'boss'
+export type EnemyType = 'grunt' | 'spitter' | 'flyer' | 'brute' | 'boss' | 'shielder'
 
 export interface Enemy {
   x: number
@@ -81,6 +81,9 @@ export interface Enemy {
   facing: 1 | -1
   floatAngle?: number
   vines?: boolean  // jungle biome: enemy is overgrown with vines
+  shieldHealth?: number       // shielder: current force-field HP (0 = down)
+  shieldMaxHealth?: number    // shielder: max force-field HP
+  burstCount?: number         // shielder: shots fired in current burst
 }
 
 export interface Bullet {

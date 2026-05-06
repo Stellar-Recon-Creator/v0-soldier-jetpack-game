@@ -73,6 +73,7 @@ const COLORS = {
     flyer: { body: '#5578bb', bodyLight: '#7799dd', bodyDark: '#3a5588', wing: '#4466aa', wingMembrane: 'rgba(80,120,200,0.5)', eye: '#ff3333', eyeGlow: 'rgba(255,50,50,0.4)', stinger: '#3355aa' },
     brute: { body: '#cc8844', bodyLight: '#eeaa66', bodyDark: '#aa6622', eye: '#ff2222', armor: '#996622', armorLight: '#bb8833', armorRivet: '#dda844', fist: '#aa5500', scar: '#8a4400' },
     boss: { body: '#cc2233', bodyLight: '#ee4455', bodyDark: '#991122', eye: '#ffff00', crown: '#ffaa00', crownGem: '#ff2244', aura: 'rgba(255,50,50,0.15)', spike: '#aa1122', mouth: '#880000', teeth: '#fff', armGlow: 'rgba(255,100,100,0.3)' },
+    shielder: { body: '#7a4aaa', bodyLight: '#9a6aca', bodyDark: '#5a3088', armor: '#3a1a5a', armorLight: '#5a3a7a', armorRivet: '#bb88dd', eye: '#ff4466', emitter: '#88ccff', emitterGlow: 'rgba(136,204,255,0.5)' },
   },
   bullet: {
     player: '#ffcc22',
@@ -4984,6 +4985,7 @@ export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy, cameraX: 
     case 'flyer': drawFlyer(ctx, enemy); break
     case 'brute': drawBrute(ctx, enemy); break
     case 'boss': drawBoss(ctx, enemy); break
+    case 'shielder': drawShielder(ctx, enemy); break
   }
 
   ctx.restore()
@@ -4993,16 +4995,32 @@ export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy, cameraX: 
     drawVineOverlay(ctx, ex, ey, enemy.width, enemy.height, enemy.x)
   }
 
-  // Health bar for all enemies
+  // Force-field shield bubble (drawn last so it overlays the body)
+  if ((enemy.shieldHealth ?? 0) > 0) {
+    drawShieldBubble(ctx, ex, ey, enemy.width, enemy.height, enemy.shieldHealth!, enemy.shieldMaxHealth ?? 1)
+  }
+
+  // Health bar for all enemies (shield bar stacked above when active)
   {
     const barW = enemy.width
     const barH = 4
     const hpRatio = enemy.health / enemy.maxHealth
+    let yTop = ey - 10
+    if ((enemy.shieldHealth ?? 0) > 0 && enemy.shieldMaxHealth) {
+      const shieldRatio = enemy.shieldHealth! / enemy.shieldMaxHealth
+      // Shield bar (cyan) - drawn just above the HP bar
+      ctx.fillStyle = 'rgba(0,0,0,0.5)'
+      roundRect(ctx, ex, yTop - 6, barW, barH, 2)
+      ctx.fill()
+      ctx.fillStyle = '#66bbee'
+      roundRect(ctx, ex, yTop - 6, barW * shieldRatio, barH, 2)
+      ctx.fill()
+    }
     ctx.fillStyle = 'rgba(0,0,0,0.5)'
-    roundRect(ctx, ex, ey - 10, barW, barH, 2)
+    roundRect(ctx, ex, yTop, barW, barH, 2)
     ctx.fill()
     ctx.fillStyle = hpRatio > 0.5 ? '#44dd55' : hpRatio > 0.25 ? '#ddaa22' : '#dd2222'
-    roundRect(ctx, ex, ey - 10, barW * hpRatio, barH, 2)
+    roundRect(ctx, ex, yTop, barW * hpRatio, barH, 2)
     ctx.fill()
   }
 }
@@ -5069,6 +5087,186 @@ function drawVineOverlay(ctx: CanvasRenderingContext2D, ex: number, ey: number, 
     ctx.fill()
   }
   ctx.restore()
+}
+
+// Force-field bubble around a shielded enemy. Drawn in world-space (not in
+// the body's translated/scaled context) so it doesn't flip or rotate.
+function drawShieldBubble(
+  ctx: CanvasRenderingContext2D,
+  ex: number, ey: number, w: number, h: number,
+  shieldHP: number, shieldMaxHP: number,
+) {
+  const cx = ex + w / 2
+  const cy = ey + h / 2
+  const radius = Math.max(w, h) * 0.85
+  const ratio = shieldMaxHP > 0 ? shieldHP / shieldMaxHP : 0
+  const pulse = 0.6 + 0.4 * Math.sin(Date.now() * 0.005)
+
+  ctx.save()
+
+  // Outer glow halo
+  const halo = ctx.createRadialGradient(cx, cy, radius * 0.55, cx, cy, radius * 1.2)
+  halo.addColorStop(0, 'rgba(120,200,255,0)')
+  halo.addColorStop(0.7, `rgba(120,200,255,${(0.18 * ratio).toFixed(3)})`)
+  halo.addColorStop(1, `rgba(120,200,255,${(0.42 * ratio * pulse).toFixed(3)})`)
+  ctx.fillStyle = halo
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius * 1.2, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Bubble fill (translucent)
+  ctx.fillStyle = `rgba(120,200,255,${(0.16 * ratio).toFixed(3)})`
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Outer ring
+  ctx.strokeStyle = `rgba(170,230,255,${(0.7 * ratio).toFixed(3)})`
+  ctx.lineWidth = 1.5
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2)
+  ctx.stroke()
+
+  // Inner ring (slightly smaller, dimmer)
+  ctx.strokeStyle = `rgba(150,210,240,${(0.35 * ratio * pulse).toFixed(3)})`
+  ctx.lineWidth = 0.8
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius * 0.85, 0, Math.PI * 2)
+  ctx.stroke()
+
+  // Hex-cell scatter dots for tech look
+  ctx.fillStyle = `rgba(180,230,255,${(0.5 * ratio).toFixed(3)})`
+  for (let i = 0; i < 8; i++) {
+    const ang = (i / 8) * Math.PI * 2 + Date.now() * 0.0003
+    const r = radius * 0.78
+    ctx.beginPath()
+    ctx.arc(cx + Math.cos(ang) * r, cy + Math.sin(ang) * r, 1.2, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  // Damage cracks once shield is below 60%
+  if (ratio < 0.6 && ratio > 0) {
+    ctx.strokeStyle = `rgba(220,240,255,${0.6 * (1 - ratio)})`
+    ctx.lineWidth = 0.7
+    const crackCount = ratio < 0.3 ? 4 : 2
+    for (let i = 0; i < crackCount; i++) {
+      const ang = (i / crackCount) * Math.PI * 2 + (cx * 0.13)
+      const x0 = cx + Math.cos(ang) * radius * 0.4
+      const y0 = cy + Math.sin(ang) * radius * 0.4
+      const x1 = cx + Math.cos(ang + 0.3) * radius * 0.95
+      const y1 = cy + Math.sin(ang + 0.3) * radius * 0.95
+      ctx.beginPath()
+      ctx.moveTo(x0, y0)
+      ctx.lineTo((x0 + x1) / 2 + Math.cos(ang + 1.5) * 4, (y0 + y1) / 2 + Math.sin(ang + 1.5) * 4)
+      ctx.lineTo(x1, y1)
+      ctx.stroke()
+    }
+  }
+
+  ctx.restore()
+}
+
+function drawShielder(ctx: CanvasRenderingContext2D, enemy: Enemy) {
+  const c = COLORS.enemy.shielder
+  const hw = enemy.width / 2
+  const hh = enemy.height / 2
+  const bob = Math.sin(enemy.animFrame * 0.08) * 1.2
+  const shieldDown = (enemy.shieldHealth ?? 0) <= 0
+
+  // ─ Legs ─
+  ctx.fillStyle = c.armor
+  ctx.fillRect(-hw + 4, hh - 11, 6, 11)
+  ctx.fillRect(hw - 10, hh - 11, 6, 11)
+  // Boot trim
+  ctx.fillStyle = c.armorLight
+  ctx.fillRect(-hw + 4, hh - 5, 6, 1.5)
+  ctx.fillRect(hw - 10, hh - 5, 6, 1.5)
+  // Knee joints
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-hw + 4, hh - 7, 6, 1.5)
+  ctx.fillRect(hw - 10, hh - 7, 6, 1.5)
+
+  // ─ Torso (heavy chest plate over body) ─
+  ctx.fillStyle = c.body
+  roundRect(ctx, -hw + 2, -hh + 12 + bob, enemy.width - 4, enemy.height - 22, 3)
+  ctx.fill()
+  // Armor plate
+  ctx.fillStyle = c.armor
+  roundRect(ctx, -hw + 4, -hh + 14 + bob, enemy.width - 8, enemy.height - 26, 2)
+  ctx.fill()
+  // Plate highlight stripe
+  ctx.fillStyle = c.armorLight
+  ctx.fillRect(-hw + 5, -hh + 15 + bob, enemy.width - 10, 1)
+  // Plate seam
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-1, -hh + 14 + bob, 2, enemy.height - 26)
+  // Rivets
+  ctx.fillStyle = c.armorRivet
+  ctx.beginPath(); ctx.arc(-hw + 6, -hh + 17 + bob, 1, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(hw - 6, -hh + 17 + bob, 1, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(-hw + 6, hh - 14, 1, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(hw - 6, hh - 14, 1, 0, Math.PI * 2); ctx.fill()
+
+  // ─ Shoulders (chunky pauldrons) ─
+  ctx.fillStyle = c.armor
+  roundRect(ctx, -hw - 1, -hh + 11 + bob, 6, 7, 2)
+  ctx.fill()
+  roundRect(ctx, hw - 5, -hh + 11 + bob, 6, 7, 2)
+  ctx.fill()
+  ctx.fillStyle = c.armorLight
+  ctx.fillRect(-hw, -hh + 12 + bob, 4, 1)
+  ctx.fillRect(hw - 4, -hh + 12 + bob, 4, 1)
+
+  // ─ Arms (slim, behind torso) ─
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-hw, -hh + 17 + bob, 3, 12)
+  ctx.fillRect(hw - 3, -hh + 17 + bob, 3, 12)
+  // Forearms / fists
+  ctx.fillStyle = c.body
+  ctx.fillRect(-hw, -hh + 26 + bob, 4, 4)
+  ctx.fillRect(hw - 4, -hh + 26 + bob, 4, 4)
+
+  // ─ Head with helmet ─
+  ctx.fillStyle = c.body
+  roundRect(ctx, -8, -hh + bob, 16, 14, 3)
+  ctx.fill()
+  // Helmet shell
+  ctx.fillStyle = c.armor
+  roundRect(ctx, -8, -hh + bob, 16, 7, 3)
+  ctx.fill()
+  // Helmet trim
+  ctx.fillStyle = c.armorLight
+  ctx.fillRect(-7, -hh + 6 + bob, 14, 0.8)
+  // Visor slit (single glowing band)
+  ctx.fillStyle = c.eye
+  ctx.shadowColor = c.eye
+  ctx.shadowBlur = 5
+  roundRect(ctx, -6, -hh + 7 + bob, 12, 3, 1)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  // Visor inner highlight
+  ctx.fillStyle = '#ffaabb'
+  ctx.fillRect(-5, -hh + 7.5 + bob, 4, 0.7)
+  // Helmet crest
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-1, -hh - 1 + bob, 2, 3)
+
+  // ─ Shield emitter on chest (glowing core) ─
+  // When shield is down, dim and add a small spark animation.
+  const emitterPulse = shieldDown ? 0.4 : 1
+  ctx.fillStyle = shieldDown ? '#3a5a7a' : c.emitter
+  ctx.shadowColor = shieldDown ? 'rgba(60,80,100,0.5)' : c.emitterGlow
+  ctx.shadowBlur = shieldDown ? 2 : 6
+  ctx.beginPath()
+  ctx.arc(0, -hh + 18 + bob, 2.2 * emitterPulse, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  if (!shieldDown) {
+    ctx.fillStyle = '#ddf2ff'
+    ctx.beginPath()
+    ctx.arc(0, -hh + 18 + bob, 0.8, 0, Math.PI * 2)
+    ctx.fill()
+  }
 }
 
 function drawGrunt(ctx: CanvasRenderingContext2D, enemy: Enemy) {

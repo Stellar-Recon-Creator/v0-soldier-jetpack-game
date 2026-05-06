@@ -91,10 +91,11 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0,
   for (let ex = 400; ex < levelLength - 200; ex += 200 + Math.random() * 300 / enemyDensity) {
     const roll = Math.random()
     let type: EnemyType
-    if (roll < 0.35) type = 'grunt'
-    else if (roll < 0.55) type = 'spitter'
-    else if (roll < 0.75) type = 'flyer'
-    else if (roll < 0.9) type = 'brute'
+    if (roll < 0.30) type = 'grunt'
+    else if (roll < 0.50) type = 'spitter'
+    else if (roll < 0.68) type = 'flyer'
+    else if (roll < 0.82) type = 'brute'
+    else if (roll < 0.95) type = 'shielder'
     else type = 'grunt'
 
     const eSize = getEnemySize(type)
@@ -110,6 +111,10 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0,
   for (const enemy of enemies) {
     enemy.health = Math.ceil(enemy.health * difficultyMultiplier)
     enemy.maxHealth = Math.ceil(enemy.maxHealth * difficultyMultiplier)
+    if (enemy.shieldMaxHealth) {
+      enemy.shieldHealth = Math.ceil((enemy.shieldHealth ?? 0) * difficultyMultiplier)
+      enemy.shieldMaxHealth = Math.ceil(enemy.shieldMaxHealth * difficultyMultiplier)
+    }
   }
 
   // ─── Jungle biome additions ───
@@ -175,6 +180,7 @@ function getEnemySize(type: EnemyType) {
     case 'flyer': return { w: 32, h: 28 }
     case 'brute': return { w: 40, h: 48 }
     case 'boss': return { w: 56, h: 64 }
+    case 'shielder': return { w: 34, h: 40 }
   }
 }
 
@@ -186,8 +192,9 @@ function createEnemy(type: EnemyType, x: number, y: number): Enemy {
     flyer: 2,
     brute: 8,
     boss: 30,
+    shielder: 3.3,  // 10% more than spitter (3 * 1.10)
   }
-  return {
+  const enemy: Enemy = {
     x, y,
     width: size.w,
     height: size.h,
@@ -202,6 +209,13 @@ function createEnemy(type: EnemyType, x: number, y: number): Enemy {
     facing: -1,
     floatAngle: Math.random() * Math.PI * 2,
   }
+  // Shielder spawns with a force field at full HP (matches grunt's 2 HP)
+  if (type === 'shielder') {
+    enemy.shieldHealth = 2
+    enemy.shieldMaxHealth = 2
+    enemy.burstCount = 0
+  }
+  return enemy
 }
 
 // ─── Stars (re-used as cloud data) ───
@@ -724,6 +738,45 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           }
         }
         break
+
+      case 'shielder':
+        // Slow tank-like advance
+        if (distToPlayer < 1400) {
+          enemy.vx = enemy.facing * 25
+        } else {
+          enemy.vx = 0
+        }
+        enemy.vy += GRAVITY * dt
+        // Only shoots once the shield is down. Fires bursts of 3 pellets,
+        // 30% faster reload than spitter (cooldown * 0.70), 50% more damage,
+        // 20% slower projectile speed.
+        if ((enemy.shieldHealth ?? 0) <= 0) {
+          enemy.shootCooldown -= dt
+          if (enemy.shootCooldown <= 0 && distToPlayer < 1400) {
+            soundEvents.alienShoot = true
+            const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x)
+            bullets.push({
+              x: enemy.x + enemy.width / 2,
+              y: enemy.y + enemy.height / 2,
+              vx: Math.cos(angle) * 240,
+              vy: Math.sin(angle) * 240,
+              radius: 5,
+              fromPlayer: false,
+              active: true,
+              damage: 15,
+            })
+            enemy.burstCount = (enemy.burstCount ?? 0) + 1
+            if (enemy.burstCount >= 3) {
+              // End of burst → long reload
+              enemy.burstCount = 0
+              enemy.shootCooldown = ((2 + Math.random()) * 0.7) / enemyFireRateMult
+            } else {
+              // Between burst shots: short delay
+              enemy.shootCooldown = 0.15 / enemyFireRateMult
+            }
+          }
+        }
+        break
     }
 
     enemy.x += enemy.vx * dt
@@ -822,16 +875,42 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           bullet.y - bullet.radius < enemy.y + enemy.height
         ) {
           bullet.active = false
-          enemy.health -= bullet.damage
           soundEvents.alienHit = true
+
+          // Shield absorbs the hit if it's still up. Damage spills over to body
+          // if the hit breaks the shield this frame.
+          let shieldBrokeThisHit = false
+          if ((enemy.shieldHealth ?? 0) > 0) {
+            const beforeShield = enemy.shieldHealth as number
+            const afterShield = beforeShield - bullet.damage
+            enemy.shieldHealth = Math.max(0, afterShield)
+            if (afterShield <= 0) {
+              shieldBrokeThisHit = true
+              const overflow = -afterShield
+              if (overflow > 0) enemy.health -= overflow
+            }
+          } else {
+            enemy.health -= bullet.damage
+          }
 
           // Hit particle colors: plasma=purple, hypershot=red, otherwise match alien body color
           const alienColors: Record<EnemyType, string[]> = {
-            grunt:   ['#3da34d', '#5cc06c', '#2a8a3a'],
-            spitter: ['#4a9a7a', '#6abba0', '#387a5a'],
-            flyer:   ['#5578bb', '#7799dd', '#3a5588'],
-            brute:   ['#cc8844', '#eeaa66', '#aa6622'],
-            boss:    ['#cc2233', '#ee4455', '#991122'],
+            grunt:    ['#3da34d', '#5cc06c', '#2a8a3a'],
+            spitter:  ['#4a9a7a', '#6abba0', '#387a5a'],
+            flyer:    ['#5578bb', '#7799dd', '#3a5588'],
+            brute:    ['#cc8844', '#eeaa66', '#aa6622'],
+            boss:     ['#cc2233', '#ee4455', '#991122'],
+            shielder: ['#7a4aaa', '#9a6aca', '#5a3088'],
+          }
+          // Shield hits always show cyan sparks regardless of weapon, plus a
+          // bigger burst when the shield shatters this hit.
+          const hitOnShield = (enemy.shieldHealth ?? 0) > 0 || shieldBrokeThisHit
+          if (hitOnShield) {
+            const shieldColors = ['#88ccff', '#aaddff', '#5599dd', '#cceeff']
+            const burst = shieldBrokeThisHit ? 12 : 4
+            for (let i = 0; i < burst; i++) {
+              particles.push(createParticle(bullet.x, bullet.y, shieldColors[Math.floor(Math.random() * shieldColors.length)]))
+            }
           }
           const hitColors = bullet.weaponType === 'charger'
             ? ['#ff8800', '#ffaa33', '#cc6600', '#ffcc66']
@@ -845,15 +924,18 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
             ? ['#ff5522', '#ff7733', '#cc3311', '#ffaa44']
             : alienColors[enemy.type] || ['#44ffaa']
 
-          for (let i = 0; i < 5; i++) {
-            particles.push(createParticle(bullet.x, bullet.y, hitColors[Math.floor(Math.random() * hitColors.length)]))
+          // Skip body-hit particles when only the shield was hit (no spillover)
+          if (!hitOnShield || shieldBrokeThisHit) {
+            for (let i = 0; i < 5; i++) {
+              particles.push(createParticle(bullet.x, bullet.y, hitColors[Math.floor(Math.random() * hitColors.length)]))
+            }
           }
 
           if (enemy.health <= 0) {
             enemy.active = false
             soundEvents.alienDeath = true
             soundEvents.explosion = true
-            const scoreMap: Record<EnemyType, number> = { grunt: 100, spitter: 200, flyer: 250, brute: 500, boss: 2000 }
+            const scoreMap: Record<EnemyType, number> = { grunt: 100, spitter: 200, flyer: 250, brute: 500, boss: 2000, shielder: 400 }
             player.score += scoreMap[enemy.type]
 
             // Death particles: plasma=purple, hypershot=red, otherwise alien body colors
