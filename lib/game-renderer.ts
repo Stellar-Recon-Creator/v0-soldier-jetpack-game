@@ -5144,25 +5144,6 @@ function drawShieldBubble(
     ctx.fill()
   }
 
-  // Damage cracks once shield is below 60%
-  if (ratio < 0.6 && ratio > 0) {
-    ctx.strokeStyle = `rgba(220,240,255,${0.6 * (1 - ratio)})`
-    ctx.lineWidth = 0.7
-    const crackCount = ratio < 0.3 ? 4 : 2
-    for (let i = 0; i < crackCount; i++) {
-      const ang = (i / crackCount) * Math.PI * 2 + (cx * 0.13)
-      const x0 = cx + Math.cos(ang) * radius * 0.4
-      const y0 = cy + Math.sin(ang) * radius * 0.4
-      const x1 = cx + Math.cos(ang + 0.3) * radius * 0.95
-      const y1 = cy + Math.sin(ang + 0.3) * radius * 0.95
-      ctx.beginPath()
-      ctx.moveTo(x0, y0)
-      ctx.lineTo((x0 + x1) / 2 + Math.cos(ang + 1.5) * 4, (y0 + y1) / 2 + Math.sin(ang + 1.5) * 4)
-      ctx.lineTo(x1, y1)
-      ctx.stroke()
-    }
-  }
-
   ctx.restore()
 }
 
