@@ -764,6 +764,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
               fromPlayer: false,
               active: true,
               damage: 5,
+              // Bypass i-frames so each pellet of the 3-shot burst can connect
+              bypassInvincibility: true,
             })
             enemy.burstCount = (enemy.burstCount ?? 0) + 1
             if (enemy.burstCount >= 3) {
@@ -966,16 +968,21 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         }
       }
     } else {
-      if (
-        player.invincibleTimer <= 0 &&
+      // Bullets flagged bypassInvincibility (shielder burst pellets) ignore
+      // i-frames and don't reset the timer, so each pellet in a burst can
+      // independently connect for its own damage.
+      const overlapping = (
         bullet.x + bullet.radius > player.x &&
         bullet.x - bullet.radius < player.x + player.width &&
         bullet.y + bullet.radius > player.y &&
         bullet.y - bullet.radius < player.y + player.height
-      ) {
+      )
+      if (overlapping && (bullet.bypassInvincibility || player.invincibleTimer <= 0)) {
         bullet.active = false
         player.health -= bullet.damage
-        player.invincibleTimer = 0.5
+        if (!bullet.bypassInvincibility) {
+          player.invincibleTimer = 0.5
+        }
         soundEvents.playerHit = true
 
         for (let i = 0; i < 6; i++) {

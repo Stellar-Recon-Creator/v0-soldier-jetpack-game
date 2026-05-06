@@ -97,6 +97,9 @@ export interface Bullet {
   damage: number
   isRedAcid?: boolean
   weaponType?: WeaponType
+  // Enemy bullets that should bypass the player's invincibility frames
+  // (e.g. shielder burst pellets - each pellet must land its own damage)
+  bypassInvincibility?: boolean
 }
 
 export interface Particle {
