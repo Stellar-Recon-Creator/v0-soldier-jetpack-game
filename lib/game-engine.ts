@@ -748,8 +748,8 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         }
         enemy.vy += GRAVITY * dt
         // Only shoots once the shield is down. Fires bursts of 3 pellets,
-        // 30% faster reload than spitter (cooldown * 0.70), 50% more damage,
-        // 20% slower projectile speed.
+        // 30% faster reload than spitter (cooldown * 0.70), 50% more damage
+        // total per burst (5 dmg per pellet × 3 = 15), 20% slower projectile.
         if ((enemy.shieldHealth ?? 0) <= 0) {
           enemy.shootCooldown -= dt
           if (enemy.shootCooldown <= 0 && distToPlayer < 1400) {
@@ -763,7 +763,7 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
               radius: 5,
               fromPlayer: false,
               active: true,
-              damage: 15,
+              damage: 5,
             })
             enemy.burstCount = (enemy.burstCount ?? 0) + 1
             if (enemy.burstCount >= 3) {
