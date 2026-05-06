@@ -179,7 +179,7 @@ export function drawStars(ctx: CanvasRenderingContext2D, stars: Star[], cameraX:
   ctx.globalAlpha = 1
 }
 
-export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: number, canvasW: number, canvasH: number, biome: Biome = 'default', cameraY: number = 0) {
+export function drawParallaxMountains(ctx: CanvasRenderingContext2D, cameraX: number, canvasW: number, canvasH: number, biome: Biome = 'grassland', cameraY: number = 0) {
   if (biome === 'jungle') {
     // Far jungle haze ridge (very pale, blends with sky)
     drawHillLayer(ctx, cameraX * 0.05, canvasW, canvasH, 0.5, 50, 110, '#7aa886', '#90bc9a')

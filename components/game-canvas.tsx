@@ -54,8 +54,8 @@ export default function GameCanvas() {
   const [score, setScore] = useState(0)
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
-  const [biome, setBiome] = useState<Biome>('default')
-  const biomeRef = useRef<Biome>('default')
+  const [biome, setBiome] = useState<Biome>('grassland')
+  const biomeRef = useRef<Biome>('grassland')
   useEffect(() => { biomeRef.current = biome }, [biome])
   const [equippedWeapon, setEquippedWeapon] = useState<WeaponType>('blastop')
   const [starCurrency, setStarCurrency] = useState(100000)
@@ -528,8 +528,87 @@ export default function GameCanvas() {
             </h1>
           </div>
 
-          {/* Sky area - spacer */}
-          <div className="flex-1" />
+          {/* Sky area - spacer (jungle backdrop overlays at the bottom) */}
+          <div className="flex-1 relative">
+            {biome === 'jungle' && (
+              <canvas
+                key={`menu-treeline-${biome}`}
+                ref={(el) => {
+                  if (el) {
+                    const ctx = el.getContext('2d')
+                    if (ctx) {
+                      const dpr = window.devicePixelRatio || 1
+                      const cssW = window.innerWidth
+                      const cssH = 280
+                      el.width = cssW * dpr
+                      el.height = cssH * dpr
+                      ctx.scale(dpr, dpr)
+                      ctx.clearRect(0, 0, cssW, cssH)
+
+                      // Soft jungle sky wash (fades into the home screen background)
+                      const grad = ctx.createLinearGradient(0, 0, 0, cssH)
+                      grad.addColorStop(0, 'rgba(40, 90, 60, 0)')
+                      grad.addColorStop(0.5, 'rgba(40, 90, 60, 0.35)')
+                      grad.addColorStop(1, 'rgba(30, 70, 50, 0.65)')
+                      ctx.fillStyle = grad
+                      ctx.fillRect(0, 0, cssW, cssH)
+
+                      // Tree silhouettes spanning the width, planted near the bottom
+                      const baseY = cssH - 4
+                      const step = 38
+                      for (let x = -step; x < cssW + step; x += step) {
+                        const seed = Math.abs(Math.sin(x * 0.07) * 1000)
+                        const seed2 = Math.abs(Math.cos(x * 0.13) * 1000)
+                        const treeH = 130 + (seed % 110)
+                        const trunkW = Math.max(4, Math.round(treeH * 0.05)) + (seed2 % 3)
+                        const canopyR = treeH * 0.24 + 8 + (seed % 5)
+                        const cx = x + canopyR
+                        const canopyCY = baseY - treeH + canopyR * 0.4
+                        const trunkTopY = canopyCY + canopyR * 0.3
+                        const trunkH = baseY + 3 - trunkTopY
+
+                        // Trunk
+                        ctx.fillStyle = '#1a3a18'
+                        ctx.fillRect(cx - trunkW / 2, trunkTopY, trunkW, trunkH)
+                        ctx.fillStyle = 'rgba(0,0,0,0.28)'
+                        ctx.fillRect(cx + trunkW / 2 - Math.max(1, trunkW * 0.3), trunkTopY, Math.max(1, trunkW * 0.3), trunkH)
+                        ctx.fillStyle = 'rgba(255,255,255,0.1)'
+                        ctx.fillRect(cx - trunkW / 2, trunkTopY, Math.max(0.8, trunkW * 0.22), trunkH)
+
+                        // Canopy underside shadow
+                        ctx.fillStyle = 'rgba(0,0,0,0.25)'
+                        ctx.beginPath()
+                        ctx.ellipse(cx, canopyCY + canopyR * 0.5, canopyR * 1.05, canopyR * 0.55, 0, 0, Math.PI * 2)
+                        ctx.fill()
+
+                        // Canopy clusters
+                        ctx.fillStyle = '#284a26'
+                        const clusters = [
+                          { dx: 0, dy: -canopyR * 0.1, rx: canopyR * 1.05, ry: canopyR * 0.85 },
+                          { dx: -canopyR * 0.6, dy: canopyR * 0.3, rx: canopyR * 0.78, ry: canopyR * 0.75 },
+                          { dx: canopyR * 0.65, dy: canopyR * 0.25, rx: canopyR * 0.82, ry: canopyR * 0.78 },
+                          { dx: -canopyR * 0.35, dy: -canopyR * 0.55, rx: canopyR * 0.65, ry: canopyR * 0.6 },
+                          { dx: canopyR * 0.4, dy: -canopyR * 0.5, rx: canopyR * 0.7, ry: canopyR * 0.62 },
+                        ]
+                        for (const cl of clusters) {
+                          ctx.beginPath()
+                          ctx.ellipse(cx + cl.dx, canopyCY + cl.dy, cl.rx, cl.ry, 0, 0, Math.PI * 2)
+                          ctx.fill()
+                        }
+                        // Canopy highlights
+                        ctx.fillStyle = 'rgba(255,255,255,0.15)'
+                        ctx.beginPath()
+                        ctx.ellipse(cx - canopyR * 0.3, canopyCY - canopyR * 0.55, canopyR * 0.55, canopyR * 0.3, -0.3, 0, Math.PI * 2)
+                        ctx.fill()
+                      }
+                    }
+                  }
+                }}
+                className="absolute bottom-0 left-0"
+                style={{ width: '100%', height: '280px', pointerEvents: 'none' }}
+              />
+            )}
+          </div>
 
           {/* Ground section - shorter height for lower ground */}
           <div className="relative w-full" style={{ height: '200px' }}>
@@ -558,8 +637,9 @@ export default function GameCanvas() {
               />
             </div>
             
-            {/* Full-width grass and dirt ground */}
+            {/* Full-width grass and dirt ground (biome-aware) */}
             <canvas
+              key={`menu-ground-${biome}`}
               ref={(el) => {
                 if (el) {
                   const ctx = el.getContext('2d')
@@ -567,48 +647,69 @@ export default function GameCanvas() {
                     el.width = window.innerWidth
                     el.height = 200
                     ctx.clearRect(0, 0, el.width, 200)
-                    
+
                     const grassY = 20
-                    
+                    const isJungle = biome === 'jungle'
+
                     // Dirt layer (fills to bottom)
-                    ctx.fillStyle = '#3a2820'
+                    ctx.fillStyle = isJungle ? '#2a1a10' : '#3a2820'
                     ctx.fillRect(0, grassY + 28, el.width, 160)
-                    
+
                     // Dirt texture - rocks
-                    ctx.fillStyle = '#2a1a15'
+                    ctx.fillStyle = isJungle ? '#1a0a05' : '#2a1a15'
                     for (let i = 0; i < el.width; i += 15) {
                       ctx.fillRect(i + Math.random() * 8, grassY + 40 + Math.random() * 80, 5, 4)
                     }
-                    ctx.fillStyle = '#4a3525'
+                    ctx.fillStyle = isJungle ? '#3a2a18' : '#4a3525'
                     for (let i = 5; i < el.width; i += 20) {
                       ctx.fillRect(i + Math.random() * 10, grassY + 50 + Math.random() * 80, 4, 3)
                     }
-                    
-                    // Grass base - darker for night
-                    ctx.fillStyle = '#2a6a2a'
+
+                    // Grass / jungle floor base
+                    ctx.fillStyle = isJungle ? '#1f4a1c' : '#2a6a2a'
                     ctx.fillRect(0, grassY, el.width, 32)
-                    
+
                     // Grass top highlight
-                    ctx.fillStyle = '#3a7a3a'
+                    ctx.fillStyle = isJungle ? '#2e5a26' : '#3a7a3a'
                     ctx.fillRect(0, grassY, el.width, 8)
-                    
+
                     // Grass blades - tall
-                    ctx.fillStyle = '#2a5a2a'
+                    ctx.fillStyle = isJungle ? '#1a3a18' : '#2a5a2a'
                     for (let i = 0; i < el.width; i += 4) {
                       const h = 10 + Math.random() * 14
                       ctx.fillRect(i, grassY - h + 8, 3, h)
                     }
                     // Grass blades - medium
-                    ctx.fillStyle = '#3a6a3a'
+                    ctx.fillStyle = isJungle ? '#2a5a26' : '#3a6a3a'
                     for (let i = 2; i < el.width; i += 6) {
                       const h = 8 + Math.random() * 10
                       ctx.fillRect(i, grassY - h + 8, 2, h)
                     }
                     // Grass blades - highlights
-                    ctx.fillStyle = '#4a7a4a'
+                    ctx.fillStyle = isJungle ? '#3d7a32' : '#4a7a4a'
                     for (let i = 3; i < el.width; i += 9) {
                       const h = 6 + Math.random() * 8
                       ctx.fillRect(i, grassY - h + 8, 2, h)
+                    }
+
+                    // Jungle: ferns sprouting from the ground
+                    if (isJungle) {
+                      ctx.fillStyle = '#2a5a26'
+                      for (let i = 0; i < el.width; i += 35) {
+                        const fx = i + Math.random() * 18
+                        const fH = 6 + Math.random() * 6
+                        ctx.beginPath()
+                        ctx.moveTo(fx - 3, grassY + 8)
+                        ctx.lineTo(fx, grassY + 8 - fH)
+                        ctx.lineTo(fx + 3, grassY + 8)
+                        ctx.closePath()
+                        ctx.fill()
+                      }
+                      ctx.fillStyle = '#4a8a3a'
+                      for (let i = 8; i < el.width; i += 35) {
+                        const fx = i + Math.random() * 18
+                        ctx.fillRect(fx - 0.4, grassY - 2, 0.8, 2)
+                      }
                     }
                   }
                 }
@@ -1095,7 +1196,7 @@ export default function GameCanvas() {
                 <div className="flex justify-center">
                   <div className="flex items-center gap-3 px-4 py-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.4)' }}>
                     {([
-                      { key: 'default' as const, label: 'STANDARD', color: '#8cd4ff' },
+                      { key: 'grassland' as const, label: 'GRASSLAND', color: '#8cd4ff' },
                       { key: 'jungle' as const, label: 'JUNGLE', color: '#7acc5a' },
                     ]).map(b => (
                       <button

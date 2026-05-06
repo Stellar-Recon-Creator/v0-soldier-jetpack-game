@@ -49,7 +49,7 @@ export interface Platform {
   floatSpeed?: number
 }
 
-export type Biome = 'default' | 'jungle'
+export type Biome = 'grassland' | 'jungle'
 
 // Solid ground-mounted obstacle (e.g. jungle rock). Full AABB collision.
 // Small variant is jumpable; tall must be flown over.

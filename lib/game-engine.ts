@@ -31,7 +31,7 @@ export const MAX_ALTITUDE_Y = -100 // y below this triggers low oxygen
 
 // ─── Level Generation ───
 // difficultyMultiplier: 1.0 = easy (default), 1.3 = medium, 1.65 = hard
-export function generateLevel(level: number, difficultyMultiplier: number = 1.0, biome: Biome = 'default'): Pick<GameState, 'platforms' | 'obstacles' | 'enemies' | 'levelLength'> {
+export function generateLevel(level: number, difficultyMultiplier: number = 1.0, biome: Biome = 'grassland'): Pick<GameState, 'platforms' | 'obstacles' | 'enemies' | 'levelLength'> {
   const platforms: Platform[] = []
   const obstacles: Obstacle[] = []
   const enemies: Enemy[] = []
@@ -114,6 +114,11 @@ export function generateLevel(level: number, difficultyMultiplier: number = 1.0,
 
   // ─── Jungle biome additions ───
   if (biome === 'jungle') {
+    // Lift all platforms 15% higher above the ground (more aerial traversal)
+    for (const plat of platforms) {
+      plat.y = GROUND_Y - (GROUND_Y - plat.y) * 1.15
+    }
+
     // Ground rock obstacles, spaced so you can react and pick a path.
     // Avoid the spawn area and the boss arena.
     const ROCK_MIN_GAP = 240
