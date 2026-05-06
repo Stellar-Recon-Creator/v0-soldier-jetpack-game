@@ -540,7 +540,7 @@ export default function GameCanvas() {
                     if (ctx) {
                       const dpr = window.devicePixelRatio || 1
                       const cssW = window.innerWidth
-                      const cssH = 560
+                      const cssH = 680
                       el.width = cssW * dpr
                       el.height = cssH * dpr
                       ctx.scale(dpr, dpr)
@@ -567,7 +567,7 @@ export default function GameCanvas() {
                   }
                 }}
                 className="absolute bottom-0 left-0"
-                style={{ width: '100%', height: '560px', pointerEvents: 'none' }}
+                style={{ width: '100%', height: '680px', pointerEvents: 'none' }}
               />
             )}
           </div>
