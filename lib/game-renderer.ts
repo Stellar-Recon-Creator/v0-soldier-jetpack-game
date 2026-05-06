@@ -5173,18 +5173,44 @@ function drawShielder(ctx: CanvasRenderingContext2D, enemy: Enemy) {
   const bob = Math.sin(enemy.animFrame * 0.08) * 1.2
   const shieldDown = (enemy.shieldHealth ?? 0) <= 0
 
-  // ─ Legs ─
+  // ─ Legs (greaves over the upper section) ─
   ctx.fillStyle = c.armor
-  ctx.fillRect(-hw + 4, hh - 11, 6, 11)
-  ctx.fillRect(hw - 10, hh - 11, 6, 11)
-  // Boot trim
+  ctx.fillRect(-hw + 4, hh - 12, 7, 12)
+  ctx.fillRect(hw - 11, hh - 12, 7, 12)
+  // Greave highlight stripe
   ctx.fillStyle = c.armorLight
-  ctx.fillRect(-hw + 4, hh - 5, 6, 1.5)
-  ctx.fillRect(hw - 10, hh - 5, 6, 1.5)
-  // Knee joints
+  ctx.fillRect(-hw + 4, hh - 11, 7, 0.8)
+  ctx.fillRect(hw - 11, hh - 11, 7, 0.8)
+  // Knee armor accents (chunky kneecap plates)
   ctx.fillStyle = c.bodyDark
-  ctx.fillRect(-hw + 4, hh - 7, 6, 1.5)
-  ctx.fillRect(hw - 10, hh - 7, 6, 1.5)
+  roundRect(ctx, -hw + 3.5, hh - 8, 8, 2.5, 1)
+  ctx.fill()
+  roundRect(ctx, hw - 11.5, hh - 8, 8, 2.5, 1)
+  ctx.fill()
+  ctx.fillStyle = c.armorRivet
+  ctx.fillRect(-hw + 7, hh - 7, 1, 1)
+  ctx.fillRect(hw - 8, hh - 7, 1, 1)
+  // Boot sole
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-hw + 4, hh - 1.5, 7, 1.5)
+  ctx.fillRect(hw - 11, hh - 1.5, 7, 1.5)
+
+  // ─ Belt / utility band ─
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-hw + 3, hh - 14, enemy.width - 6, 2)
+  // Belt buckle
+  ctx.fillStyle = c.armorRivet
+  roundRect(ctx, -2, hh - 14.2, 4, 2.5, 0.5)
+  ctx.fill()
+  // Pouches on either side
+  ctx.fillStyle = c.armor
+  roundRect(ctx, -hw + 5, hh - 16, 4, 3, 0.5)
+  ctx.fill()
+  roundRect(ctx, hw - 9, hh - 16, 4, 3, 0.5)
+  ctx.fill()
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-hw + 6, hh - 14.5, 2, 0.5)
+  ctx.fillRect(hw - 8, hh - 14.5, 2, 0.5)
 
   // ─ Torso (heavy chest plate over body) ─
   ctx.fillStyle = c.body
@@ -5197,6 +5223,13 @@ function drawShielder(ctx: CanvasRenderingContext2D, enemy: Enemy) {
   // Plate highlight stripe
   ctx.fillStyle = c.armorLight
   ctx.fillRect(-hw + 5, -hh + 15 + bob, enemy.width - 10, 1)
+  // Glowing piping along the plate edges (cyan, dimmer when shield down)
+  ctx.fillStyle = shieldDown ? 'rgba(60,80,100,0.4)' : c.emitter
+  ctx.shadowColor = shieldDown ? 'transparent' : c.emitterGlow
+  ctx.shadowBlur = shieldDown ? 0 : 3
+  ctx.fillRect(-hw + 4.5, -hh + 14 + bob, 0.7, enemy.height - 26)
+  ctx.fillRect(hw - 5.2, -hh + 14 + bob, 0.7, enemy.height - 26)
+  ctx.shadowBlur = 0
   // Plate seam
   ctx.fillStyle = c.bodyDark
   ctx.fillRect(-1, -hh + 14 + bob, 2, enemy.height - 26)
@@ -5204,27 +5237,42 @@ function drawShielder(ctx: CanvasRenderingContext2D, enemy: Enemy) {
   ctx.fillStyle = c.armorRivet
   ctx.beginPath(); ctx.arc(-hw + 6, -hh + 17 + bob, 1, 0, Math.PI * 2); ctx.fill()
   ctx.beginPath(); ctx.arc(hw - 6, -hh + 17 + bob, 1, 0, Math.PI * 2); ctx.fill()
-  ctx.beginPath(); ctx.arc(-hw + 6, hh - 14, 1, 0, Math.PI * 2); ctx.fill()
-  ctx.beginPath(); ctx.arc(hw - 6, hh - 14, 1, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(-hw + 6, hh - 16, 1, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(hw - 6, hh - 16, 1, 0, Math.PI * 2); ctx.fill()
 
-  // ─ Shoulders (chunky pauldrons) ─
+  // ─ Shoulders (chunky pauldrons with rim) ─
   ctx.fillStyle = c.armor
-  roundRect(ctx, -hw - 1, -hh + 11 + bob, 6, 7, 2)
+  roundRect(ctx, -hw - 1, -hh + 11 + bob, 7, 8, 2)
   ctx.fill()
-  roundRect(ctx, hw - 5, -hh + 11 + bob, 6, 7, 2)
+  roundRect(ctx, hw - 6, -hh + 11 + bob, 7, 8, 2)
   ctx.fill()
+  // Pauldron rim highlight
   ctx.fillStyle = c.armorLight
-  ctx.fillRect(-hw, -hh + 12 + bob, 4, 1)
-  ctx.fillRect(hw - 4, -hh + 12 + bob, 4, 1)
+  ctx.fillRect(-hw, -hh + 12 + bob, 5, 1)
+  ctx.fillRect(hw - 5, -hh + 12 + bob, 5, 1)
+  // Pauldron lower shadow
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-hw - 1, -hh + 18 + bob, 7, 1)
+  ctx.fillRect(hw - 6, -hh + 18 + bob, 7, 1)
 
   // ─ Arms (slim, behind torso) ─
   ctx.fillStyle = c.bodyDark
-  ctx.fillRect(-hw, -hh + 17 + bob, 3, 12)
-  ctx.fillRect(hw - 3, -hh + 17 + bob, 3, 12)
-  // Forearms / fists
-  ctx.fillStyle = c.body
-  ctx.fillRect(-hw, -hh + 26 + bob, 4, 4)
-  ctx.fillRect(hw - 4, -hh + 26 + bob, 4, 4)
+  ctx.fillRect(-hw, -hh + 18 + bob, 3, 13)
+  ctx.fillRect(hw - 3, -hh + 18 + bob, 3, 13)
+  // Gauntlets / forearms
+  ctx.fillStyle = c.armor
+  roundRect(ctx, -hw - 0.5, -hh + 26 + bob, 4.5, 6, 1)
+  ctx.fill()
+  roundRect(ctx, hw - 4, -hh + 26 + bob, 4.5, 6, 1)
+  ctx.fill()
+  // Gauntlet trim
+  ctx.fillStyle = c.armorLight
+  ctx.fillRect(-hw - 0.5, -hh + 26.3 + bob, 4.5, 0.6)
+  ctx.fillRect(hw - 4, -hh + 26.3 + bob, 4.5, 0.6)
+  // Knuckle dots
+  ctx.fillStyle = c.armorRivet
+  ctx.fillRect(-hw + 1, -hh + 30 + bob, 1, 1)
+  ctx.fillRect(hw - 2, -hh + 30 + bob, 1, 1)
 
   // ─ Head with helmet ─
   ctx.fillStyle = c.body
@@ -5234,9 +5282,13 @@ function drawShielder(ctx: CanvasRenderingContext2D, enemy: Enemy) {
   ctx.fillStyle = c.armor
   roundRect(ctx, -8, -hh + bob, 16, 7, 3)
   ctx.fill()
-  // Helmet trim
+  // Brow ridge above visor
+  ctx.fillStyle = c.bodyDark
+  roundRect(ctx, -7, -hh + 5 + bob, 14, 1.2, 0.5)
+  ctx.fill()
+  // Helmet trim highlight
   ctx.fillStyle = c.armorLight
-  ctx.fillRect(-7, -hh + 6 + bob, 14, 0.8)
+  ctx.fillRect(-7, -hh + 1 + bob, 14, 0.7)
   // Visor slit (single glowing band)
   ctx.fillStyle = c.eye
   ctx.shadowColor = c.eye
@@ -5244,27 +5296,55 @@ function drawShielder(ctx: CanvasRenderingContext2D, enemy: Enemy) {
   roundRect(ctx, -6, -hh + 7 + bob, 12, 3, 1)
   ctx.fill()
   ctx.shadowBlur = 0
-  // Visor inner highlight
+  // Visor crosshair / center divider
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-0.4, -hh + 7 + bob, 0.8, 3)
+  // Visor inner highlights (twin)
   ctx.fillStyle = '#ffaabb'
-  ctx.fillRect(-5, -hh + 7.5 + bob, 4, 0.7)
+  ctx.fillRect(-5, -hh + 7.5 + bob, 3.5, 0.6)
+  ctx.fillRect(1.5, -hh + 7.5 + bob, 3.5, 0.6)
   // Helmet crest
   ctx.fillStyle = c.bodyDark
   ctx.fillRect(-1, -hh - 1 + bob, 2, 3)
+  // Antenna with glowing tip
+  ctx.strokeStyle = c.bodyDark
+  ctx.lineWidth = 0.8
+  ctx.beginPath()
+  ctx.moveTo(4, -hh + 1 + bob)
+  ctx.quadraticCurveTo(6, -hh - 3 + bob, 6.5, -hh - 5 + bob)
+  ctx.stroke()
+  ctx.fillStyle = c.emitter
+  ctx.shadowColor = c.emitterGlow
+  ctx.shadowBlur = shieldDown ? 0 : 4
+  ctx.beginPath()
+  ctx.arc(6.5, -hh - 5 + bob, 0.9, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  // Helmet side vents
+  ctx.fillStyle = c.bodyDark
+  ctx.fillRect(-8, -hh + 3 + bob, 0.8, 2)
+  ctx.fillRect(7.2, -hh + 3 + bob, 0.8, 2)
 
-  // ─ Shield emitter on chest (glowing core) ─
-  // When shield is down, dim and add a small spark animation.
+  // ─ Shield emitter cluster on chest (central core + flanking dots) ─
   const emitterPulse = shieldDown ? 0.4 : 1
   ctx.fillStyle = shieldDown ? '#3a5a7a' : c.emitter
   ctx.shadowColor = shieldDown ? 'rgba(60,80,100,0.5)' : c.emitterGlow
   ctx.shadowBlur = shieldDown ? 2 : 6
   ctx.beginPath()
-  ctx.arc(0, -hh + 18 + bob, 2.2 * emitterPulse, 0, Math.PI * 2)
+  ctx.arc(0, -hh + 18 + bob, 2.4 * emitterPulse, 0, Math.PI * 2)
   ctx.fill()
+  ctx.shadowBlur = 0
+  // Flanking emitter dots
+  ctx.fillStyle = shieldDown ? '#3a5a7a' : c.emitter
+  ctx.shadowColor = shieldDown ? 'transparent' : c.emitterGlow
+  ctx.shadowBlur = shieldDown ? 0 : 3
+  ctx.beginPath(); ctx.arc(-4, -hh + 21 + bob, 0.9, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(4, -hh + 21 + bob, 0.9, 0, Math.PI * 2); ctx.fill()
   ctx.shadowBlur = 0
   if (!shieldDown) {
     ctx.fillStyle = '#ddf2ff'
     ctx.beginPath()
-    ctx.arc(0, -hh + 18 + bob, 0.8, 0, Math.PI * 2)
+    ctx.arc(0, -hh + 18 + bob, 0.9, 0, Math.PI * 2)
     ctx.fill()
   }
 }

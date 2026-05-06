@@ -180,7 +180,7 @@ function getEnemySize(type: EnemyType) {
     case 'flyer': return { w: 32, h: 28 }
     case 'brute': return { w: 40, h: 48 }
     case 'boss': return { w: 56, h: 64 }
-    case 'shielder': return { w: 34, h: 40 }
+    case 'shielder': return { w: 39, h: 46 }
   }
 }
 
@@ -740,9 +740,9 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
         break
 
       case 'shielder':
-        // Slow tank-like advance
+        // Steady armored advance
         if (distToPlayer < 1400) {
-          enemy.vx = enemy.facing * 25
+          enemy.vx = enemy.facing * 45
         } else {
           enemy.vx = 0
         }
@@ -877,18 +877,14 @@ export function updateGame(state: GameState, keys: Keys, dt: number, canvasW: nu
           bullet.active = false
           soundEvents.alienHit = true
 
-          // Shield absorbs the hit if it's still up. Damage spills over to body
-          // if the hit breaks the shield this frame.
+          // Shield fully absorbs the hit if it's still up - no spill damage,
+          // so a one-shot weapon that breaks the shield doesn't also hurt the
+          // body in the same hit. Player has to follow up with another shot.
           let shieldBrokeThisHit = false
           if ((enemy.shieldHealth ?? 0) > 0) {
-            const beforeShield = enemy.shieldHealth as number
-            const afterShield = beforeShield - bullet.damage
+            const afterShield = (enemy.shieldHealth as number) - bullet.damage
             enemy.shieldHealth = Math.max(0, afterShield)
-            if (afterShield <= 0) {
-              shieldBrokeThisHit = true
-              const overflow = -afterShield
-              if (overflow > 0) enemy.health -= overflow
-            }
+            if (afterShield <= 0) shieldBrokeThisHit = true
           } else {
             enemy.health -= bullet.damage
           }
